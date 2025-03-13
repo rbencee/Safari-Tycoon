@@ -1,4 +1,4 @@
-package io.github.safari.lwjgl3.npc.animals;
+package lwjgl3.src.main.java.io.github.safari.lwjgl3.npc.animals;
 
-public class Lion {
+public class Lion extends Animal {
 }

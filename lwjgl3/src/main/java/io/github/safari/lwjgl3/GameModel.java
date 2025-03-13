@@ -1,5 +1,7 @@
+import lwjgl3.src.main.java.io.github.safari.lwjgl3.npc.animals.Herd;
 import java.util.*;
-import util.*;
+import io.github.safari.lwjgl3.npc.animals.*;
+
 
 public class GameModel {
     private int money;
@@ -94,12 +96,12 @@ public class GameModel {
     private sumuniqueanimals(ArrayList<Herd> herds)
     {
         //To DO, enum lista, amiben szamontartjuk hogy bennevan e?
-        AnimalType Seenanimals [];
 
+        Set<Animal> animals;
 
         for (herd : herds)
         {
-            if()
+
         }
 
         return Seenanimals.size();
