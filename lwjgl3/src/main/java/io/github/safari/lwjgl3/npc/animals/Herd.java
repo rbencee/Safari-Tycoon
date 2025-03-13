@@ -1,4 +1,5 @@
-package npc;
+package io.github.safari.lwjgl3.npc.animals;
+import npc.animals.Animal;
 import util.*;
 
 import java.util.ArrayList;
