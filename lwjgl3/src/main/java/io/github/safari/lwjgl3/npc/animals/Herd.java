@@ -1,4 +1,4 @@
-package io.github.safari.lwjgl3.npc.animals;
+package lwjgl3.src.main.java.io.github.safari.lwjgl3.npc.animals;
 import npc.animals.Animal;
 import util.*;
 
@@ -6,12 +6,14 @@ import java.util.ArrayList;
 
 public class Herd {
     private ArrayList<Animal> animals;
-    private AnimalType animalType;
+    private Animal animaltype;
 
-    public Herd(AnimalType animalType)
+
+    public Herd(Animal chosenone)
     {
-        this.animalType = animalType;
-        //type nem eleg a konstruktorhoz, tudnia kell hova kell raknia
+        this.animaltype = chosenone;
+        ArrayList<Animal> animals = new ArrayList<>();
+        animals.add(chosenone);
 
     }
 
@@ -31,7 +33,7 @@ public class Herd {
         return animals.size();
     }
 
-    public AnimalType getAnimalType() {
+    public Animal getAnimalType() {
         return animalType;
     }
 }

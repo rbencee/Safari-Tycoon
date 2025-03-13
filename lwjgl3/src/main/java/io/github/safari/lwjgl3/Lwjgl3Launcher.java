@@ -1,8 +1,9 @@
-package io.github.safari.lwjgl3;
+package lwjgl3.src.main.java.io.github.safari.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.safari.Main;
+
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
