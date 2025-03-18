@@ -1,6 +1,5 @@
-package lwjgl3.src.main.java.io.github.safari.lwjgl3.npc.animals;
-import npc.animals.Animal;
-import util.*;
+package lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.npc.animals;
+
 
 import java.util.ArrayList;
 

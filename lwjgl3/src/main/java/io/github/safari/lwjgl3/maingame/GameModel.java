@@ -1,7 +1,16 @@
-import lwjgl3.src.main.java.io.github.safari.lwjgl3.maingame.MainMenu;
+package lwjgl3.src.main.java.io.github.safari.lwjgl3.maingame;
+
+import lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.npc.animals.Herbivore;
 import lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.npc.animals.Herd;
-import java.util.*;
-import io.github.safari.lwjgl3.npc.animals.*;
+import lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.npc.*;
+import lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.Visitors.*;
+import lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.security.*;
+import lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.objects.*;
+
+
+
+
+import java.util.ArrayList;
 
 
 public class GameModel {
@@ -10,27 +19,54 @@ public class GameModel {
     private int monthlyexpense;
     private int speed; // 1 - 3
     private int difficulty; // 1 - 3
+    private int dayspassed;
+
     //map?
     private int ticketprice;
     private int touristcount;
+    private ArrayList<Herbivore> herbs;
     private ArrayList<Herd> herds;
-    private ArrayList<Poaccher> poachers;
+    private ArrayList<Poacher> poachers;
     private ArrayList<Ranger> rangers;
     private ArrayList<Jeep> jeeps;
     private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
 
-    private MainMenu menu;
+
 
     public GameModel(int difficulty)
     {
         this.difficulty = difficulty;
-        this.menu = new MainMenu();
+    }
+
+    //Setters and getters
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public int getIncome() {
+        return income;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public int getDayspassed() {
+        return dayspassed;
+    }
+
+    public int getTouristcount() {
+        return touristcount;
     }
 
     public void InitializeGame()
     {
 
+
+
+        generateMap();
     }
 
     private void generateMap()
@@ -50,7 +86,7 @@ public class GameModel {
         this.money += money;
     }
 
-    public void calculateIncome(herbs,predators)
+    public void calculateIncome(herds,herbs)
     {
 
 
@@ -107,6 +143,35 @@ public class GameModel {
 
         return Seenanimals.size();
     }
+
+    public int sumHerbivorous() { //ArrayList<Herd> herds
+        int sum = 0;
+
+        for (var e : herds) {
+            if (e.getIsherbivore) {
+                sum++;
+            }
+        }
+
+        return sum;
+    }
+
+    public int sumPredators() //ArrayList<Herd> herds
+    {
+        int sum = 0;
+
+        for (var e : herds) {
+            if (!e.getIsherbivore) {
+                sum++;
+            }
+        }
+
+        return sum;
+
+
+    }
+
+
 
     private CheckInRange()
     {

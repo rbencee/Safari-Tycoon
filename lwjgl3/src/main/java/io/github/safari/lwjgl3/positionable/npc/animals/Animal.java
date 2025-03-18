@@ -13,4 +13,5 @@ public abstract class Animal implements Positionable {
     Position knownFood;
     Position knownWater;
     int maxAge;
+    private boolean isHerbivore;
 }
