@@ -1,8 +1,8 @@
-package io.github.safari.lwjgl3.npc.animals;
+package lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.npc.animals;
 
-import io.github.safari.lwjgl3.util.*;
+import lwjgl3.src.main.java.io.github.safari.lwjgl3.positionable.Position;
 
-public abstract class Animal implements Positionable {
+public abstract class Animal implements Position {
     public static int VISION_RANGE;
     int age;
     int hunger;
