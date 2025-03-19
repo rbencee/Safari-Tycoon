@@ -42,15 +42,47 @@ public class GameView implements Screen {
 
 
     @Override
-    public void show()
-    {
+    public void show() {
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
+
+        Table table = new Table();
+        table.setFillParent(true);
 
 
+        //table.add(title).pad(20);
+
+        stage.addActor(table);
     }
 
     @Override
-    public void render(float v) {
+    public void render(float delta) {
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.LEFT)) {
+            camera.translate(-5, 0);
+        }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.RIGHT)) {
+            camera.translate(5, 0);
+        }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.UP)) {
+            camera.translate(0, 5);
+        }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.DOWN)) {
+            camera.translate(0, -5);
+        }
 
+        camera.update();
+
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        camera.update();
+        mapRenderer.setView(camera);
+        mapRenderer.render();
+
+
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override
@@ -75,6 +107,9 @@ public class GameView implements Screen {
 
     @Override
     public void dispose() {
-
+        map.dispose();
+        mapRenderer.dispose();
+        stage.dispose();
+        skin.dispose();
     }
 }
