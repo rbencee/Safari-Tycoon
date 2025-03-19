@@ -3,96 +3,44 @@ package io.github.safari.lwjgl3.maingame;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.lwjgl.opengl.GL20;
 
-import javax.swing.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class GameView implements Screen {
 
-    private Game game;
     private Skin skin;
     private Stage stage;
     GameModel gameModel;
-    MainMenu mainMenu;
-    private Timer timer;
+    private Game game;
+    private TiledMap map;
+    private OrthogonalTiledMapRenderer mapRenderer;
+    private OrthographicCamera camera;
 
 
-    public GameView(int difficulty)
+
+    public GameView(Game game, int difficulty)
     {
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false,800,800);
 
-        stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
+        map = new TmxMapLoader().load("untitled.tmx");
+        mapRenderer = new OrthogonalTiledMapRenderer(map);
 
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-
-        Table table = new Table();
-        table.top();
-        table.setFillParent(true);
-
-        com.badlogic.gdx.scenes.scene2d.ui.Label title = new Label("Safari", skin);
-        table.add(title);
-
-
-
+        this.game = game;
         this.gameModel = new GameModel(difficulty);
-
-
-    }
-
-    public void UpdateScore()
-    {
-
-        int time = gameModel.getDayspassed();
-        int income = gameModel.getIncome();
-        int balance = gameModel.getMoney();
-        int touristcount = gameModel.getTouristcount();
-        int herbivorecount = gameModel.sumHerbivorous();
-        int sumpredators = gameModel.sumPredators();
-
-    }
-
-    private void StartNewGame(){
-        stop();
-
-        gameModel.InitializeGame();
-
-        timer = new Timer(10, oneGameCycleAction);
-        timer.start();
-
-
-
     }
 
 
-
-
-
-    private void stop(){
-        if(timer != null && timer.isRunning()){
-            timer.stop();
-        }
-    }
-
-    private final ActionListener oneGameCycleAction = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e){
-
-        }
-    };
     @Override
     public void show()
     {
@@ -106,8 +54,8 @@ public class GameView implements Screen {
     }
 
     @Override
-    public void resize(int i, int i1) {
-
+    public void resize(int width, int height) {
+        camera.setToOrtho(false,width,height);
     }
 
     @Override

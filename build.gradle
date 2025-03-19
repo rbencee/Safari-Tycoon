@@ -9,8 +9,6 @@ buildscript {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
   }
   dependencies {
-
-
   }
 }
 
@@ -31,8 +29,6 @@ configure(subprojects) {
   apply plugin: 'java-library'
   sourceCompatibility = 17
 
-  // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
-  // The article can be helpful when using assets.txt in your project.
   tasks.register('generateAssetList') {
     inputs.dir("${project.rootDir}/assets/")
     // projectFolder/assets
@@ -59,14 +55,30 @@ configure(subprojects) {
 subprojects {
   version = "$projectVersion"
   ext.appName = 'Safari'
+
   repositories {
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }
-    // You may want to remove the following line if you have errors downloading dependencies.
     mavenLocal()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
+  }
+
+  // Replacing the deprecated JavaPluginConvention with the new API
+  plugins.withType(JavaPlugin) {
+    java {
+      toolchain {
+        languageVersion = JavaLanguageVersion.of(17)  // Adjust to your Java version
+      }
+    }
+  }
+
+  // Replacing the deprecated ApplicationPluginConvention with the new API
+  plugins.withType(ApplicationPlugin) {
+    application {
+      mainClass.set("com.yourpackage.Main")  // Set your main class here
+    }
   }
 }
 

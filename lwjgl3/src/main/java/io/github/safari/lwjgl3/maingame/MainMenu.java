@@ -3,12 +3,16 @@ package io.github.safari.lwjgl3.maingame;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 
 
 public class MainMenu implements Screen {
@@ -16,6 +20,7 @@ public class MainMenu implements Screen {
     private Game game;
     private Skin skin;
     private Stage stage;
+    private ButtonGroup<TextButton> difficultyGroup;
 
 
     public MainMenu(Game game) {
@@ -38,9 +43,47 @@ public class MainMenu implements Screen {
 
         TextButton startButton = new TextButton("Start Game", skin);
         TextButton quitButton = new TextButton("Quit", skin);
+
         TextButton easyButton = new TextButton("Easy", skin);
         TextButton mediumButton = new TextButton("Medium", skin);
         TextButton hardButton = new TextButton("Hard", skin);
+
+
+        startButton.setDisabled(true);
+
+        difficultyGroup = new ButtonGroup<>(easyButton,mediumButton,hardButton);
+        difficultyGroup.setMaxCheckCount(1);
+        difficultyGroup.setMinCheckCount(1);
+
+        ClickListener buttonClickListener = new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                TextButton selectedbutton = (TextButton) event.getListenerActor();
+
+                resetButtonBorders();
+                TextButton.TextButtonStyle newStyle = new TextButton.TextButtonStyle(selectedbutton.getStyle());
+                newStyle.fontColor = Color.YELLOW;
+                selectedbutton.setStyle(newStyle);
+
+                startButton.setDisabled(false);
+            }
+        };
+
+        easyButton.addListener(buttonClickListener);
+        mediumButton.addListener(buttonClickListener);
+        hardButton.addListener(buttonClickListener);
+
+        startButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                TextButton selected = difficultyGroup.getChecked();
+                if (selected != null) {
+                    int difficulty = getDifficulty(selected);
+                    startGame(difficulty);
+                }
+            }
+        });
+
 
         quitButton.addListener(new ClickListener() {
             @Override
@@ -49,26 +92,7 @@ public class MainMenu implements Screen {
             }
         });
 
-        easyButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                startGame(1);
-            }
-        });
 
-        mediumButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                startGame(2);
-            }
-        });
-
-        hardButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                startGame(3);
-            }
-        });
 
         table.row().pad(10);
         table.add(startButton);
@@ -83,10 +107,23 @@ public class MainMenu implements Screen {
         stage.addActor(table);
     }
 
+
+    private void resetButtonBorders() {
+        for (TextButton button : difficultyGroup.getButtons()) {
+            button.getStyle().fontColor = Color.WHITE;
+        }
+    }
+
+    private int getDifficulty(TextButton button){
+        if (button.getText().toString().equals("Easy")) return 1;
+        if (button.getText().toString().equals("Medium")) return 2;
+        return 3;
+    }
+
     private void startGame(int diff) {
         System.out.println("Starting game with difficulty: " + diff);
 
-        game.setScreen(new GameView(diff));
+        game.setScreen(new GameView(game, diff));
     }
 
     @Override

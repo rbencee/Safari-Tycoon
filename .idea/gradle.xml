@@ -13,16 +13,6 @@
           </set>
         </option>
       </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/asd" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/asd" />
-            <option value="$PROJECT_DIR$/asd/core" />
-            <option value="$PROJECT_DIR$/asd/lwjgl3" />
-          </set>
-        </option>
-      </GradleProjectSettings>
     </option>
   </component>
 </project>
