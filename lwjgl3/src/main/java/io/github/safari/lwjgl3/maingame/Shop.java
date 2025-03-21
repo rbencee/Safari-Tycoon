@@ -1,24 +1,22 @@
-package io.github.safari.lwjgl3;
+package io.github.safari.lwjgl3.maingame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import io.github.safari.lwjgl3.maingame.GameModel;
 import io.github.safari.lwjgl3.util.ShopType;
-
-import java.util.ArrayList;
 
 public class Shop {
     private Window shopWindow;
     private boolean isVisible;
     private ShopType pageShown;
-    private Table contentTable; // Dinamikus tartalomhoz
+    private Table contentTable;
     private Skin skin;
     private GameModel MainGame;
     private TextButton[] PShownbuttons;
-    //Kontrollernek kellene lehet inkabb kuldeni a dolgokat
+    private ShopItem SelectedItem;
+
 
 
     public Shop(Skin skin, Stage stage, GameModel MainGame) {
@@ -34,7 +32,7 @@ public class Shop {
         shopWindow.setMovable(false);
         shopWindow.setResizable(false);
 
-        // Kategória gombok létrehozása
+
         TextButton plantsButton = new TextButton("Plants", skin);
         TextButton animalsButton = new TextButton("Animals", skin);
         TextButton othersButton = new TextButton("Others", skin);
@@ -72,18 +70,18 @@ public class Shop {
             }
         });
 
-        // Gombok hozzáadása az ablakhoz
+
         Table buttonTable = new Table();
         buttonTable.add(plantsButton).width(100).height(50).pad(5);
         buttonTable.add(animalsButton).width(100).height(50).pad(5);
         buttonTable.add(othersButton).width(100).height(50).pad(5);
         shopWindow.add(buttonTable).row();
 
-        // Tartalom táblázat
+
         contentTable = new Table();
         shopWindow.add(contentTable).row();
 
-        // Bezárás gomb
+
         TextButton closeButton = new TextButton("Close", skin);
         closeButton.addListener(new ClickListener() {
             @Override
@@ -93,15 +91,22 @@ public class Shop {
         });
         shopWindow.add(closeButton).pad(10).row();
 
-        // Alapból növények oldalt mutatjuk
+
         showPlantsPage();
 
-        // Hozzáadás a Stage-hez
+
         stage.addActor(shopWindow);
         shopWindow.setVisible(false);
     }
 
+    public ShopItem getShopItems() {
+        return  this.SelectedItem;
+    }
 
+    public void clearSelection()
+    {
+        this.SelectedItem = null;
+    }
 
     public void show() {
         isVisible = true;
@@ -117,42 +122,47 @@ public class Shop {
         return isVisible;
     }
 
-    // Növények oldala
     private void showPlantsPage() {
         pageShown = ShopType.PLANTS;
-        updateContent(new String[]{"Tree - 50$", "Lake - 20$", "Bush - 30$", "Grass - 10$"});
+        updateContent(new ShopItem[]{
+            new ShopItem("Tree", 50),
+            new ShopItem("Lake", 20),
+            new ShopItem("Bush", 30),
+            new ShopItem("Grass", 10)
+        });
     }
 
-    // Állatok oldala
     private void showAnimalsPage() {
         pageShown = ShopType.ANIMALS;
-        updateContent(new String[]{"Capybara - 100$", "Mammoth - 500$", "Dinosaur - 1000$", "Lion-2000$"});
+        updateContent(new ShopItem[]{
+            new ShopItem("Capybara", 100),
+            new ShopItem("Mammoth", 500),
+            new ShopItem("Dinosaur", 1000),
+            new ShopItem("Lion", 2000)
+        });
     }
 
-    // Egyéb tárgyak oldala
     private void showOthersPage() {
         pageShown = ShopType.OTHERS;
-        updateContent(new String[]{"Road - 200$", "Ranger - 500$", "Camera - 300$", "Jeep - 400$"});
+        updateContent(new ShopItem[]{
+            new ShopItem("Road", 200),
+            new ShopItem("Ranger", 500),
+            new ShopItem("Camera", 300),
+            new ShopItem("Jeep", 400)
+        });
     }
 
-    // Tartalom frissítése a kiválasztott kategóriához
-    private void updateContent(String[] items) {
+    private void updateContent(ShopItem[] items) {
         contentTable.clear();
 
-        for (String item : items) {
-            TextButton itemButton = new TextButton(item, skin);
-            SetFontsize(0.8f,itemButton);
+        for (ShopItem item : items) {
+            TextButton itemButton = new TextButton(item.getName() + " - " + item.getPrice() + "$", skin);
+            SetFontsize(0.8f, itemButton);
             itemButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    System.out.println(item + " purchased!");
-                    /*
-                    if(MainGame.CanBuy())
-                    {
-                        MainGame.BuySelected(String event);
-                    }
-
-                     */
+                    SelectedItem = item; // Helyes változónév
+                    System.out.println(item.getName() + " selected! Price: " + item.getPrice());
                 }
             });
             contentTable.add(itemButton).pad(5).row();

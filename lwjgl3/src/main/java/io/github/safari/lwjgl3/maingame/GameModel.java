@@ -170,28 +170,39 @@ public class GameModel {
 
     }
 
-    public void TryToBuy(String chosen ,int price)
+    public boolean CanBuy(ShopItem selectedItem)
     {
-        if(money - price >= 0 )
+        if(money - selectedItem.getPrice() >= 0)
         {
-            System.out.println("Sucessful buy!");
-            money = money - price;
-            //Boughtobj(String chosen);
+            return true;
         }
-
+        return false;
     }
 
-    private void Boughtobj(String chosen)
+    public void BuyItem(ShopItem item, int x,int y)
     {
-        switch(chosen)
+        money = money - item.getPrice();
+
+        switch(item.getName())
         {
-            //itt kellene majd valamit csinalni ,hogy valassza ki az ember hova akarja letenni, GameControllernek kuldeni valamit
             case "Capybara":
-               // herds(new Capybara());
+                Capybara capybara = new Capybara(x, y);  // Új Capybara példány létrehozása a megadott koordinátákkal
+                Herd herd = new Herd(capybara, true);  // Új herd, a capybara lesz a vezető
+                herds.add(herd);  // A herd hozzáadása a herds listához
+                System.out.println("Capybara buy successful!");
+                break;
+            case "Mammoth":
+                break;
+            case "Dinosaur":
+                break;
+            case "Lion":
+                break;
+            default: System.out.println("Not Implemented yet!");
+            break;
         }
-
-
     }
+
+
 
 
     /*

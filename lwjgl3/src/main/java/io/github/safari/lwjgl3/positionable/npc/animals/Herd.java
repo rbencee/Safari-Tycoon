@@ -6,13 +6,16 @@ import io.github.safari.lwjgl3.positionable.npc.animals.*;
 
 public class Herd {
     private ArrayList<Animal> animals;
+    private Animal Leader; //Szerintem kellene egy Leader allat amitol a tobbiek egy adott tavolsagon belul helyezkednek el.
+    private boolean Herbivoregroup;
 
-
-    public Herd(Animal chosenone)
+    public Herd(Animal chosenone, boolean isherbivore)
     {
 
         ArrayList<Animal> animals = new ArrayList<>();
+        this.Leader = chosenone;
         animals.add(chosenone);
+        this.Herbivoregroup = isherbivore;
 
     }
 

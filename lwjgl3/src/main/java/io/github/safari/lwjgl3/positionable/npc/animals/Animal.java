@@ -13,5 +13,19 @@ public abstract class Animal extends Position {
     Position knownFood;
     Position knownWater;
     int maxAge;
-    private boolean isHerbivore;
+
+    // Konstruktor
+    public Animal(int x, int y) {
+        super(x, y); // Mivel a Position a szülő osztály, az Animal konstruktorban is ezt inicializáljuk.
+        this.position = new Position(x, y); // Beállítjuk a pozíciót.
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
 }
