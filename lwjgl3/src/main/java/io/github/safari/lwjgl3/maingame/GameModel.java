@@ -19,9 +19,9 @@ public class GameModel {
     private int difficulty; // 1 - 3
     private int dayspassed;
 
-    //map?
     private int ticketprice;
     private int touristcount;
+
     private ArrayList<Herbivore> herbs;
     private ArrayList<Herd> herds;
     private ArrayList<Poacher> poachers;
@@ -29,11 +29,12 @@ public class GameModel {
     private ArrayList<Jeep> jeeps;
     private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
-    private int objectNumber = 10;
+
+    private int objectNumber = 50;
     private float mapWidth = 3200;
     private float mapHeight = 3200;
     private Random random;
-    private float minDistance;
+    private float minDistance = 64;
 
 
 
@@ -43,7 +44,6 @@ public class GameModel {
         this.random = new Random();
 
         environments = new ArrayList<>();
-        minDistance = 50;
 
         InitializeGame();
     }
@@ -83,9 +83,11 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            int width = 32;
+            int height = 32;
 
             if (positionFound(x, y, minDistance)) {
-                environments.add(new Tree(x, y));
+                environments.add(new Tree(x, y, width, height));
                 objectCount++;
             }
         }
@@ -94,9 +96,11 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            int width = 32;
+            int height = 32;
 
             if (positionFound(x, y, minDistance)) {
-                environments.add(new Bush(x, y));
+                environments.add(new Bush(x, y, width, height));
                 objectCount++;
             }
         }
@@ -105,8 +109,11 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            int width = 32;
+            int height = 32;
+
             if (positionFound(x, y, minDistance)) {
-                environments.add(new Lake(x, y));
+                environments.add(new Lake(x, y, width, height));
                 objectCount++;
             }
         }
@@ -115,10 +122,12 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            int width = 32;
+            int height = 32;
 
 
             if (positionFound(x, y, minDistance)) {
-                environments.add(new Grass(x, y));
+                environments.add(new Grass(x, y, width, height));
                 objectCount++;
             }
         }
@@ -239,14 +248,14 @@ public class GameModel {
         return false;
     }
 
-    public void BuyItem(ShopItem item, int x,int y)
+    public void BuyItem(ShopItem item, float x,float y,int width, int height)
     {
         money = money - item.getPrice();
 
         switch(item.getName())
         {
             case "Capybara":
-                Capybara capybara = new Capybara(x, y);  // Új Capybara példány létrehozása a megadott koordinátákkal
+                Capybara capybara = new Capybara(x, y, width, height);  // Új Capybara példány létrehozása a megadott koordinátákkal
                 Herd herd = new Herd(capybara, true);  // Új herd, a capybara lesz a vezető
                 herds.add(herd);  // A herd hozzáadása a herds listához
                 System.out.println("Capybara buy successful!");

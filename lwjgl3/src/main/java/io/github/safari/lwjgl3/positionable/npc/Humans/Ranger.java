@@ -2,12 +2,13 @@ package io.github.safari.lwjgl3.positionable.npc.Humans;
 
 
 import io.github.safari.lwjgl3.positionable.Moveable;
+import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 
 import java.util.ArrayList;
 
 
-public class Ranger implements Moveable {
+public class Ranger extends Position implements Moveable {
     private boolean isAlive;
     private int x;
     private int y;
@@ -15,7 +16,8 @@ public class Ranger implements Moveable {
     private static int range;
     private ArrayList<Poacher> knownPoachers;
 
-    public Ranger() {
+    public Ranger(float x, float y,int width, int height) {
+        super(x,y,width,height);
         this.isAlive = true;
     }
 
@@ -25,10 +27,6 @@ public class Ranger implements Moveable {
     public void KillPoacher(Poacher target) {
     }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public void setX(int x) { this.x = x; }
-    public void setY(int y) { this.y = y; }
 
     @Override
     public void move() {

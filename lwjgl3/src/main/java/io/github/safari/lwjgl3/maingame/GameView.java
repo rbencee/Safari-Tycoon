@@ -8,12 +8,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import io.github.safari.lwjgl3.positionable.objects.*;
 import org.lwjgl.opengl.GL20;
 
@@ -24,6 +29,7 @@ public class GameView implements Screen {
 
     private Stage stage;
     private GameModel gameModel;
+    private Shop shop;
     private Game game;
 
     private int mapWidth;
@@ -43,6 +49,8 @@ public class GameView implements Screen {
     private SpriteBatch spriteBatch;
 
     private FitViewport viewport;
+    private float cameraMaxZoom = 1.4f;
+    private float cameraMinZoom = 0.6f;
 
 
 
@@ -53,16 +61,16 @@ public class GameView implements Screen {
         mapRenderer = new OrthogonalTiledMapRenderer(map);
 
 
-
         mapWidth = map.getProperties().get("width", Integer.class) * 32;
         mapHeight = map.getProperties().get("height", Integer.class) * 32;
         cameraSpeed = 3f;
 
 
         treeTexture = new Texture("textures/bush2.png");
-        lakeTexture = new Texture("textures/bush2.png");
+        lakeTexture = new Texture("textures/lake1.png");
         grassTexture = new Texture("textures/bush2.png");
         bushTexture = new Texture("textures/bush2.png");
+
 
         this.spriteBatch = new SpriteBatch();
         this.game = game;
@@ -78,9 +86,6 @@ public class GameView implements Screen {
 
         camera.setToOrtho(false, 1920, 1080);
 
-        // camera.zoom = 0.75f;
-        camera.zoom = 0.5f;
-
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
@@ -90,8 +95,53 @@ public class GameView implements Screen {
         table.setFillParent(true);
 
 
-        //table.add(title).pad(20);
+        shop = new Shop(skin, stage, this.gameModel);
 
+        // Nyitó gomb hozzáadása
+        TextButton openShopButton = new TextButton("Shop", skin);
+        openShopButton.setPosition(50, Gdx.graphics.getHeight() - 50);
+        openShopButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (shop.isVisible()) {
+                    shop.hide();
+                } else {
+                    shop.show();
+                }
+            }
+        });
+
+        Label zoomLabel = new Label("Zoom",skin);
+        zoomLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 45);
+
+        TextButton zoomInButton = new TextButton("+", skin);
+        zoomInButton.setPosition(Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 50);
+        zoomInButton.setSize(50,50);
+        zoomInButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (camera.zoom > cameraMinZoom) {
+                    camera.zoom -= 0.1f;
+                }
+            }
+        });
+
+        TextButton zoomOutButton = new TextButton("-", skin);
+        zoomOutButton.setPosition(Gdx.graphics.getWidth() - 210, Gdx.graphics.getHeight() - 50);
+        zoomOutButton.setSize(50,50);
+        zoomOutButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (camera.zoom < cameraMaxZoom) {
+                    camera.zoom += 0.1f;
+                }
+            }
+        });
+
+        stage.addActor(zoomLabel);
+        stage.addActor(zoomOutButton);
+        stage.addActor(zoomInButton);
+        stage.addActor(openShopButton);
         stage.addActor(table);
     }
 
@@ -116,7 +166,7 @@ public class GameView implements Screen {
             } else if (env instanceof Bush) {
                 spriteBatch.draw(bushTexture, env.getX(), env.getY(), 32, 32);
             } else if (env instanceof Lake) {
-                spriteBatch.draw(lakeTexture, env.getX(), env.getY(), 32, 32);
+                spriteBatch.draw(lakeTexture, env.getX(), env.getY(), 64, 64);
             } else if (env instanceof Grass) {
                 spriteBatch.draw(grassTexture, env.getX(), env.getY(), 32, 32);
             }
@@ -141,8 +191,8 @@ public class GameView implements Screen {
             camera.translate(0, -cameraSpeed);
         }
 
-        float halfWidth = camera.viewportWidth / 2;
-        float halfHeight = camera.viewportHeight / 2;
+        float halfWidth = camera.viewportWidth / 2 * camera.zoom;
+        float halfHeight = camera.viewportHeight / 2 * camera.zoom;
 
         if (camera.position.x - halfWidth < 0) {
             camera.position.x = halfWidth;
