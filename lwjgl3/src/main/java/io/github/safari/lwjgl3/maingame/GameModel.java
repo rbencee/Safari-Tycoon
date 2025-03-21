@@ -1,9 +1,9 @@
 package io.github.safari.lwjgl3.maingame;
 
-import io.github.safari.lwjgl3.positionable.npc.Humans.Poacher;
-import io.github.safari.lwjgl3.positionable.npc.Humans.Ranger;
+import io.github.safari.lwjgl3.positionable.npc.humans.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.humans.Ranger;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
-import io.github.safari.lwjgl3.positionable.Visitors.*;
+import io.github.safari.lwjgl3.positionable.visitors.*;
 import io.github.safari.lwjgl3.positionable.security.*;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 

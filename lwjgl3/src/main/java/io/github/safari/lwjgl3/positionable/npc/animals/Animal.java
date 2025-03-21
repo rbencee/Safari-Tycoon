@@ -2,7 +2,7 @@ package io.github.safari.lwjgl3.positionable.npc.animals;
 
 import io.github.safari.lwjgl3.positionable.Position;
 
-public abstract class Animal extends Position {
+public abstract class Animal {
     public static int VISION_RANGE;
     int age;
     int hunger;

@@ -1,4 +1,4 @@
-package io.github.safari.lwjgl3.positionable.npc.Humans;
+package io.github.safari.lwjgl3.positionable.npc.humans;
 
 import io.github.safari.lwjgl3.positionable.Moveable;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
