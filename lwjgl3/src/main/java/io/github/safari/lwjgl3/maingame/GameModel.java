@@ -1,14 +1,16 @@
 package io.github.safari.lwjgl3.maingame;
 
+
+
+
+
+import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
+import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
 import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
-import io.github.safari.lwjgl3.positionable.visitors.*;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
-
-
-
+import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 
 import java.util.ArrayList;
 
