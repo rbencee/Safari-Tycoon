@@ -170,6 +170,29 @@ public class GameModel {
 
     }
 
+    public void TryToBuy(String chosen ,int price)
+    {
+        if(money - price >= 0 )
+        {
+            System.out.println("Sucessful buy!");
+            money = money - price;
+            //Boughtobj(String chosen);
+        }
+
+    }
+
+    private void Boughtobj(String chosen)
+    {
+        switch(chosen)
+        {
+            //itt kellene majd valamit csinalni ,hogy valassza ki az ember hova akarja letenni, GameControllernek kuldeni valamit
+            case "Capybara":
+               // herds(new Capybara());
+        }
+
+
+    }
+
 
     /*
     private CheckInRange()
