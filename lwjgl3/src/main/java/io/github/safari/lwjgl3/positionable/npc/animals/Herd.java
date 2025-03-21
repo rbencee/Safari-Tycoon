@@ -1,22 +1,20 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import java.util.ArrayList;
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
 
 public class Herd {
-    private ArrayList<Animal> animals;
+    private ArrayList<AnimalImpl> animals;
 
 
-    public Herd(Animal chosenone)
+    public Herd(AnimalImpl chosenone)
     {
 
-        ArrayList<Animal> animals = new ArrayList<>();
+        ArrayList<AnimalImpl> animals = new ArrayList<>();
         animals.add(chosenone);
 
     }
 
-    public void joinHerd(Animal join)
+    public void joinHerd(AnimalImpl join)
     {
         animals.add(join);
 

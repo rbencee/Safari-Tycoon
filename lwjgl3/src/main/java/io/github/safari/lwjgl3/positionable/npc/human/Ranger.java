@@ -1,23 +1,28 @@
-package io.github.safari.lwjgl3.positionable.npc.humans;
+package io.github.safari.lwjgl3.positionable.npc.human;
+
 
 import io.github.safari.lwjgl3.positionable.Moveable;
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 
-public class Poacher implements Moveable {
+import java.util.ArrayList;
+
+
+public class Ranger implements Moveable {
     private boolean isAlive;
-    private int shootRange;
-    private static int range;
     private int x;
     private int y;
+    private int shootRange;
+    private static int range;
+    private ArrayList<Poacher> knownPoachers;
 
-    public Poacher() {
+    public Ranger() {
         this.isAlive = true;
     }
 
     public void KillAnimal(Animal target) {
     }
 
-    public void KillRanger(Ranger target) {
+    public void KillPoacher(Poacher target) {
     }
 
     public int getX() { return x; }
@@ -38,3 +43,4 @@ public class Poacher implements Moveable {
     public void setSpeed(int speed) {
     }
 }
+

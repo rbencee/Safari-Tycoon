@@ -1,10 +1,10 @@
 package io.github.safari.lwjgl3.maingame;
 
-import io.github.safari.lwjgl3.positionable.npc.humans.Poacher;
-import io.github.safari.lwjgl3.positionable.npc.humans.Ranger;
+import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.visitors.*;
-import io.github.safari.lwjgl3.positionable.security.*;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 
 
@@ -24,7 +24,6 @@ public class GameModel {
     //map?
     private int ticketprice;
     private int touristcount;
-    private ArrayList<Herbivore> herbs;
     private ArrayList<Herd> herds;
     private ArrayList<Poacher> poachers;
     private ArrayList<Ranger> rangers;
@@ -134,7 +133,7 @@ public class GameModel {
     {
         //To DO, enum lista, amiben szamontartjuk hogy bennevan e?
 
-        ArrayList<Animal> uniqueanimals = new ArrayList<Animal>();
+        ArrayList<Animal> uniqueanimals = new ArrayList<>();
 
         for (Herd herd : herds)
         {
