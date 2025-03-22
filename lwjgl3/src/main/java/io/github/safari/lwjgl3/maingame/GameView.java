@@ -34,6 +34,7 @@ public class GameView implements Screen {
     private Shop shop;
     private Game game;
     private GameController gameController;
+    private ScorePanel scorePanel;
 
     private int mapWidth;
     private int mapHeight;
@@ -100,9 +101,9 @@ public class GameView implements Screen {
 
         shop = new Shop(skin, stage, this.gameModel);
 
-        // Nyitó gomb hozzáadása
+
         TextButton openShopButton = new TextButton("Shop", skin);
-        openShopButton.setPosition(50, Gdx.graphics.getHeight() - 50);
+        openShopButton.setPosition(0, 0);
         openShopButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -148,6 +149,7 @@ public class GameView implements Screen {
         stage.addActor(table);
 
         gameController = new GameController(shop,this.gameModel);
+        this.scorePanel = new ScorePanel(skin,stage, gameModel);
         setupPlace();
     }
 
