@@ -17,7 +17,7 @@ public class GameController {
     {
         ShopItem selectedItem = shop.getShopItems();
 
-        if(selectedItem == null)
+        if(selectedItem != null)
         {
             if(canplace(x,y,width, height))
             {

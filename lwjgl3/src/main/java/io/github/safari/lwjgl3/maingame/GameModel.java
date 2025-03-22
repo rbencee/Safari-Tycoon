@@ -42,8 +42,10 @@ public class GameModel {
     {
         this.difficulty = difficulty;
         this.random = new Random();
+        this.herds = new ArrayList<>();
 
         environments = new ArrayList<>();
+        this.money = 5000000;
 
         InitializeGame();
     }
@@ -251,24 +253,39 @@ public class GameModel {
     public void BuyItem(ShopItem item, float x,float y,int width, int height)
     {
         money = money - item.getPrice();
+        System.out.println(item.getName());
 
         switch(item.getName())
         {
             case "Capybara":
-                Capybara capybara = new Capybara(x, y, width, height);  // Új Capybara példány létrehozása a megadott koordinátákkal
-                Herd herd = new Herd(capybara, true);  // Új herd, a capybara lesz a vezető
-                herds.add(herd);  // A herd hozzáadása a herds listához
+                Capybara capybara = new Capybara(x, y, width, height);
+                Herd herdcapy = new Herd(capybara, true);
+                herds.add(herdcapy);
                 System.out.println("Capybara buy successful!");
                 break;
             case "Mammoth":
+                Mammoth mammoth = new Mammoth(x, y, width, height);
+                Herd herdmam = new Herd(mammoth, true);
+                herds.add(herdmam);
+                System.out.println("Mammoth buy successful!");
                 break;
             case "Dinosaur":
+                Dinosaur dinosaur = new Dinosaur(x, y, width, height);
+                Herd herddino = new Herd(dinosaur, false);
+                herds.add(herddino);
+                System.out.println("Dinosaur buy successful!");
                 break;
             case "Lion":
+                Lion lion = new Lion(x, y, width, height);
+                Herd herdlion = new Herd(lion, false);
+                herds.add(herdlion);
+                System.out.println("Lion buy successful!");
                 break;
             default: System.out.println("Not Implemented yet!");
             break;
         }
+
+
     }
 
 

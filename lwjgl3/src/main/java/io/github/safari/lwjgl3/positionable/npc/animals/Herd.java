@@ -11,18 +11,16 @@ public class Herd {
 
     public Herd(Animal chosenone, boolean isherbivore)
     {
-
-        ArrayList<Animal> animals = new ArrayList<>();
+        this.animals = new ArrayList<>();
         this.Leader = chosenone;
-        animals.add(chosenone);
+        this.animals.add(chosenone);
         this.Herbivoregroup = isherbivore;
-
     }
 
-    public void joinHerd(Animal join)
-    {
-        animals.add(join);
-
+    public void joinHerd(Animal join) {
+        if (!animals.contains(join)) {
+            animals.add(join);
+        }
     }
 
     public void ChooseOneObjective()

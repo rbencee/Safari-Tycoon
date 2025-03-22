@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -31,6 +33,7 @@ public class GameView implements Screen {
     private GameModel gameModel;
     private Shop shop;
     private Game game;
+    private GameController gameController;
 
     private int mapWidth;
     private int mapHeight;
@@ -143,6 +146,9 @@ public class GameView implements Screen {
         stage.addActor(zoomInButton);
         stage.addActor(openShopButton);
         stage.addActor(table);
+
+        gameController = new GameController(shop,this.gameModel);
+        setupPlace();
     }
 
     @Override
@@ -238,4 +244,36 @@ public class GameView implements Screen {
         stage.dispose();
         skin.dispose();
     }
+
+
+
+
+    private void setupPlace()
+    {
+        stage.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Actor target = stage.hit(x, y, true);
+                if (target != null) {
+                    System.out.println("UI element clicked: " + target.getName());
+                    return;
+                }
+                Vector3 worldCoordinates = camera.unproject(new Vector3(x, y, 0));
+                boolean success = gameController.TryToPlace(worldCoordinates.x, worldCoordinates.y, 32, 32, 0, 0);
+
+
+                if (success) {
+                    System.out.println("Item placed at : " + worldCoordinates.x + ", " + worldCoordinates.y);
+                } else {
+                    System.out.println("Placement failed.");
+                }
+
+
+            }
+        });
+
+
+    }
+
+
 }
