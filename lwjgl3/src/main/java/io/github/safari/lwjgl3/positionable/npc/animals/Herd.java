@@ -1,8 +1,10 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
+import com.badlogic.gdx.scenes.scene2d.Group;
+
 import java.util.ArrayList;
 
-public class Herd {
+public class Herd extends Group {
     private ArrayList<AnimalImpl> animals;
 
 
