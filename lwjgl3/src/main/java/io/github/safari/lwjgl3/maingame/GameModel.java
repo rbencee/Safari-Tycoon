@@ -4,7 +4,9 @@ package io.github.safari.lwjgl3.maingame;
 
 
 
+import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
 import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
@@ -144,32 +146,9 @@ public class GameModel {
         return 0;
     }
 
-    public int sumHerbivorous() { //ArrayList<Herd> herds
-        int sum = 0;
-
-        for (Herd e : herds) {
-            if (e.getIsherbivore()) {
-                sum++;
-            }
-        }
-
-        return sum;
-    }
-
-    public int sumPredators() //ArrayList<Herd> herds
-    {
-        int sum = 0;
-
-        for (var e : herds) {
-            if (!e.getIsherbivore()) {
-                sum++;
-            }
-        }
-
-        return sum;
 
 
-    }
+
 
 
     /*

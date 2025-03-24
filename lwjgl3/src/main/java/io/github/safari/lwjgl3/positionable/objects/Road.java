@@ -1,4 +1,11 @@
 package io.github.safari.lwjgl3.positionable.objects;
 
-public class Road {
+import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.util.Positionable;
+
+public class Road implements Positionable {
+    @Override
+    public Position getPosition() {
+        return null;
+    }
 }

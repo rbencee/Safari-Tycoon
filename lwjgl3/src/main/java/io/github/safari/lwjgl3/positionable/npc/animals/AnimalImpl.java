@@ -1,47 +1,61 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
+import io.github.safari.lwjgl3.util.Positionable;
 
 import java.util.ArrayList;
 
-class AnimalImpl extends Actor implements Animal {
-    public int visionRange;
+public class AnimalImpl extends Actor implements Animal, Positionable {
+    final float visionRange;
 
     double age;
-    double maxAge;
+    final double maxAge;
     double hunger;
     double thirst;
+    final double speed;
     //??? picture;
+    final TextureRegion textureRegion;
     Position position;
     ArrayList<Position> knownFood;
     ArrayList<Position> knownWater;
-    AnimalSpecies animalSpecies;
+    final AnimalSpecies animalSpecies;
     final Behaviour behaviour;
 
     public AnimalImpl (
-        int visionRange,
+        float visionRange,
         double age,
         double maxAge,
         double hunger,
         double thirst,
+        double speed,
+        TextureRegion textureRegion,
         Position position,
-        AnimalSpecies animalSpecies, Behaviour behaviour) {
+        AnimalSpecies animalSpecies,
+        Behaviour behaviour) {
+
 
         this.visionRange = visionRange;
         this.age = age;
         this.maxAge = maxAge;
         this.hunger = hunger;
         this.thirst = thirst;
+        this.speed = speed;
+        this.textureRegion = textureRegion;
         this.position = position;
+        this.setPosition(position.getX(), position.getY()); //inherited from Actor
         this.animalSpecies = animalSpecies;
         this.behaviour = behaviour;
     }
 
     @Override
-    public int getVisionRange() {
+    public float getVisionRange() {
         return visionRange;
     }
 
@@ -63,6 +77,11 @@ class AnimalImpl extends Actor implements Animal {
     @Override
     public double getThirst() {
         return thirst;
+    }
+
+    @Override
+    public double getSpeed() {
+        return speed;
     }
 
     @Override
@@ -90,12 +109,19 @@ class AnimalImpl extends Actor implements Animal {
         return animalSpecies;
     }
 
+
+    //todo detect water
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
+        batch.draw(textureRegion, 50, 50);
         if(!this.hasActions() || behaviour.shouldCreateNewAction(this)){
             this.clearActions();
-            this.addAction(behaviour.createFittingAction(this));
+            Action b = behaviour.createFittingAction(this);
+            if (b != null) {
+                this.addAction(b);
+            }
         }
     }
 }

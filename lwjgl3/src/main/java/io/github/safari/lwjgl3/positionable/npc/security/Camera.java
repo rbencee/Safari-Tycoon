@@ -1,4 +1,11 @@
 package io.github.safari.lwjgl3.positionable.npc.security;
 
-public class Camera {
+import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.util.Positionable;
+
+public class Camera implements Positionable {
+    @Override
+    public Position getPosition() {
+        return null;
+    }
 }

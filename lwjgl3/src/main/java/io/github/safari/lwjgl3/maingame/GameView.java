@@ -11,6 +11,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
 import org.lwjgl.opengl.GL20;
 
 
@@ -43,6 +45,7 @@ public class GameView implements Screen {
     @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
+        stage.addActor(AnimalFactory.createCapybara(new Position(0,0)));
         Gdx.input.setInputProcessor(stage);
 
         skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));

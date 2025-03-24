@@ -1,43 +1,44 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
+import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.util.Positionable;
 
 import java.util.ArrayList;
 
-public class Herd extends Group {
-    private ArrayList<AnimalImpl> animals;
+public class Herd extends Group implements Positionable {
+    private final AnimalSpecies animalSpecies;
+    private final ArrayList<AnimalImpl> animals = new ArrayList<>();
+
+    //todo ha collide-ol egy másik ugyanolyan típusú herddel, összeolvadnak
 
 
-    public Herd(AnimalImpl chosenone)
-    {
+    public Herd(AnimalSpecies animalSpecies) {
+        this.animalSpecies = animalSpecies;
+    }
 
-        ArrayList<AnimalImpl> animals = new ArrayList<>();
-        animals.add(chosenone);
+    public void addToHerd(AnimalImpl animal) {
+        animals.add(animal);
+    }
+
+    public void ChooseOneObjective() {
 
     }
 
-    public void joinHerd(AnimalImpl join)
-    {
-        animals.add(join);
-
+    public AnimalType getAnimalType(){
+        return animalSpecies.getAnimalType();
     }
 
-    public void ChooseOneObjective()
-    {
-
+    public AnimalSpecies getAnimalSpecies(){
+        return animalSpecies;
     }
 
-    public boolean getIsherbivore()
-    {
-        return true;
-    }
-
-    public int animalcount()
-    {
+    public int animalcount() {
         return animals.size();
     }
 
-    //public Animal getAnimalType() {
-       // return animalType;
-    //}
+    @Override
+    public Position getPosition() {
+        return null;
+    }
 }

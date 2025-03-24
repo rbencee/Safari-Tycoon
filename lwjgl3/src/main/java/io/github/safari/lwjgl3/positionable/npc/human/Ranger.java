@@ -2,12 +2,14 @@ package io.github.safari.lwjgl3.positionable.npc.human;
 
 
 import io.github.safari.lwjgl3.positionable.Moveable;
+import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
+import io.github.safari.lwjgl3.util.Positionable;
 
 import java.util.ArrayList;
 
 
-public class Ranger implements Moveable {
+public class Ranger implements Moveable, Positionable {
     private boolean isAlive;
     private int x;
     private int y;
@@ -41,6 +43,11 @@ public class Ranger implements Moveable {
 
     @Override
     public void setSpeed(int speed) {
+    }
+
+    @Override
+    public Position getPosition() {
+        return null;
     }
 }
 

@@ -30,4 +30,9 @@ public class Position {
         this.x = x;
         this.y = y;
     }
+
+    @Override
+    public Position clone(){
+        return new Position(x,y);
+    }
 }

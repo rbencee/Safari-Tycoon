@@ -1,7 +1,7 @@
-package io.github.safari.lwjgl3.util;
+package io.github.safari.lwjgl3.positionable.objects;
 
 import io.github.safari.lwjgl3.positionable.Position;
 
-public interface Positionable {
+public interface Drinkable {
     Position getPosition();
 }
