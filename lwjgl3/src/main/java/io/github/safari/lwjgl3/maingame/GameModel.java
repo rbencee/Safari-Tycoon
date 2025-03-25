@@ -166,9 +166,7 @@ public class GameModel {
         switch(item.getName())
         {
             case "Capybara":
-                Capybara capybara = new Capybara(x, y);  // Új Capybara példány létrehozása a megadott koordinátákkal
-                Herd herd = new Herd(capybara, true);  // Új herd, a capybara lesz a vezető
-                herds.add(herd);  // A herd hozzáadása a herds listához
+                AnimalFactory.createCapybara(new Position(x,y));  // Új Capybara példány létrehozása a megadott koordinátákkal
                 System.out.println("Capybara buy successful!");
                 break;
             case "Mammoth":
