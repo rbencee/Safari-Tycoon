@@ -36,8 +36,6 @@ public class ScorePanel {
         return "Days Passed: " + gameModel.getDayspassed()  +"  "+
             "Money: " + gameModel.getMoney() +"  "+
             "Income: " + gameModel.getIncome()  +"  "+
-            "Tourists: " + gameModel.getTouristcount() +"  "+
-            "Herbivores: " + gameModel.sumHerbivorous() +"  "+
-            "Predators: " + gameModel.sumPredators();
+            "Tourists: " + gameModel.getTouristcount();
     }
 }

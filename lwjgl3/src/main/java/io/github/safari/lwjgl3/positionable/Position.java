@@ -50,6 +50,6 @@ public class Position {
 
     @Override
     public Position clone(){
-        return new Position(x,y);
+        return new Position(x,y,width,height);
     }
 }

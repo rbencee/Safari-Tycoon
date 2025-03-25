@@ -1,11 +1,7 @@
 package io.github.safari.lwjgl3.maingame;
 
-import io.github.safari.lwjgl3.positionable.npc.Humans.Poacher;
-import io.github.safari.lwjgl3.positionable.npc.Humans.Ranger;
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
-import io.github.safari.lwjgl3.positionable.Visitors.*;
+import io.github.safari.lwjgl3.positionable.npc.human.*;
 import io.github.safari.lwjgl3.positionable.objects.*;
-import io.github.safari.lwjgl3.positionable.security.*;
 
 
 
@@ -14,8 +10,6 @@ import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
-import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
-import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
@@ -101,7 +95,7 @@ public class GameModel {
             int height = 32;
 
             if (positionFound(x, y, minDistance)) {
-                environments.add(new Tree(x, y, width, height));
+                environments.add(new Tree(new Position(x, y, width, height)));
                 objectCount++;
             }
         }
@@ -114,7 +108,7 @@ public class GameModel {
             int height = 32;
 
             if (positionFound(x, y, minDistance)) {
-                environments.add(new Bush(x, y, width, height));
+                environments.add(new Bush(new Position(x, y, width, height)));
                 objectCount++;
             }
         }
@@ -127,7 +121,7 @@ public class GameModel {
             int height = 32;
 
             if (positionFound(x, y, minDistance)) {
-                environments.add(new Lake(x, y, width, height));
+                environments.add(new Lake(new Position(x, y, width, height)));
                 objectCount++;
             }
         }
@@ -141,7 +135,7 @@ public class GameModel {
 
 
             if (positionFound(x, y, minDistance)) {
-                environments.add(new Grass(x, y, width, height));
+                environments.add(new Grass(new Position(x, y, width, height)));
                 objectCount++;
             }
         }
@@ -150,7 +144,8 @@ public class GameModel {
 
     private boolean positionFound(float x, float y,float minDistance){
         for(Environment environment : environments){
-            float distance = (float) Math.sqrt(Math.pow(x - environment.getX(), 2) + Math.pow(y - environment.getY(), 2));
+            if (environment.getPosition() == null) continue;
+            float distance = (float) Math.sqrt(Math.pow(x - environment.getPosition().getX(), 2) + Math.pow(y - environment.getPosition().getY(), 2));
             if(distance < minDistance){
                 return false;
             }
@@ -247,7 +242,7 @@ public class GameModel {
         switch(item.getName())
         {
             case "Capybara":
-                AnimalFactory.createCapybara(new Position(x,y));  // Új Capybara példány létrehozása a megadott koordinátákkal
+                AnimalFactory.createCapybara(new Position(x,y, width, height));  // Új Capybara példány létrehozása a megadott koordinátákkal
                 System.out.println("Capybara buy successful!");
                 break;
             case "Mammoth":

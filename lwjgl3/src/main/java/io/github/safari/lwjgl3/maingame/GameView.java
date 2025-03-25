@@ -21,6 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import org.lwjgl.opengl.GL20;
 
@@ -30,25 +32,25 @@ public class GameView implements Screen {
     private Skin skin;
 
     private Stage stage;
-    private GameModel gameModel;
+    private final GameModel gameModel;
     private Shop shop;
-    private Game game;
+    private final Game game;
     private GameController gameController;
     private ScorePanel scorePanel;
 
-    private int mapWidth;
-    private int mapHeight;
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer mapRenderer;
+    private final int mapWidth;
+    private final int mapHeight;
+    private final TiledMap map;
+    private final OrthogonalTiledMapRenderer mapRenderer;
 
-    private float cameraSpeed;
+    private final float cameraSpeed;
     private OrthographicCamera camera;
 
 
-    private Texture treeTexture;
-    private Texture lakeTexture;
-    private Texture grassTexture;
-    private Texture bushTexture;
+    private final Texture treeTexture;
+    private final Texture lakeTexture;
+    private final Texture grassTexture;
+    private final Texture bushTexture;
 
     private SpriteBatch spriteBatch;
 
@@ -170,16 +172,17 @@ public class GameView implements Screen {
         spriteBatch.begin();
         for (Environment env : gameModel.getEnvironments()) {
             if (env instanceof Tree) {
-                spriteBatch.draw(treeTexture, env.getX(), env.getY(), 32, 32);
+                spriteBatch.draw(treeTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             } else if (env instanceof Bush) {
-                spriteBatch.draw(bushTexture, env.getX(), env.getY(), 32, 32);
+                spriteBatch.draw(bushTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             } else if (env instanceof Lake) {
-                spriteBatch.draw(lakeTexture, env.getX(), env.getY(), 64, 64);
+                spriteBatch.draw(lakeTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             } else if (env instanceof Grass) {
-                spriteBatch.draw(grassTexture, env.getX(), env.getY(), 32, 32);
+                spriteBatch.draw(grassTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             }
         }
         spriteBatch.end();
+
 
         stage.act(delta);
         stage.draw();
