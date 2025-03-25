@@ -150,6 +150,40 @@ public class GameModel {
 
 
 
+    public boolean CanBuy(ShopItem selectedItem)
+    {
+        if(money - selectedItem.getPrice() >= 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void BuyItem(ShopItem item, int x,int y)
+    {
+        money = money - item.getPrice();
+
+        switch(item.getName())
+        {
+            case "Capybara":
+                Capybara capybara = new Capybara(x, y);  // Új Capybara példány létrehozása a megadott koordinátákkal
+                Herd herd = new Herd(capybara, true);  // Új herd, a capybara lesz a vezető
+                herds.add(herd);  // A herd hozzáadása a herds listához
+                System.out.println("Capybara buy successful!");
+                break;
+            case "Mammoth":
+                break;
+            case "Dinosaur":
+                break;
+            case "Lion":
+                break;
+            default: System.out.println("Not Implemented yet!");
+            break;
+        }
+    }
+
+
+
 
     /*
     private CheckInRange()

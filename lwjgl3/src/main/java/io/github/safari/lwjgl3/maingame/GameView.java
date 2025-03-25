@@ -6,13 +6,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
+import io.github.safari.lwjgl3.Shop;
 import org.lwjgl.opengl.GL20;
 
 
@@ -21,7 +23,8 @@ public class GameView implements Screen {
 
     private Skin skin;
     private Stage stage;
-    GameModel gameModel;
+    private GameModel gameModel;
+    private Shop shop;
     private Game game;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
@@ -45,7 +48,6 @@ public class GameView implements Screen {
     @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
-        stage.addActor(AnimalFactory.createCapybara(new Position(0,0)));
         Gdx.input.setInputProcessor(stage);
 
         skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
@@ -54,6 +56,23 @@ public class GameView implements Screen {
         table.setFillParent(true);
 
 
+        shop = new Shop(skin, stage, this.gameModel);
+
+        // Nyitó gomb hozzáadása
+        TextButton openShopButton = new TextButton("Shop", skin);
+        openShopButton.setPosition(50, Gdx.graphics.getHeight() - 50);
+        openShopButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (shop.isVisible()) {
+                    shop.hide();
+                } else {
+                    shop.show();
+                }
+            }
+        }); // ⬅️ Ez a hiányzó zárójel
+
+        stage.addActor(openShopButton);
         //table.add(title).pad(20);
 
         stage.addActor(table);
