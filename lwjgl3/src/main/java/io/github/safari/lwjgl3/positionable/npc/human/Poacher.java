@@ -1,4 +1,4 @@
-package io.github.safari.lwjgl3.positionable.npc.human;
+package io.github.safari.lwjgl3.positionable.npc.Humans;
 
 import io.github.safari.lwjgl3.positionable.Moveable;
 import io.github.safari.lwjgl3.positionable.Position;
@@ -9,11 +9,11 @@ public class Poacher implements Moveable, Positionable {
     private boolean isAlive;
     private int shootRange;
     private static int range;
-    private int x;
-    private int y;
+    private Position position;
 
-    public Poacher() {
+    public Poacher(Position position) {
         this.isAlive = true;
+        this.position = position;
     }
 
     public void KillAnimal(Animal target) {

@@ -1,5 +1,11 @@
 package io.github.safari.lwjgl3.maingame;
 
+import io.github.safari.lwjgl3.positionable.npc.Humans.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.Humans.Ranger;
+import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.Visitors.*;
+import io.github.safari.lwjgl3.positionable.objects.*;
+import io.github.safari.lwjgl3.positionable.security.*;
 
 
 
@@ -15,6 +21,7 @@ import io.github.safari.lwjgl3.positionable.objects.Environment;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class GameModel {
@@ -25,9 +32,9 @@ public class GameModel {
     private int difficulty; // 1 - 3
     private int dayspassed;
 
-    //map?
     private int ticketprice;
     private int touristcount;
+
     private ArrayList<Herd> herds;
     private ArrayList<Poacher> poachers;
     private ArrayList<Ranger> rangers;
@@ -35,11 +42,24 @@ public class GameModel {
     private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
 
+    private int objectNumber = 50;
+    private float mapWidth = 3200;
+    private float mapHeight = 3200;
+    private Random random;
+    private float minDistance = 64;
+
 
 
     public GameModel(int difficulty)
     {
         this.difficulty = difficulty;
+        this.random = new Random();
+        this.herds = new ArrayList<>();
+
+        environments = new ArrayList<>();
+        this.money = 5000000;
+
+        InitializeGame();
     }
 
     //Setters and getters
@@ -64,18 +84,78 @@ public class GameModel {
         return touristcount;
     }
 
+    public ArrayList<Environment> getEnvironments() {return environments;}
+
     public void InitializeGame()
     {
-
-
-
         generateMap();
     }
 
     private void generateMap()
     {
+        int objectCount = 0;
+        while (objectCount < objectNumber) {
+            float x = random.nextInt((int)(mapWidth / 32)) * 32;
+            float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            int width = 32;
+            int height = 32;
+
+            if (positionFound(x, y, minDistance)) {
+                environments.add(new Tree(x, y, width, height));
+                objectCount++;
+            }
+        }
+
+        objectCount = 0;
+        while (objectCount < objectNumber) {
+            float x = random.nextInt((int)(mapWidth / 32)) * 32;
+            float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            int width = 32;
+            int height = 32;
+
+            if (positionFound(x, y, minDistance)) {
+                environments.add(new Bush(x, y, width, height));
+                objectCount++;
+            }
+        }
+
+        objectCount = 0;
+        while (objectCount < objectNumber) {
+            float x = random.nextInt((int)(mapWidth / 32)) * 32;
+            float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            int width = 32;
+            int height = 32;
+
+            if (positionFound(x, y, minDistance)) {
+                environments.add(new Lake(x, y, width, height));
+                objectCount++;
+            }
+        }
+
+        objectCount = 0;
+        while (objectCount < objectNumber) {
+            float x = random.nextInt((int)(mapWidth / 32)) * 32;
+            float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            int width = 32;
+            int height = 32;
 
 
+            if (positionFound(x, y, minDistance)) {
+                environments.add(new Grass(x, y, width, height));
+                objectCount++;
+            }
+        }
+
+    }
+
+    private boolean positionFound(float x, float y,float minDistance){
+        for(Environment environment : environments){
+            float distance = (float) Math.sqrt(Math.pow(x - environment.getX(), 2) + Math.pow(y - environment.getY(), 2));
+            if(distance < minDistance){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void Simulation()
@@ -159,9 +239,10 @@ public class GameModel {
         return false;
     }
 
-    public void BuyItem(ShopItem item, int x,int y)
+    public void BuyItem(ShopItem item, float x,float y,int width, int height)
     {
         money = money - item.getPrice();
+        System.out.println(item.getName());
 
         switch(item.getName())
         {

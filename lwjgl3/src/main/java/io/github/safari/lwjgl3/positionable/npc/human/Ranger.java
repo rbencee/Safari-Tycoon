@@ -1,4 +1,4 @@
-package io.github.safari.lwjgl3.positionable.npc.human;
+package io.github.safari.lwjgl3.positionable.npc.Humans;
 
 
 import io.github.safari.lwjgl3.positionable.Moveable;
@@ -11,14 +11,14 @@ import java.util.ArrayList;
 
 public class Ranger implements Moveable, Positionable {
     private boolean isAlive;
-    private int x;
-    private int y;
     private int shootRange;
     private static int range;
     private ArrayList<Poacher> knownPoachers;
+    private Position position;
 
-    public Ranger() {
+    public Ranger(Position position) {
         this.isAlive = true;
+        this.position = position;
     }
 
     public void KillAnimal(Animal target) {

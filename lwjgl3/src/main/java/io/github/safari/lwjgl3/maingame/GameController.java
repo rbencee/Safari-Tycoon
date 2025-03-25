@@ -11,22 +11,19 @@ public class GameController {
         this.gameModel = model;
 
 
-
-
-
     }
 
-    public boolean TryToPlace(int x, int y, int pointer, int button)
+    public boolean TryToPlace(float x, float y,int width, int height, int pointer, int button)
     {
         ShopItem selectedItem = shop.getShopItems();
 
-        if(selectedItem == null)
+        if(selectedItem != null)
         {
-            if(canplace(x,y))
+            if(canplace(x,y,width, height))
             {
                 if(gameModel.CanBuy(selectedItem))
                 {
-                    gameModel.BuyItem(selectedItem,x,y);
+                    gameModel.BuyItem(selectedItem,x,y,width, height);
                     shop.clearSelection();
                     return true;
                 }else
@@ -49,10 +46,11 @@ public class GameController {
 
     }
 
-    private boolean canplace(int x, int y)
+    private boolean canplace(float x, float y,int width, int height)
     {
         return true;
     }
+
 
 
 }
