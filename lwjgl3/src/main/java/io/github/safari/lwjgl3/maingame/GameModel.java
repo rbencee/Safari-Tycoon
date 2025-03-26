@@ -47,8 +47,10 @@ public class GameModel {
         this.difficulty = difficulty;
         this.random = new Random();
         this.herds = new ArrayList<>();
+        this.rangers = new ArrayList<>();
         this.dayspassed = 0;
         this.income = 0;
+        this.touristcount = 0;
 
         environments = new ArrayList<>();
         this.money = 5000;
@@ -174,7 +176,7 @@ public class GameModel {
             {
                 dayspassed++;
                 timeacc = 0;
-                getIncome();
+                calculateIncome();
             }
         }
 
@@ -192,7 +194,7 @@ public class GameModel {
 
     }
 
-    private int CalculateTourist()
+    private int CalculateTourist() //Turistakat ad hozza ha kell
     {
         return 0;
     }
