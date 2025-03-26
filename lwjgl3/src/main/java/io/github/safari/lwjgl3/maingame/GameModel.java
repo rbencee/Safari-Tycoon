@@ -1,6 +1,5 @@
 package io.github.safari.lwjgl3.maingame;
 
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalSpecies;
 import io.github.safari.lwjgl3.positionable.npc.human.*;
 import io.github.safari.lwjgl3.positionable.objects.*;
 
@@ -13,8 +12,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
-import io.github.safari.lwjgl3.positionable.visitors.Jeep;
-import io.github.safari.lwjgl3.positionable.visitors.Tourist;
+// import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -34,7 +32,7 @@ public class GameModel {
     private ArrayList<Herd> herds;
     private ArrayList<Poacher> poachers;
     private ArrayList<Ranger> rangers;
-    private ArrayList<Jeep> jeeps;
+    // private ArrayList<Jeep> jeeps;
     private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
 
@@ -53,7 +51,7 @@ public class GameModel {
         this.herds = new ArrayList<>();
 
         environments = new ArrayList<>();
-        this.money = 5000;
+        this.money = 5000000;
 
         InitializeGame();
     }
@@ -82,6 +80,8 @@ public class GameModel {
 
     public ArrayList<Environment> getEnvironments() {return environments;}
 
+    public ArrayList<Herd> getHerds() {return herds;}
+
     public void InitializeGame()
     {
         generateMap();
@@ -93,10 +93,10 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
-            int width = 96;
-            int height = 124;
+            int width = 32;
+            int height = 32;
 
-            if (positionFound(x, y, minDistance)) {
+            if (positionFound(x, y, width, height)) {
                 environments.add(new Tree(new Position(x, y, width, height)));
                 objectCount++;
             }
@@ -106,10 +106,10 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
-            int width = 42;
-            int height = 42;
+            int width = 32;
+            int height = 32;
 
-            if (positionFound(x, y, minDistance)) {
+            if (positionFound(x, y, width, height)) {
                 environments.add(new Bush(new Position(x, y, width, height)));
                 objectCount++;
             }
@@ -119,10 +119,10 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
-            int width = 92;
-            int height = 92;
+            int width = 32;
+            int height = 32;
 
-            if (positionFound(x, y, minDistance)) {
+            if (positionFound(x, y, width, height)) {
                 environments.add(new Lake(new Position(x, y, width, height)));
                 objectCount++;
             }
@@ -132,11 +132,11 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
-            int width = 64;
-            int height = 58;
+            int width = 32;
+            int height = 32;
 
 
-            if (positionFound(x, y, minDistance)) {
+            if (positionFound(x, y, width, height)) {
                 environments.add(new Grass(new Position(x, y, width, height)));
                 objectCount++;
             }
@@ -144,11 +144,16 @@ public class GameModel {
 
     }
 
-    private boolean positionFound(float x, float y,float minDistance){
-        for(Environment environment : environments){
+    private boolean positionFound(float x, float y, int width, int height) {
+        for (Environment environment : environments) {
             if (environment.getPosition() == null) continue;
-            float distance = (float) Math.sqrt(Math.pow(x - environment.getPosition().getX(), 2) + Math.pow(y - environment.getPosition().getY(), 2));
-            if(distance < minDistance){
+
+            float envX = environment.getPosition().getX();
+            float envY = environment.getPosition().getY();
+            int envWidth = environment.getPosition().getWidth();
+            int envHeight = environment.getPosition().getHeight();
+
+            if (x + width > envX && x < envX + envWidth && y + height > envY && y < envY + envHeight) {
                 return false;
             }
         }
@@ -157,14 +162,6 @@ public class GameModel {
 
     public void Simulation()
     {
-        while(!isGameOver())
-        {
-
-
-            calculateIncome();
-
-        }
-
 
 
     }
@@ -177,7 +174,6 @@ public class GameModel {
     public void calculateIncome()
     {
 
-        this.money += touristcount * 5 + (sumuniqueanimals() * sumanimals() * 3) - payrangers();
 
     }
 
@@ -187,9 +183,9 @@ public class GameModel {
         return 0;
     }
 
-    private int payrangers()
+    private void Payrangers(ArrayList<Ranger> rangers)
     {
-        return rangers.size() * 50;
+        //Ki kell talalni, hogy mennyivel csokkentjuk
 
     }
 
@@ -208,35 +204,28 @@ public class GameModel {
         this.ticketprice = ticketprice;
     }
 
-    private int sumanimals( )
+    private int Sumanimals( )//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
     {
         int sum = 0;
         for (Herd herd : herds)
         {
-            sum += herd.animalcount();
+            sum += herd.animalcount(); //Lehet meg kell nezni hogy biztos el e.
         }
 
         return sum;
     }
 
-    private int sumuniqueanimals() //ArrayList<Herd> herds
+    private int sumuniqueanimals(ArrayList<Herd> herds)
     {
+        //To DO, enum lista, amiben szamontartjuk hogy bennevan e?
 
-
-        int sum = 0;
-
-        ArrayList<AnimalSpecies> uniqueanimals = new ArrayList<>();
+        ArrayList<Animal> uniqueanimals = new ArrayList<>();
 
         for (Herd herd : herds)
         {
-            if (!uniqueanimals.contains(herd.getAnimalSpecies())) {
-                uniqueanimals.add(herd.getAnimalSpecies());
-                sum++;
-            }
-
         }
 
-        return sum;
+        return 0;
     }
 
 
@@ -270,7 +259,7 @@ public class GameModel {
             case "Lion":
                 break;
             default: System.out.println("Not Implemented yet!");
-            break;
+                break;
         }
     }
 
