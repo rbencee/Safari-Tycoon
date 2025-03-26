@@ -39,6 +39,6 @@ public class Herd extends Group implements Positionable {
 
     @Override
     public Position getPosition() {
-        return null;
+        return getPosition();
     }
 }
