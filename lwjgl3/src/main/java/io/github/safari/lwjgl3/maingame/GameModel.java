@@ -93,8 +93,8 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
-            int width = 32;
-            int height = 32;
+            int width = 96;
+            int height = 110;
 
             if (positionFound(x, y, width, height)) {
                 environments.add(new Tree(new Position(x, y, width, height)));
@@ -106,8 +106,8 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
-            int width = 32;
-            int height = 32;
+            int width = 64;
+            int height = 64;
 
             if (positionFound(x, y, width, height)) {
                 environments.add(new Bush(new Position(x, y, width, height)));
@@ -119,8 +119,8 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
-            int width = 32;
-            int height = 32;
+            int width = 96;
+            int height = 96;
 
             if (positionFound(x, y, width, height)) {
                 environments.add(new Lake(new Position(x, y, width, height)));
@@ -132,8 +132,8 @@ public class GameModel {
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
             float y = random.nextInt((int)(mapHeight / 32)) * 32;
-            int width = 32;
-            int height = 32;
+            int width = 64;
+            int height = 64;
 
 
             if (positionFound(x, y, width, height)) {
@@ -145,6 +145,10 @@ public class GameModel {
     }
 
     private boolean positionFound(float x, float y, int width, int height) {
+        if (x < 0 || y < 0 || x + width > mapWidth || y + height > mapHeight) {
+            return false;
+        }
+
         for (Environment environment : environments) {
             if (environment.getPosition() == null) continue;
 
