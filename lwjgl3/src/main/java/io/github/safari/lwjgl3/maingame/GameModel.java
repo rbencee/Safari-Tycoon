@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.maingame;
 
+import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.human.*;
 import io.github.safari.lwjgl3.positionable.objects.*;
 
@@ -7,9 +8,6 @@ import io.github.safari.lwjgl3.positionable.objects.*;
 
 
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
-import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 // import io.github.safari.lwjgl3.positionable.visitors.Jeep;
@@ -49,9 +47,11 @@ public class GameModel {
         this.difficulty = difficulty;
         this.random = new Random();
         this.herds = new ArrayList<>();
+        this.dayspassed = 0;
+        this.income = 0;
 
         environments = new ArrayList<>();
-        this.money = 5000000;
+        this.money = 5000;
 
         InitializeGame();
     }
@@ -166,7 +166,10 @@ public class GameModel {
 
     public void Simulation()
     {
+        while(!isGameOver())
+        {
 
+        }
 
     }
 
@@ -177,19 +180,19 @@ public class GameModel {
 
     public void calculateIncome()
     {
-
+        this.money += touristcount * 5 + (sumuniqueanimals() * sumanimals() * 3) - payrangers();
+        this.income = touristcount * 5 + (sumuniqueanimals() * sumanimals() * 3) - payrangers();
 
     }
 
     private int CalculateTourist()
     {
-
         return 0;
     }
 
-    private void Payrangers(ArrayList<Ranger> rangers)
+    private int payrangers()
     {
-        //Ki kell talalni, hogy mennyivel csokkentjuk
+        return rangers.size() * 50;
 
     }
 
@@ -208,7 +211,7 @@ public class GameModel {
         this.ticketprice = ticketprice;
     }
 
-    private int Sumanimals( )//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
+    private int sumanimals()//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
     {
         int sum = 0;
         for (Herd herd : herds)
@@ -219,14 +222,19 @@ public class GameModel {
         return sum;
     }
 
-    private int sumuniqueanimals(ArrayList<Herd> herds)
+    private int sumuniqueanimals()
     {
-        //To DO, enum lista, amiben szamontartjuk hogy bennevan e?
+        int sum = 0;
 
-        ArrayList<Animal> uniqueanimals = new ArrayList<>();
+        ArrayList<AnimalSpecies> uniqueanimals = new ArrayList<>();
 
         for (Herd herd : herds)
         {
+
+            if (!uniqueanimals.contains(herd.getAnimalSpecies())) {
+                uniqueanimals.add(herd.getAnimalSpecies());
+                sum++;
+            }
         }
 
         return 0;
