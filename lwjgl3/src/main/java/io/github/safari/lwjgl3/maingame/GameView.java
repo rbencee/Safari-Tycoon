@@ -16,13 +16,10 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import org.lwjgl.opengl.GL20;
 
@@ -51,10 +48,11 @@ public class GameView implements Screen {
     private final Texture lakeTexture;
     private final Texture grassTexture;
     private final Texture bushTexture;
+    private final Texture animaltexture;
 
     private SpriteBatch spriteBatch;
 
-    private FitViewport viewport;
+    private ScreenViewport viewport;
     private float cameraMaxZoom = 1.4f;
     private float cameraMinZoom = 0.6f;
 
@@ -76,6 +74,7 @@ public class GameView implements Screen {
         lakeTexture = new Texture("textures/lake1.png");
         grassTexture = new Texture("textures/grass4.png");
         bushTexture = new Texture("textures/bush2.png");
+        animaltexture = new Texture("textures/bush2.png");
 
 
         this.spriteBatch = new SpriteBatch();
@@ -88,7 +87,7 @@ public class GameView implements Screen {
     public void show() {
 
         camera = new OrthographicCamera();
-        viewport = new FitViewport(1920, 1080, camera);
+        viewport = new ScreenViewport(camera);
 
         camera.setToOrtho(false, 1920, 1080);
 
@@ -117,36 +116,9 @@ public class GameView implements Screen {
             }
         });
 
-        Label zoomLabel = new Label("Zoom",skin);
-        zoomLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 45);
+        zoomContolButtons();
 
-        TextButton zoomInButton = new TextButton("+", skin);
-        zoomInButton.setPosition(Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 50);
-        zoomInButton.setSize(50,50);
-        zoomInButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (camera.zoom > cameraMinZoom) {
-                    camera.zoom -= 0.1f;
-                }
-            }
-        });
 
-        TextButton zoomOutButton = new TextButton("-", skin);
-        zoomOutButton.setPosition(Gdx.graphics.getWidth() - 210, Gdx.graphics.getHeight() - 50);
-        zoomOutButton.setSize(50,50);
-        zoomOutButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (camera.zoom < cameraMaxZoom) {
-                    camera.zoom += 0.1f;
-                }
-            }
-        });
-
-        stage.addActor(zoomLabel);
-        stage.addActor(zoomOutButton);
-        stage.addActor(zoomInButton);
         stage.addActor(openShopButton);
         stage.addActor(table);
 
@@ -180,12 +152,46 @@ public class GameView implements Screen {
             } else if (env instanceof Grass) {
                 spriteBatch.draw(grassTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             }
+
         }
         spriteBatch.end();
 
 
         stage.act(delta);
         stage.draw();
+    }
+
+    private void zoomContolButtons(){
+        Label zoomLabel = new Label("Zoom",skin);
+        zoomLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 45);
+
+        TextButton zoomInButton = new TextButton("+", skin);
+        zoomInButton.setPosition(Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 50);
+        zoomInButton.setSize(50,50);
+        zoomInButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (camera.zoom > cameraMinZoom) {
+                    camera.zoom -= 0.1f;
+                }
+            }
+        });
+
+        TextButton zoomOutButton = new TextButton("-", skin);
+        zoomOutButton.setPosition(Gdx.graphics.getWidth() - 210, Gdx.graphics.getHeight() - 50);
+        zoomOutButton.setSize(50,50);
+        zoomOutButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (camera.zoom < cameraMaxZoom) {
+                    camera.zoom += 0.1f;
+                }
+            }
+        });
+
+        stage.addActor(zoomLabel);
+        stage.addActor(zoomOutButton);
+        stage.addActor(zoomInButton);
     }
 
     private void cameraMovement(){
@@ -221,6 +227,8 @@ public class GameView implements Screen {
         camera.update();
 
     }
+
+
 
     @Override
     public void resize(int width, int height) {
