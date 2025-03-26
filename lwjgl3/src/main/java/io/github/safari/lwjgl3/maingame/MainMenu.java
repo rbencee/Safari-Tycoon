@@ -5,6 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -21,6 +24,8 @@ public class MainMenu implements Screen {
     private Skin skin;
     private Stage stage;
     private ButtonGroup<TextButton> difficultyGroup;
+    private Texture backgroundTexture;
+    private SpriteBatch spriteBatch;
 
 
     public MainMenu(Game game) {
@@ -34,15 +39,16 @@ public class MainMenu implements Screen {
 
         skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
 
+        ShowBackGround();
         Table table = new Table();
-        table.top();
+        table.center();
         table.setFillParent(true);
 
-        Label title = new Label("Safari", skin);
-        table.add(title);
+
 
         TextButton startButton = new TextButton("Start Game", skin);
         TextButton quitButton = new TextButton("Quit", skin);
+
 
         TextButton easyButton = new TextButton("Easy", skin);
         TextButton mediumButton = new TextButton("Medium", skin);
@@ -94,17 +100,36 @@ public class MainMenu implements Screen {
 
 
 
+        Label title = new Label("Safari", skin);
+        title.setFontScale(8f);
+        table.row().pad(50);
+        table.add(title).colspan(3);
+
+        table.row().pad(20);
+        table.add(startButton).padBottom(10).colspan(3);
         table.row().pad(10);
-        table.add(startButton);
-        table.row().pad(10);
-        table.add(quitButton);
+        table.add(quitButton).padBottom(50).colspan(3);
+
+        table.row().pad(20);
+        Label difficultyTitle = new Label("Difficulty", skin);
+        table.add(difficultyTitle).colspan(3);
 
         table.row().pad(10);
-        table.add(easyButton);
-        table.add(mediumButton);
+        table.add(easyButton).padRight(10);
+        table.add(mediumButton).padRight(10);
         table.add(hardButton);
 
         stage.addActor(table);
+    }
+
+    private void ShowBackGround()
+    {
+        stage = new Stage(new ScreenViewport());
+        spriteBatch = new SpriteBatch();
+        backgroundTexture = new Texture("MainMenu/backgroundpixel.png");
+
+
+        Gdx.input.setInputProcessor(stage);
     }
 
 
@@ -126,9 +151,13 @@ public class MainMenu implements Screen {
         game.setScreen(new GameView(game, diff));
     }
 
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        spriteBatch.begin();
+        spriteBatch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        spriteBatch.end();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
@@ -140,8 +169,10 @@ public class MainMenu implements Screen {
 
     @Override
     public void dispose() {
-        stage.dispose(); // Erőforrások felszabadítása
-        skin.dispose();  // Skin felszabadítása
+        stage.dispose();
+        skin.dispose();
+        spriteBatch.dispose();
+        backgroundTexture.dispose();
     }
 
     @Override
