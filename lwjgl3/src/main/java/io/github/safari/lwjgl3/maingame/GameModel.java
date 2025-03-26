@@ -40,7 +40,7 @@ public class GameModel {
     private Random random;
     private float minDistance = 64;
 
-
+    private float timeacc = 0;
 
     public GameModel(int difficulty)
     {
@@ -164,11 +164,18 @@ public class GameModel {
         return true;
     }
 
-    public void Simulation()
+    public void Simulation(float delta)
     {
-        while(!isGameOver())
+        if(!isGameOver())
         {
+            timeacc += delta;
 
+            if(timeacc >= 3.0f)
+            {
+                dayspassed++;
+                timeacc = 0;
+                getIncome();
+            }
         }
 
     }

@@ -159,6 +159,9 @@ public class GameView implements Screen {
 
         stage.act(delta);
         stage.draw();
+
+        scorePanel.updateScore();
+        gameModel.Simulation(delta);
     }
 
     private void zoomContolButtons(){
