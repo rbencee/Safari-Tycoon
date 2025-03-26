@@ -72,9 +72,9 @@ public class GameView implements Screen {
         cameraSpeed = 3f;
 
 
-        treeTexture = new Texture("textures/bush2.png");
+        treeTexture = new Texture("textures/tree3.png");
         lakeTexture = new Texture("textures/lake1.png");
-        grassTexture = new Texture("textures/bush2.png");
+        grassTexture = new Texture("textures/grass4.png");
         bushTexture = new Texture("textures/bush2.png");
 
 
