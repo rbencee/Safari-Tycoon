@@ -149,7 +149,6 @@ public class GameModel {
                 objectCount++;
             }
         }
-
     }
 
     public boolean positionFound(float x, float y, int width, int height) {
@@ -262,6 +261,30 @@ public class GameModel {
         }
 
         return 0;
+    }
+
+    public int sumHerbivores(){
+        int sum = 0;
+        for (Herd herd : herds){
+            for (Animal animal : herd.getAnimals()){
+                if (animal.getAnimalType().equals(AnimalType.HERBIVORE)){
+                    sum++;
+                }
+            }
+        }
+        return sum;
+    }
+
+    public int sumPredators(){
+        int sum = 0;
+        for (Herd herd : herds){
+            for (Animal animal : herd.getAnimals()){
+                if (animal.getAnimalType().equals(AnimalType.PREDATOR)){
+                    sum++;
+                }
+            }
+        }
+        return sum;
     }
 
 
