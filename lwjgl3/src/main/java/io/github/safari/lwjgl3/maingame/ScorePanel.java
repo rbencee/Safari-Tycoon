@@ -33,9 +33,11 @@ public class ScorePanel {
 
 
     private String getScoreText() {
-        return "Days Passed: " + gameModel.getDayspassed()  +"  "+
-            "Money: " + gameModel.getMoney() +"  "+
-            "Income: " + gameModel.getIncome()  +"  "+
-            "Tourists: " + gameModel.getTouristcount();
+        return "Days Passed: " + gameModel.getDayspassed() + "  " +
+            "Money: " + gameModel.getMoney() + "  " +
+            "Income: " + gameModel.getIncome() + "  " +
+            "Tourists: " + gameModel.getTouristcount() + "  " +
+            "Herbivores: " + gameModel.sumHerbivores() + "  "+
+            "Predators: " + gameModel.sumPredators();
     }
 }
