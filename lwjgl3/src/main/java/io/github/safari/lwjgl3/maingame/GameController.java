@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.maingame;
 
+
 public class GameController {
     Shop shop;
     GameModel gameModel;
@@ -19,7 +20,7 @@ public class GameController {
 
         if(selectedItem != null)
         {
-            if(canplace(x,y,width, height))
+            if(gameModel.positionFound(x,y,width, height))
             {
                 if(gameModel.CanBuy(selectedItem))
                 {
@@ -46,10 +47,6 @@ public class GameController {
 
     }
 
-    private boolean canplace(float x, float y,int width, int height)
-    {
-        return true;
-    }
 
 
 

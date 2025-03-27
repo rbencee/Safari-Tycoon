@@ -25,6 +25,10 @@ public class Herd extends Group implements Positionable {
 
     }
 
+    public ArrayList<AnimalImpl> getAnimals() {
+        return animals;
+    }
+
     public AnimalType getAnimalType(){
         return animalSpecies.getAnimalType();
     }
@@ -39,6 +43,6 @@ public class Herd extends Group implements Positionable {
 
     @Override
     public Position getPosition() {
-        return getPosition();
+        return animals.get(0).getPosition();
     }
 }

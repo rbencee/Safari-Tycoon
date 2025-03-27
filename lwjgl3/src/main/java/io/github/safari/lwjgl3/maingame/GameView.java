@@ -20,6 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
+import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import org.lwjgl.opengl.GL20;
 
@@ -152,7 +154,13 @@ public class GameView implements Screen {
             } else if (env instanceof Grass) {
                 spriteBatch.draw(grassTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             }
+        }
 
+        for( Herd herd : gameModel.getHerds()){
+            for (AnimalImpl animal : herd.getAnimals()) {
+                spriteBatch.draw(grassTexture, animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
+
+            }
         }
         spriteBatch.end();
 
@@ -210,6 +218,7 @@ public class GameView implements Screen {
 
         float halfWidth = camera.viewportWidth / 2 * camera.zoom;
         float halfHeight = camera.viewportHeight / 2 * camera.zoom;
+
 
         if (camera.position.x - halfWidth < 0) {
             camera.position.x = halfWidth;
@@ -271,8 +280,10 @@ public class GameView implements Screen {
                     System.out.println("UI element clicked: " + target.getName());
                     return;
                 }
-                Vector3 worldCoordinates = camera.unproject(new Vector3(x, y, 0));
-                boolean success = gameController.TryToPlace(worldCoordinates.x, worldCoordinates.y, 32, 32, 0, 0);
+
+                float screenY = Gdx.graphics.getHeight() - y;
+                Vector3 worldCoordinates = camera.unproject(new Vector3(x, screenY, 0));
+                boolean success = gameController.TryToPlace(worldCoordinates.x, worldCoordinates.y, 64,64, 0, 0);
 
 
                 if (success) {
@@ -280,6 +291,8 @@ public class GameView implements Screen {
                 } else {
                     System.out.println("Placement failed.");
                 }
+
+
 
 
             }

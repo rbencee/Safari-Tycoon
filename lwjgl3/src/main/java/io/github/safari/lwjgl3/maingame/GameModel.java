@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.maingame;
 
+import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.human.*;
 import io.github.safari.lwjgl3.positionable.objects.*;
 
@@ -7,9 +8,6 @@ import io.github.safari.lwjgl3.positionable.objects.*;
 
 
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
-import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 // import io.github.safari.lwjgl3.positionable.visitors.Jeep;
@@ -144,7 +142,7 @@ public class GameModel {
 
     }
 
-    private boolean positionFound(float x, float y, int width, int height) {
+    public boolean positionFound(float x, float y, int width, int height) {
         if (x < 0 || y < 0 || x + width > mapWidth || y + height > mapHeight) {
             return false;
         }
@@ -250,10 +248,16 @@ public class GameModel {
         money = money - item.getPrice();
         System.out.println(item.getName());
 
+        AnimalImpl animal = null;
+        Herd herd = null;
+
         switch(item.getName())
         {
             case "Capybara":
-                AnimalFactory.createCapybara(new Position(x,y, width, height));  // Új Capybara példány létrehozása a megadott koordinátákkal
+                animal = AnimalFactory.createCapybara(new Position(x,y, width, height));  // Új Capybara példány létrehozása a megadott koordinátákkal
+                herd = new Herd(AnimalSpecies.CAPYBARA);
+                herd.addToHerd(animal);
+                herds.add(herd);
                 System.out.println("Capybara buy successful!");
                 break;
             case "Mammoth":
@@ -262,12 +266,26 @@ public class GameModel {
                 break;
             case "Lion":
                 break;
+            case "Bush":
+                Bush bush = new Bush(new Position(x,y, width, height));
+                environments.add(bush);
+                break;
+            case "Tree":
+                Tree tree = new Tree(new Position(x,y, width, height));
+                environments.add(tree);
+                break;
+            case "Lake":
+                Lake lake = new Lake(new Position(x,y, width, height));
+                environments.add(lake);
+                break;
+            case "Grass":
+                Grass grass = new Grass(new Position(x,y, width, height));
+                environments.add(grass);
+                break;
             default: System.out.println("Not Implemented yet!");
                 break;
         }
     }
-
-
 
 
     /*
