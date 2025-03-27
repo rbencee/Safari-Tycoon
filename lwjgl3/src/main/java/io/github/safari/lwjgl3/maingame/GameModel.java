@@ -186,6 +186,7 @@ public class GameModel {
 
         if(!isGameOver())
         {
+            int previousDays = dayspassed;
             timeacc += delta;
 
             if(timeacc >= 3.0f)
@@ -193,7 +194,7 @@ public class GameModel {
                 dayspassed += timeinterval;
                 timeacc = 0;
 
-                if(dayspassed % 30 == 0) {
+                if((dayspassed - previousDays) % 30 == 0) {
                     calculateIncome();
                 }
             }
@@ -260,7 +261,7 @@ public class GameModel {
             }
         }
 
-        return 0;
+        return sum;
     }
 
     public int sumHerbivores(){
