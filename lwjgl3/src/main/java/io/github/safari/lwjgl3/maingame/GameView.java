@@ -159,7 +159,7 @@ public class GameView implements Screen {
 
         for( Herd herd : gameModel.getHerds()){
             for (Animal animal : herd.getAnimals()) {
-                spriteBatch.draw(grassTexture, animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
+                spriteBatch.draw(animal.getTexture(), animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
 
             }
         }

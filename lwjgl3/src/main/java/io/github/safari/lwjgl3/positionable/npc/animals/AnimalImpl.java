@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -21,7 +22,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     double thirst;
     final double speed;
     //??? picture;
-    final TextureRegion textureRegion;
+    final Texture texture;
     Position position;
     ArrayList<Position> knownFood;
     ArrayList<Position> knownWater;
@@ -35,7 +36,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         double hunger,
         double thirst,
         double speed,
-        TextureRegion textureRegion,
+        Texture texture,
         Position position,
         AnimalSpecies animalSpecies,
         Behaviour behaviour) {
@@ -47,7 +48,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         this.hunger = hunger;
         this.thirst = thirst;
         this.speed = speed;
-        this.textureRegion = textureRegion;
+        this.texture = texture;
         this.position = position;
         this.setPosition(position.getX(), position.getY()); //inherited from Actor
         this.animalSpecies = animalSpecies;
@@ -109,13 +110,16 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         return animalSpecies;
     }
 
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
 
     //todo detect water
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        batch.draw(textureRegion, 50, 50);
         if(!this.hasActions() || behaviour.shouldCreateNewAction(this)){
             this.clearActions();
             Action b = behaviour.createFittingAction(this);

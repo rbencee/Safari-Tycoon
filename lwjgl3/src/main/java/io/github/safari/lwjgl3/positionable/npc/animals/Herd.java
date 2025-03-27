@@ -17,7 +17,7 @@ public class Herd extends Group implements Positionable {
         this.animalSpecies = animalSpecies;
     }
 
-    public void addToHerd(AnimalImpl animal) {
+    public void addToHerd(Animal animal) {
         animals.add(animal);
     }
 

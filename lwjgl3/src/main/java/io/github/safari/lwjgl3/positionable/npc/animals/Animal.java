@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.positionable.Position;
@@ -32,4 +33,5 @@ public interface Animal {
     void addAction(Action action);
     Array<Action> getActions();
     boolean hasActions();
+    Texture getTexture();
 }
