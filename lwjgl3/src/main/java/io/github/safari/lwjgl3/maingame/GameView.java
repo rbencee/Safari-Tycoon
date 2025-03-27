@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.objects.*;
@@ -157,8 +158,8 @@ public class GameView implements Screen {
         }
 
         for( Herd herd : gameModel.getHerds()){
-            for (AnimalImpl animal : herd.getAnimals()) {
-                spriteBatch.draw(grassTexture, animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
+            for (Animal animal : herd.getAnimals()) {
+                spriteBatch.draw(animal.getTexture(), animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
 
             }
         }

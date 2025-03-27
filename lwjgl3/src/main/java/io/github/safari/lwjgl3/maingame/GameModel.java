@@ -282,7 +282,7 @@ public class GameModel {
         money = money - item.getPrice();
         System.out.println(item.getName());
 
-        AnimalImpl animal = null;
+        Animal animal = null;
         Herd herd = null;
 
         switch(item.getName())
@@ -297,6 +297,11 @@ public class GameModel {
             case "Mammoth":
                 break;
             case "Dinosaur":
+                animal = AnimalFactory.createDinosaur(new Position(x,y, width, height));
+                herd = new Herd(AnimalSpecies.DINOSAUR);
+                herd.addToHerd(animal);
+                herds.add(herd);
+                System.out.println("Dinosaur buy successful!");
                 break;
             case "Lion":
                 break;
