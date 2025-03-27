@@ -51,6 +51,7 @@ public class GameModel {
         this.dayspassed = 0;
         this.income = 0;
         this.touristcount = 0;
+        this.speed = 1;
 
         environments = new ArrayList<>();
         this.money = 5000;
@@ -59,6 +60,11 @@ public class GameModel {
     }
 
     //Setters and getters
+
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
@@ -168,15 +174,29 @@ public class GameModel {
 
     public void Simulation(float delta)
     {
+        int timeinterval = 1;
+
+        if(speed == 2)
+        {
+            timeinterval = 7;
+        }
+        else if(speed == 3)
+        {
+            timeinterval = 30;
+        }
+
         if(!isGameOver())
         {
             timeacc += delta;
 
             if(timeacc >= 3.0f)
             {
-                dayspassed++;
+                dayspassed += timeinterval;
                 timeacc = 0;
-                calculateIncome();
+
+                if(dayspassed % 30 == 0) {
+                    calculateIncome();
+                }
             }
         }
 
@@ -208,11 +228,6 @@ public class GameModel {
     private boolean isGameOver()
     {
         return false;
-    }
-
-    public void ChangeSpeed(int speed)
-    {
-        this.speed = speed;
     }
 
     public void ChangeTicketPrice(int ticketprice)
@@ -283,7 +298,6 @@ public class GameModel {
                 break;
         }
     }
-
 
 
 
