@@ -40,21 +40,31 @@ public class GameModel {
     private Random random;
     private float minDistance = 64;
 
-
+    private float timeacc = 0;
 
     public GameModel(int difficulty)
     {
         this.difficulty = difficulty;
         this.random = new Random();
         this.herds = new ArrayList<>();
+        this.rangers = new ArrayList<>();
+        this.dayspassed = 0;
+        this.income = 0;
+        this.touristcount = 0;
+        this.speed = 1;
 
         environments = new ArrayList<>();
-        this.money = 5000000;
+        this.money = 5000;
 
         InitializeGame();
     }
 
     //Setters and getters
+
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
@@ -162,9 +172,33 @@ public class GameModel {
         return true;
     }
 
-    public void Simulation()
+    public void Simulation(float delta)
     {
+        int timeinterval = 1;
 
+        if(speed == 2)
+        {
+            timeinterval = 7;
+        }
+        else if(speed == 3)
+        {
+            timeinterval = 30;
+        }
+
+        if(!isGameOver())
+        {
+            timeacc += delta;
+
+            if(timeacc >= 3.0f)
+            {
+                dayspassed += timeinterval;
+                timeacc = 0;
+
+                if(dayspassed % 30 == 0) {
+                    calculateIncome();
+                }
+            }
+        }
 
     }
 
@@ -175,19 +209,19 @@ public class GameModel {
 
     public void calculateIncome()
     {
-
+        this.money += touristcount * 5 + (sumuniqueanimals() * sumanimals() * 3) - payrangers();
+        this.income = touristcount * 5 + (sumuniqueanimals() * sumanimals() * 3) - payrangers();
 
     }
 
-    private int CalculateTourist()
+    private int CalculateTourist() //Turistakat ad hozza ha kell
     {
-
         return 0;
     }
 
-    private void Payrangers(ArrayList<Ranger> rangers)
+    private int payrangers()
     {
-        //Ki kell talalni, hogy mennyivel csokkentjuk
+        return rangers.size() * 50;
 
     }
 
@@ -196,17 +230,12 @@ public class GameModel {
         return false;
     }
 
-    public void ChangeSpeed(int speed)
-    {
-        this.speed = speed;
-    }
-
     public void ChangeTicketPrice(int ticketprice)
     {
         this.ticketprice = ticketprice;
     }
 
-    private int Sumanimals( )//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
+    private int sumanimals()//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
     {
         int sum = 0;
         for (Herd herd : herds)
@@ -217,14 +246,19 @@ public class GameModel {
         return sum;
     }
 
-    private int sumuniqueanimals(ArrayList<Herd> herds)
+    private int sumuniqueanimals()
     {
-        //To DO, enum lista, amiben szamontartjuk hogy bennevan e?
+        int sum = 0;
 
-        ArrayList<Animal> uniqueanimals = new ArrayList<>();
+        ArrayList<AnimalSpecies> uniqueanimals = new ArrayList<>();
 
         for (Herd herd : herds)
         {
+
+            if (!uniqueanimals.contains(herd.getAnimalSpecies())) {
+                uniqueanimals.add(herd.getAnimalSpecies());
+                sum++;
+            }
         }
 
         return 0;
@@ -286,6 +320,7 @@ public class GameModel {
                 break;
         }
     }
+
 
 
     /*

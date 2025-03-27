@@ -119,7 +119,7 @@ public class GameView implements Screen {
         });
 
         zoomContolButtons();
-
+        speedbutton();
 
         stage.addActor(openShopButton);
         stage.addActor(table);
@@ -167,6 +167,9 @@ public class GameView implements Screen {
 
         stage.act(delta);
         stage.draw();
+
+        scorePanel.updateScore();
+        gameModel.Simulation(delta);
     }
 
     private void zoomContolButtons(){
@@ -201,6 +204,53 @@ public class GameView implements Screen {
         stage.addActor(zoomOutButton);
         stage.addActor(zoomInButton);
     }
+
+    private void speedbutton() {
+        float buttonWidth = 110f;
+        float buttonHeight = 60f;
+        float initialX = 10f; // Kezdeti X pozíció
+        float spacing = 10f;
+
+
+        TextButton daySpeedButton = new TextButton("Day", skin);
+        daySpeedButton.setPosition(initialX, 80);
+        daySpeedButton.setSize(buttonWidth, buttonHeight);
+        daySpeedButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gameModel.setSpeed(1);
+            }
+        });
+
+        // Week gomb
+        TextButton weekSpeedButton = new TextButton("Week", skin);
+        weekSpeedButton.setPosition(initialX + buttonWidth + spacing, 80);
+        weekSpeedButton.setSize(buttonWidth, buttonHeight);
+        weekSpeedButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gameModel.setSpeed(2);
+            }
+        });
+
+        // Month gomb
+        TextButton monthSpeedButton = new TextButton("Month", skin);
+        monthSpeedButton.setPosition(initialX + 2 * (buttonWidth + spacing), 80);
+        monthSpeedButton.setSize(buttonWidth, buttonHeight);
+        monthSpeedButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gameModel.setSpeed(3);
+            }
+        });
+
+
+
+        stage.addActor(daySpeedButton);
+        stage.addActor(weekSpeedButton);
+        stage.addActor(monthSpeedButton);
+    }
+
 
     private void cameraMovement(){
         if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.LEFT)) {
