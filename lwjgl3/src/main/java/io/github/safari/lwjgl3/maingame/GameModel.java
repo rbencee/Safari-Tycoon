@@ -13,7 +13,9 @@ import io.github.safari.lwjgl3.positionable.objects.Environment;
 // import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 
 public class GameModel {
@@ -209,14 +211,14 @@ public class GameModel {
 
     public void calculateIncome()
     {
-        this.money += touristcount * 5 + (sumuniqueanimals() * sumanimals() * 3) - payrangers();
-        this.income = touristcount * 5 + (sumuniqueanimals() * sumanimals() * 3) - payrangers();
+        this.money += touristcount * 5 + (sumUniqueAnimals() * sumAnimals() * 3) - payrangers();
+        this.income = touristcount * 5 + (sumUniqueAnimals() * sumAnimals() * 3) - payrangers();
 
     }
 
     private int CalculateTourist() //Turistakat ad hozza ha kell
     {
-        return 0;
+        return sumUniqueAnimals();
     }
 
     private int payrangers()
@@ -235,7 +237,7 @@ public class GameModel {
         this.ticketprice = ticketprice;
     }
 
-    private int sumanimals()//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
+    private int sumAnimals()//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
     {
         int sum = 0;
         for (Herd herd : herds)
@@ -246,31 +248,21 @@ public class GameModel {
         return sum;
     }
 
-    private int sumuniqueanimals()
+    private int sumUniqueAnimals()
     {
-        int sum = 0;
-
-        ArrayList<AnimalSpecies> uniqueanimals = new ArrayList<>();
-
-        for (Herd herd : herds)
-        {
-
-            if (!uniqueanimals.contains(herd.getAnimalSpecies())) {
-                uniqueanimals.add(herd.getAnimalSpecies());
-                sum++;
-            }
+        Set<AnimalSpecies> uniqueAnimals = new HashSet<>();
+        for (Herd herd : herds) {
+            uniqueAnimals.add(herd.getAnimalSpecies());
         }
 
-        return sum;
+        return uniqueAnimals.size();
     }
 
     public int sumHerbivores(){
         int sum = 0;
         for (Herd herd : herds){
-            for (Animal animal : herd.getAnimals()){
-                if (animal.getAnimalType().equals(AnimalType.HERBIVORE)){
-                    sum++;
-                }
+            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.HERBIVORE)){
+                sum += herd.animalcount();
             }
         }
         return sum;
@@ -279,10 +271,8 @@ public class GameModel {
     public int sumPredators(){
         int sum = 0;
         for (Herd herd : herds){
-            for (Animal animal : herd.getAnimals()){
-                if (animal.getAnimalType().equals(AnimalType.PREDATOR)){
-                    sum++;
-                }
+            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.PREDATOR)){
+                sum += herd.animalcount();
             }
         }
         return sum;
