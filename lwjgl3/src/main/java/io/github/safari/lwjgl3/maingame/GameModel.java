@@ -291,54 +291,8 @@ public class GameModel {
         return false;
     }
 
-    public void BuyItem(ShopItem item, float x,float y,int width, int height)
-    {
-        money = money - item.getPrice();
-        System.out.println(item.getName());
 
-        Animal animal = null;
-        Herd herd = null;
 
-        switch(item.getName())
-        {
-            case "Capybara":
-                animal = AnimalFactory.createCapybara(new Position(x,y, width, height));  // Új Capybara példány létrehozása a megadott koordinátákkal
-                herd = new Herd(AnimalSpecies.CAPYBARA);
-                herd.addToHerd(animal);
-                herds.add(herd);
-                System.out.println("Capybara buy successful!");
-                break;
-            case "Mammoth":
-                break;
-            case "Dinosaur":
-                animal = AnimalFactory.createDinosaur(new Position(x,y, width, height));
-                herd = new Herd(AnimalSpecies.DINOSAUR);
-                herd.addToHerd(animal);
-                herds.add(herd);
-                System.out.println("Dinosaur buy successful!");
-                break;
-            case "Lion":
-                break;
-            case "Bush":
-                Bush bush = new Bush(new Position(x,y, width, height));
-                environments.add(bush);
-                break;
-            case "Tree":
-                Tree tree = new Tree(new Position(x,y, width, height));
-                environments.add(tree);
-                break;
-            case "Lake":
-                Lake lake = new Lake(new Position(x,y, width, height));
-                environments.add(lake);
-                break;
-            case "Grass":
-                Grass grass = new Grass(new Position(x,y, width, height));
-                environments.add(grass);
-                break;
-            default: System.out.println("Not Implemented yet!");
-                break;
-        }
-    }
 
 
 

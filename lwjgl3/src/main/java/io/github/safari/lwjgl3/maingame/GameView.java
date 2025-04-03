@@ -2,6 +2,7 @@ package io.github.safari.lwjgl3.maingame;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,9 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
-import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import org.lwjgl.opengl.GL20;
 
@@ -31,7 +29,8 @@ public class GameView implements Screen {
 
     private Skin skin;
 
-    private Stage stage;
+    private Stage gameStage;
+    private Stage uiStage;
     private final GameModel gameModel;
     private Shop shop;
     private final Game game;
@@ -51,13 +50,12 @@ public class GameView implements Screen {
     private final Texture lakeTexture;
     private final Texture grassTexture;
     private final Texture bushTexture;
-    private final Texture animaltexture;
 
-    private SpriteBatch spriteBatch;
+    private final SpriteBatch spriteBatch;
 
     private ScreenViewport viewport;
-    private float cameraMaxZoom = 1.4f;
-    private float cameraMinZoom = 0.6f;
+    private final float cameraMaxZoom = 1.4f;
+    private final float cameraMinZoom = 0.6f;
 
 
 
@@ -77,13 +75,13 @@ public class GameView implements Screen {
         lakeTexture = new Texture("textures/lake1.png");
         grassTexture = new Texture("textures/grass4.png");
         bushTexture = new Texture("textures/bush2.png");
-        animaltexture = new Texture("textures/bush2.png");
 
 
         this.spriteBatch = new SpriteBatch();
         this.game = game;
         this.gameModel = new GameModel(difficulty);
     }
+
 
 
     @Override
@@ -94,8 +92,15 @@ public class GameView implements Screen {
 
         camera.setToOrtho(false, 1920, 1080);
 
-        stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
+
+        uiStage = new Stage(new ScreenViewport());
+        gameStage = new Stage(viewport);
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(uiStage);
+        multiplexer.addProcessor(gameStage);
+
+        Gdx.input.setInputProcessor(multiplexer);
 
         skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
 
@@ -103,7 +108,7 @@ public class GameView implements Screen {
         table.setFillParent(true);
 
 
-        shop = new Shop(skin, stage, this.gameModel);
+        shop = new Shop(skin, uiStage, this.gameModel);
 
 
         TextButton openShopButton = new TextButton("Shop", skin);
@@ -122,11 +127,11 @@ public class GameView implements Screen {
         zoomContolButtons();
         speedbutton();
 
-        stage.addActor(openShopButton);
-        stage.addActor(table);
+        uiStage.addActor(openShopButton);
+        uiStage.addActor(table);
 
-        gameController = new GameController(shop,this.gameModel);
-        this.scorePanel = new ScorePanel(skin,stage, gameModel);
+        gameController = new GameController(shop,this.gameModel, this);
+        this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
         setupPlace();
     }
 
@@ -157,17 +162,13 @@ public class GameView implements Screen {
             }
         }
 
-        for( Herd herd : gameModel.getHerds()){
-            for (Animal animal : herd.getAnimals()) {
-                spriteBatch.draw(animal.getTexture(), animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
-
-            }
-        }
         spriteBatch.end();
 
+        gameStage.act(delta);
+        gameStage.draw();
 
-        stage.act(delta);
-        stage.draw();
+        uiStage.act(delta);
+        uiStage.draw();
 
         scorePanel.updateScore();
         gameModel.Simulation(delta);
@@ -201,9 +202,9 @@ public class GameView implements Screen {
             }
         });
 
-        stage.addActor(zoomLabel);
-        stage.addActor(zoomOutButton);
-        stage.addActor(zoomInButton);
+        uiStage.addActor(zoomLabel);
+        uiStage.addActor(zoomOutButton);
+        uiStage.addActor(zoomInButton);
     }
 
     private void speedbutton() {
@@ -247,9 +248,9 @@ public class GameView implements Screen {
 
 
 
-        stage.addActor(daySpeedButton);
-        stage.addActor(weekSpeedButton);
-        stage.addActor(monthSpeedButton);
+        uiStage.addActor(daySpeedButton);
+        uiStage.addActor(weekSpeedButton);
+        uiStage.addActor(monthSpeedButton);
     }
 
 
@@ -314,19 +315,27 @@ public class GameView implements Screen {
     public void dispose() {
         map.dispose();
         mapRenderer.dispose();
-        stage.dispose();
+        gameStage.dispose();
+        uiStage.dispose();
         skin.dispose();
     }
 
 
+    public Stage getGameStage() {
+        return gameStage;
+    }
 
+    public Stage getUiStage() {
+        return uiStage;
+    }
 
     private void setupPlace()
     {
-        stage.addListener(new ClickListener() {
+        gameStage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Actor target = stage.hit(x, y, true);
+                Actor target = gameStage.hit(x, y, true);
+                System.out.println("clicked");
                 if (target != null) {
                     System.out.println("UI element clicked: " + target.getName());
                     return;
@@ -342,10 +351,6 @@ public class GameView implements Screen {
                 } else {
                     System.out.println("Placement failed.");
                 }
-
-
-
-
             }
         });
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Herd extends Group implements Positionable {
     private final AnimalSpecies animalSpecies;
-    private final ArrayList<Animal> animals = new ArrayList<>();
+    private final ArrayList<AnimalImpl> animals = new ArrayList<>();
 
     //todo ha collide-ol egy másik ugyanolyan típusú herddel, összeolvadnak
 
@@ -18,14 +18,14 @@ public class Herd extends Group implements Positionable {
     }
 
     public void addToHerd(Animal animal) {
-        animals.add(animal);
+        animals.add((AnimalImpl) animal);
     }
 
     public void ChooseOneObjective() {
 
     }
 
-    public ArrayList<Animal> getAnimals() {
+    public ArrayList<AnimalImpl> getAnimals() {
         return animals;
     }
 
