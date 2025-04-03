@@ -18,7 +18,9 @@ public class HerbivoreBehaviour implements Behaviour{
 
     @Override
     public Action createFittingAction(Animal animal) {
-        if (animal.getHunger() < 30 || animal.getThirst() < 30){
+        return Actions.moveBy(10,10, 10);
+
+        /*if (animal.getHunger() < 30 || animal.getThirst() < 30){
             if (animal.getHunger() < animal.getThirst()) {
                 animal.addAction(Actions.moveTo( //todo legközelebbihez menjen
                     animal.getKnownFood().get(0).getX(),
@@ -30,10 +32,11 @@ public class HerbivoreBehaviour implements Behaviour{
             }
         }
         if (!animal.hasActions()){
+            return Actions.moveBy(100,100, 10);
             //todo random place
         }
 
-        return null;
+        return null;*/
     }
 
 
@@ -72,7 +75,7 @@ public class HerbivoreBehaviour implements Behaviour{
 
     @Override
     public boolean shouldCreateNewAction(Animal animal) {
-        return animal.getHunger() < 30 || animal.getThirst() < 30;
+        return true; //animal.getHunger() < 30 || animal.getThirst() < 30;
     }
 
 

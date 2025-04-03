@@ -21,7 +21,6 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     double hunger;
     double thirst;
     final double speed;
-    //??? picture;
     final Texture texture;
     Position position;
     ArrayList<Position> knownFood;
@@ -87,7 +86,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public Position getPosition() {
-        return position;
+        return new Position(this.getX(), this.getY(), this.position.getWidth(), this.position.getHeight());
     }
 
     @Override
@@ -115,17 +114,23 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         return texture;
     }
 
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+
+        if (behaviour.shouldCreateNewAction(this)) {
+            System.out.println("animalImpl: should create new action");
+            addAction(behaviour.createFittingAction(this));
+            System.out.println("animalimpl: acions size: " + this.getActions().size);
+            System.out.println("animalImpl: position: " + this.getX() + " " + this.getY());
+        }
+    }
+
     //todo detect water
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        if(!this.hasActions() || behaviour.shouldCreateNewAction(this)){
-            this.clearActions();
-            Action b = behaviour.createFittingAction(this);
-            if (b != null) {
-                this.addAction(b);
-            }
-        }
+        batch.draw(texture, this.getX(), this.getY());
     }
 }
