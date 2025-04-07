@@ -99,6 +99,9 @@ public class GameModel {
 
     private void generateMap()
     {
+
+
+
         int objectCount = 0;
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
@@ -218,7 +221,7 @@ public class GameModel {
 
     private int CalculateTourist() //Turistakat ad hozza ha kell
     {
-        return sumUniqueAnimals();
+        return sumUniqueAnimals() + sumAnimals() / 20;
     }
 
     private int payrangers()
@@ -335,9 +338,34 @@ public class GameModel {
                 Grass grass = new Grass(new Position(x,y, width, height));
                 environments.add(grass);
                 break;
+            case "Road":
+                Road road= new Road(new Position(x,y, width, height));
+                environments.add(road);
+                break;
             default: System.out.println("Not Implemented yet!");
                 break;
         }
+    }
+
+
+
+    public boolean Is_There_Road(float x, float y)
+    {
+        for(Environment environment : environments)
+        {
+            if (environment instanceof Road)
+            {
+                if(Math.abs(environment.getPosition().getX() - x) < 100 )
+                    if(Math.abs(environment.getPosition().getY() - y) < 100)
+                    {
+                        return true;
+                    }
+            }
+
+        }
+
+        return false;
+
     }
 
 

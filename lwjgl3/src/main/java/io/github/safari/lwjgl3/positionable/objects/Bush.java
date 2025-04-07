@@ -8,4 +8,5 @@ public class Bush extends Environment implements HerbivoreEdible, Positionable {
         super(position);
     }
 
+
 }

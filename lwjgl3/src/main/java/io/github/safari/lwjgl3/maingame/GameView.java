@@ -38,6 +38,9 @@ public class GameView implements Screen {
     private GameController gameController;
     private ScorePanel scorePanel;
 
+    private boolean isDraggingRoad = false;
+    private Vector3 lastPlacedPos = new Vector3();
+
     private final int mapWidth;
     private final int mapHeight;
     private final TiledMap map;
@@ -60,9 +63,7 @@ public class GameView implements Screen {
     private float cameraMinZoom = 0.6f;
 
 
-
-    public GameView(Game game, int difficulty)
-    {
+    public GameView(Game game, int difficulty) {
 
         map = new TmxMapLoader().load("savannasmallsmall.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
@@ -125,8 +126,8 @@ public class GameView implements Screen {
         stage.addActor(openShopButton);
         stage.addActor(table);
 
-        gameController = new GameController(shop,this.gameModel);
-        this.scorePanel = new ScorePanel(skin,stage, gameModel);
+        gameController = new GameController(shop, this.gameModel);
+        this.scorePanel = new ScorePanel(skin, stage, gameModel);
         setupPlace();
     }
 
@@ -154,10 +155,12 @@ public class GameView implements Screen {
                 spriteBatch.draw(lakeTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             } else if (env instanceof Grass) {
                 spriteBatch.draw(grassTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
+            } else if (env instanceof Road) {
+                spriteBatch.draw(((Road) env).getTexture(), env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             }
         }
 
-        for( Herd herd : gameModel.getHerds()){
+        for (Herd herd : gameModel.getHerds()) {
             for (Animal animal : herd.getAnimals()) {
                 spriteBatch.draw(animal.getTexture(), animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
 
@@ -173,13 +176,13 @@ public class GameView implements Screen {
         gameModel.Simulation(delta);
     }
 
-    private void zoomContolButtons(){
-        Label zoomLabel = new Label("Zoom",skin);
+    private void zoomContolButtons() {
+        Label zoomLabel = new Label("Zoom", skin);
         zoomLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 45);
 
         TextButton zoomInButton = new TextButton("+", skin);
         zoomInButton.setPosition(Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 50);
-        zoomInButton.setSize(50,50);
+        zoomInButton.setSize(50, 50);
         zoomInButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -191,7 +194,7 @@ public class GameView implements Screen {
 
         TextButton zoomOutButton = new TextButton("-", skin);
         zoomOutButton.setPosition(Gdx.graphics.getWidth() - 210, Gdx.graphics.getHeight() - 50);
-        zoomOutButton.setSize(50,50);
+        zoomOutButton.setSize(50, 50);
         zoomOutButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -246,14 +249,13 @@ public class GameView implements Screen {
         });
 
 
-
         stage.addActor(daySpeedButton);
         stage.addActor(weekSpeedButton);
         stage.addActor(monthSpeedButton);
     }
 
 
-    private void cameraMovement(){
+    private void cameraMovement() {
         if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.LEFT)) {
             camera.translate(-cameraSpeed, 0);
         }
@@ -289,7 +291,6 @@ public class GameView implements Screen {
     }
 
 
-
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
@@ -319,38 +320,64 @@ public class GameView implements Screen {
     }
 
 
-
-
-    private void setupPlace()
-    {
+    private void setupPlace() {
         stage.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 Actor target = stage.hit(x, y, true);
-                if (target != null) {
-                    System.out.println("UI element clicked: " + target.getName());
-                    return;
-                }
+                if (target != null) return false;
 
-                float screenY = Gdx.graphics.getHeight() - y;
-                Vector3 worldCoordinates = camera.unproject(new Vector3(x, screenY, 0));
-                boolean success = gameController.TryToPlace(worldCoordinates.x, worldCoordinates.y, 64,64, 0, 0);
+                ShopItem item = shop.getShopItems();
+                if (item == null) return false;
 
+                Vector3 world = camera.unproject(new Vector3(x, Gdx.graphics.getHeight() - y, 0));
 
-                if (success) {
-                    System.out.println("Item placed at : " + worldCoordinates.x + ", " + worldCoordinates.y);
+                if (item.getName().equals("Road")) {
+                    isDraggingRoad = true;
+                    lastPlacedPos.set(-999, -999, 0); // reset
+                    return true;
                 } else {
-                    System.out.println("Placement failed.");
+
+                    boolean isjeep = false;
+
+                    if(item.getName().equals("Jeep")) isjeep = true;
+
+                    // Normál egy dara.bos elhelyezés
+                    boolean placed = gameController.TryToPlace(world.x, world.y, 64, 64, 0, 0, isjeep);
+                    if (placed) {
+                        System.out.println("Item placed at : " + world.x + ", " + world.y);
+                        shop.clearSelection(); // ha csak egyszer akarod elhelyezni
+                    }
+                    return true;
                 }
+            }
 
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                if (isDraggingRoad) {
+                    Vector3 world = camera.unproject(new Vector3(x, Gdx.graphics.getHeight() - y, 0));
 
+                    float gridSize = 64f;
+                    float roundedX = Math.round(world.x / gridSize) * gridSize;
+                    float roundedY = Math.round(world.y / gridSize) * gridSize;
 
+                    // Akkor helyezz el új utat, ha nem ugyanoda próbálunk
+                    if (Math.abs(lastPlacedPos.x - roundedX) >= gridSize || Math.abs(lastPlacedPos.y - roundedY) >= gridSize) {
+                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0);
+                        if (placed) {
+                            System.out.println("Road placed at : " + roundedX + ", " + roundedY);
+                            lastPlacedPos.set(roundedX, roundedY, 0);
+                        }
+                    }
+                }
+            }
 
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                isDraggingRoad = false;
             }
         });
 
 
     }
-
-
 }
