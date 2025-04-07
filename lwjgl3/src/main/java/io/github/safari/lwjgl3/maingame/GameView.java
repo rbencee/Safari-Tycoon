@@ -24,6 +24,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.objects.*;
+import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import org.lwjgl.opengl.GL20;
 
 
@@ -165,6 +166,16 @@ public class GameView implements Screen {
                 spriteBatch.draw(animal.getTexture(), animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
 
             }
+        }
+
+        for(Jeep jeep : gameModel.getJeeps())
+        {
+            spriteBatch.draw(jeep.getTexture(),
+                jeep.getPosition().getX(),
+                jeep.getPosition().getY(),
+                jeep.getPosition().getWidth(),
+                jeep.getPosition().getHeight());
+
         }
         spriteBatch.end();
 
@@ -363,7 +374,7 @@ public class GameView implements Screen {
 
                     // Akkor helyezz el új utat, ha nem ugyanoda próbálunk
                     if (Math.abs(lastPlacedPos.x - roundedX) >= gridSize || Math.abs(lastPlacedPos.y - roundedY) >= gridSize) {
-                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0);
+                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0,false);
                         if (placed) {
                             System.out.println("Road placed at : " + roundedX + ", " + roundedY);
                             lastPlacedPos.set(roundedX, roundedY, 0);

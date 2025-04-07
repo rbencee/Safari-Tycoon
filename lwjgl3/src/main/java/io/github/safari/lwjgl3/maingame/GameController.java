@@ -17,7 +17,7 @@ public class GameController {
         ShopItem selectedItem = shop.getShopItems();
 
         if (selectedItem != null) {
-            if (gameModel.positionFound(x, y, width, height)) {
+            if (gameModel.positionFound(x, y, width, height) || isjeep){
                 if (gameModel.CanBuy(selectedItem)) {
                     if(!isjeep) {
                         gameModel.BuyItem(selectedItem, x, y, width, height);

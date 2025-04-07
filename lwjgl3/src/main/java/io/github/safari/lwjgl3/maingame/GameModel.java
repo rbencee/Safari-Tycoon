@@ -10,6 +10,7 @@ import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
+import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 // import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class GameModel {
     private ArrayList<Herd> herds;
     private ArrayList<Poacher> poachers;
     private ArrayList<Ranger> rangers;
-    // private ArrayList<Jeep> jeeps;
+    private ArrayList<Jeep> jeeps;
     private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
 
@@ -56,6 +57,7 @@ public class GameModel {
         this.speed = 1;
 
         environments = new ArrayList<>();
+        this.jeeps = new ArrayList<>();
         this.money = 5000;
 
         InitializeGame();
@@ -91,6 +93,8 @@ public class GameModel {
     public ArrayList<Environment> getEnvironments() {return environments;}
 
     public ArrayList<Herd> getHerds() {return herds;}
+
+    public ArrayList<Jeep> getJeeps() {return jeeps;}
 
     public void InitializeGame()
     {
@@ -341,6 +345,10 @@ public class GameModel {
             case "Road":
                 Road road= new Road(new Position(x,y, width, height));
                 environments.add(road);
+                break;
+            case "Jeep":
+                Jeep jeep= new Jeep(new Position(x,y, width, height));
+                jeeps.add(jeep);
                 break;
             default: System.out.println("Not Implemented yet!");
                 break;
