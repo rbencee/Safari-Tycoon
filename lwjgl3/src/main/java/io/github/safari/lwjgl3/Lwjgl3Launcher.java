@@ -1,6 +1,8 @@
 package io.github.safari.lwjgl3;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.safari.lwjgl3.maingame.MainMenu;
@@ -26,9 +28,30 @@ public class Lwjgl3Launcher {
     }
 
     private static class MyGame extends Game {
+        private Music music;
+
         @Override
         public void create() {
             this.setScreen(new MainMenu(this));
+
+            music = Gdx.audio.newMusic(Gdx.files.internal("music/my_song.mp3"));
+
+            music.setLooping(true);
+            music.setVolume(0.5f);
+            music.play();
+        }
+
+        @Override
+        public void render() {
+            super.render();
+        }
+
+        @Override
+        public void dispose() {
+            if (music != null) {
+                music.stop();
+                music.dispose();
+            }
         }
     }
 }

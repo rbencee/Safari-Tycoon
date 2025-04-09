@@ -166,21 +166,28 @@ public class GameModel {
 
 
         //Belepo kilepo
-        int roadtoplace = 2;
-            while(roadtoplace > 0) {
+        boolean entranceb = false;
+        boolean exitb = false;
 
-                float entranceY = random.nextInt((int) (mapHeight / 32)) * 32;
+            while(!entranceb && !exitb) {
+
+                float gridSize = 64f;
+
+                float entranceY = random.nextInt((int)(mapHeight / gridSize)) * gridSize - 32;
+                float exitY = random.nextInt((int)(mapHeight / gridSize)) * gridSize - 32;
+
+
+
                 if(positionFound(0,entranceY,64,64)) {
-                    Road entrance = new Road(new Position(0, entranceY, 64, 64), 2);
+                    Road entrance = new Road(new Position(32, entranceY, 64, 64), 2);
                     roads.add(entrance);
-                    roadtoplace--;
+                    entranceb = true;
                 }
 
-                if(positionFound(0,entranceY,64,64)) {
-                    float exitY = random.nextInt((int) (mapHeight / 32)) * 32;
-                    Road exit = new Road(new Position(mapWidth - 32, exitY, 64, 64), 3);
+                if(positionFound(0,exitY,64,64)) {
+                    Road exit = new Road(new Position(mapWidth - 64 - 32, exitY, 64, 64), 3);
                     roads.add(exit);
-                    roadtoplace--;
+                    exitb = true;
                 }
             }
 
@@ -205,6 +212,20 @@ public class GameModel {
                 return false;
             }
         }
+
+
+        for(Road road : roads)
+        {
+            Position pos = road.getPosition();
+
+            if (Math.abs(pos.getX() - x) < 32 && Math.abs(pos.getY() - y) < 32) {
+                System.out.println("ROAD BLOCKED");
+                return false;
+            }
+        }
+
+
+
         return true;
     }
 

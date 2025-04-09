@@ -361,7 +361,7 @@ public class GameView implements Screen {
                     boolean placed = gameController.TryToPlace(world.x - 32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
-                        shop.clearSelection(); // ha csak egyszer akarod elhelyezni
+                        shop.clearSelection(); 
                     }
                     return true;
                 }
@@ -373,12 +373,12 @@ public class GameView implements Screen {
                     Vector3 world = camera.unproject(new Vector3(x, Gdx.graphics.getHeight() - y, 0));
 
                     float gridSize = 64f;
-                    float roundedX = Math.round(world.x / gridSize) * gridSize - 32;
-                    float roundedY = Math.round(world.y / gridSize) * gridSize - 32;
+                    float roundedX = Math.round(world.x / gridSize) * gridSize - gridSize / 2;
+                    float roundedY = Math.round(world.y / gridSize) * gridSize - gridSize / 2;
 
-                    // Akkor helyezz el új utat, ha nem ugyanoda próbálunk
+
                     if (Math.abs(lastPlacedPos.x - roundedX) >= gridSize || Math.abs(lastPlacedPos.y - roundedY) >= gridSize) {
-                        boolean placed = gameController.TryToPlace(roundedX, roundedY , 64, 64, 0, 0,false);
+                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0,false);
                         if (placed) {
                             System.out.println("Road placed at : " + roundedX + ", " + roundedY);
                             lastPlacedPos.set(roundedX, roundedY, 0);
