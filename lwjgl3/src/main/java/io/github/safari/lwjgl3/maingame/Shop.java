@@ -161,10 +161,25 @@ public class Shop {
             itemButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    SelectedItem = item; // Helyes változónév
+                    SelectedItem = item;
                     System.out.println(item.getName() + " selected! Price: " + item.getPrice());
+
                 }
             });
+            TextButton sellbutton = new TextButton("Sell" + " - " + item.getPrice() * 0.7 + "$", skin);
+            SetFontsize(0.8f, sellbutton);
+            itemButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    SelectedItem = item;
+                    System.out.println(item.getName() + " selected for sell! Price: " + item.getPrice() * 0.7);
+
+
+                }
+            });
+
+
+
             contentTable.add(itemButton).pad(5).row();
         }
     }

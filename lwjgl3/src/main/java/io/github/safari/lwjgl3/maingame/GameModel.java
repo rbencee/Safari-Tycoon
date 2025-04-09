@@ -58,7 +58,7 @@ public class GameModel {
 
         environments = new ArrayList<>();
         this.jeeps = new ArrayList<>();
-        this.money = 5000;
+        this.money = 50000000;
 
         InitializeGame();
     }
@@ -363,8 +363,8 @@ public class GameModel {
         {
             if (environment instanceof Road)
             {
-                if(Math.abs(environment.getPosition().getX() - x) < 100 )
-                    if(Math.abs(environment.getPosition().getY() - y) < 100)
+                if(Math.abs(environment.getPosition().getX() - x) < 32 )
+                    if(Math.abs(environment.getPosition().getY() - y) < 32)
                     {
                         return true;
                     }
