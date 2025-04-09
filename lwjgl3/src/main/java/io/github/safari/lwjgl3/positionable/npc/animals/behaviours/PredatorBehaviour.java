@@ -31,7 +31,7 @@ public class PredatorBehaviour implements Behaviour {
     @Override
     public void detectFood(Animal animal, EdibleCollection foodPositions) {
         Vector2 animalPos = new Vector2(animal.getPosition().getX(), animal.getPosition().getY());
-        for (Animal a : foodPositions.getAllAnimals()) {
+        for (Animal a : foodPositions.getAllHerbivores()) {
             if (preyPositions.containsKey(a)){
                 if (preyPositions.get(a).equals(a.getPosition())){
                     continue;

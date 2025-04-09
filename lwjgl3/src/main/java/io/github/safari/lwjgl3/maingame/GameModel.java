@@ -3,22 +3,15 @@ package io.github.safari.lwjgl3.maingame;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.human.*;
 import io.github.safari.lwjgl3.positionable.objects.*;
-
-
-
-
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
-// import io.github.safari.lwjgl3.positionable.visitors.Jeep;
+import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 
-public class GameModel {
+public class GameModel implements EdibleCollection{
     private int money;
     private int income;
     private int monthlyexpense;
@@ -32,9 +25,24 @@ public class GameModel {
     private ArrayList<Herd> herds;
     private ArrayList<Poacher> poachers;
     private ArrayList<Ranger> rangers;
-    // private ArrayList<Jeep> jeeps;
+    private ArrayList<Jeep> jeeps;
     private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
+
+
+    ArrayList<Animal> allHerbivores = new ArrayList<>();
+    ArrayList<HerbivoreEdible> allHerbivoreEdible = new ArrayList<>();
+
+
+    @Override
+    public List<HerbivoreEdible> getAllHerbivoreEdible() {
+        return allHerbivoreEdible;
+    }
+
+    @Override
+    public ArrayList<Animal> getAllHerbivores() {
+        return allHerbivores;
+    }
 
     private int objectNumber = 50;
     private float mapWidth = 3200;
@@ -59,6 +67,7 @@ public class GameModel {
         this.money = 5000;
 
         InitializeGame();
+        AnimalFactory.gameModel = this;
     }
 
     //Setters and getters
@@ -107,7 +116,9 @@ public class GameModel {
             int height = 110;
 
             if (positionFound(x, y, width, height)) {
-                environments.add(new Tree(new Position(x, y, width, height)));
+                Tree tree = new Tree(new Position(x, y, width, height));
+                environments.add(tree);
+                allHerbivoreEdible.add(tree);
                 objectCount++;
             }
         }
@@ -120,7 +131,9 @@ public class GameModel {
             int height = 64;
 
             if (positionFound(x, y, width, height)) {
-                environments.add(new Bush(new Position(x, y, width, height)));
+                Bush bush = new Bush(new Position(x, y, width, height));
+                environments.add(bush);
+                allHerbivoreEdible.add(bush);
                 objectCount++;
             }
         }
@@ -133,7 +146,8 @@ public class GameModel {
             int height = 96;
 
             if (positionFound(x, y, width, height)) {
-                environments.add(new Lake(new Position(x, y, width, height)));
+                Lake lake = new Lake(new Position(x, y, width, height));
+                environments.add(lake);
                 objectCount++;
             }
         }
@@ -147,7 +161,9 @@ public class GameModel {
 
 
             if (positionFound(x, y, width, height)) {
-                environments.add(new Grass(new Position(x, y, width, height)));
+                Grass grass = new Grass(new Position(x, y, width, height));
+                environments.add(grass);
+                allHerbivoreEdible.add(grass);
                 objectCount++;
             }
         }

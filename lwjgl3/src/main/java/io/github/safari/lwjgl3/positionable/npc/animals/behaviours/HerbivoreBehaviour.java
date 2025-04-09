@@ -8,9 +8,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.objects.Drinkable;
 import io.github.safari.lwjgl3.positionable.objects.HerbivoreEdible;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class HerbivoreBehaviour implements Behaviour{
     HashMap<HerbivoreEdible, Position> plantPositions = new HashMap<>();
@@ -18,25 +16,31 @@ public class HerbivoreBehaviour implements Behaviour{
 
     @Override
     public Action createFittingAction(Animal animal) {
-        return Actions.moveBy(10,10, 10);
+        Random rand = new Random();
+        if (plantPositions.isEmpty()) {
+            System.out.println("plantpositions empty");
+            //todo a randomon lehetne szépíteni
+            return Actions.moveBy(rand.nextFloat(-50, 50), rand.nextFloat(-50, 50), rand.nextFloat((float) (1/ animal.getSpeed()), (float) (140/animal.getSpeed())));
+        }
+        if (animal.getHunger() < 100 || animal.getThirst() < 100) {
+            System.out.println("hungry");
+            if (!plantPositions.isEmpty()) {
+                Map.Entry<HerbivoreEdible, Position> entry = plantPositions.entrySet().iterator().next();
+                Position pos = entry.getValue();
+                Float dist = Position.distance(pos, animal.getPosition());
 
-        /*if (animal.getHunger() < 30 || animal.getThirst() < 30){
-            if (animal.getHunger() < animal.getThirst()) {
-                animal.addAction(Actions.moveTo( //todo legközelebbihez menjen
-                    animal.getKnownFood().get(0).getX(),
-                    animal.getKnownFood().get(0).getY()));
-            }
-
-            else {
+                System.out.println("going to: " + pos.getX() + " " + pos.getY());
+                return Actions.moveTo(pos.getX(), pos.getY(), (float) (dist/animal.getSpeed()));//todo legközelebbihez menjen
+            } else {
                 //todo
             }
         }
-        if (!animal.hasActions()){
-            return Actions.moveBy(100,100, 10);
+        if (!animal.hasActions()) {
+            return Actions.moveBy(-100, 100, 10);
             //todo random place
         }
 
-        return null;*/
+        return null;
     }
 
 
@@ -52,8 +56,13 @@ public class HerbivoreBehaviour implements Behaviour{
 
             Vector2 foodPos = new Vector2(plant.getPosition().getX(), plant.getPosition().getY());
             if(animalPos.dst(foodPos) <= animal.getVisionRange()) {
-                plantPositions.put(plant, plant.getPosition().clone());
+                System.out.println("foodpos position:" + foodPos);
+                plantPositions.put(plant, plant.getPosition());
             }
+        }
+        if (!plantPositions.isEmpty()) {
+            if (plantPositions.get(0) != null)
+            System.out.println("first saved food position: " + plantPositions.get(0).getX() + " " + plantPositions.get(0).getY());
         }
     }
 
@@ -75,7 +84,7 @@ public class HerbivoreBehaviour implements Behaviour{
 
     @Override
     public boolean shouldCreateNewAction(Animal animal) {
-        return true; //animal.getHunger() < 30 || animal.getThirst() < 30;
+        return true; //animal.getHunger() < 30 || animal.getThirst() < 30; todo
     }
 
 

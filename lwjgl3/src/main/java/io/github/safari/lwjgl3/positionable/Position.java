@@ -1,6 +1,8 @@
 package io.github.safari.lwjgl3.positionable;
 
 
+import com.badlogic.gdx.math.Vector2;
+
 public class Position {
 
     private float x;
@@ -51,5 +53,11 @@ public class Position {
     @Override
     public Position clone(){
         return new Position(x,y,width,height);
+    }
+
+    public static float distance(Position pos1, Position pos2){
+        Vector2 vect1 = new Vector2(pos1.getX(), pos1.getY());
+        Vector2 vect2 = new Vector2(pos2.getX(), pos2.getY());
+        return vect1.dst(vect2);
     }
 }

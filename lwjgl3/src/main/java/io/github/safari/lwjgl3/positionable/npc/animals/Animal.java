@@ -26,8 +26,6 @@ public interface Animal {
     double getThirst();
     double getSpeed();
     Position getPosition();
-    ArrayList<Position> getKnownFood();
-    ArrayList<Position> getKnownWater();
     AnimalType getAnimalType();
     AnimalSpecies getAnimalSpecies();
     void addAction(Action action);

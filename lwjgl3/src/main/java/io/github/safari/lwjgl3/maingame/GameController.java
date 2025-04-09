@@ -1,8 +1,6 @@
 package io.github.safari.lwjgl3.maingame;
 
-
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.objects.Bush;
@@ -70,7 +68,6 @@ public class GameController {
                 herd.addToHerd(animal);
                 gameModel.getHerds().add(herd);
                 System.out.println("Capybara buy successful!");
-                animal.addAction(Actions.moveBy(100,100, 5));
                 gameView.getGameStage().addActor((AnimalImpl) animal);
                 System.out.println("Animal added to gameStage: " + (gameView.getGameStage().getActors().contains((Actor)animal, true)));
 

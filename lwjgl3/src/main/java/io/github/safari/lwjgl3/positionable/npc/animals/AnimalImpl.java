@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import io.github.safari.lwjgl3.maingame.GameModel;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.util.Positionable;
@@ -23,10 +24,9 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     final double speed;
     final Texture texture;
     Position position;
-    ArrayList<Position> knownFood;
-    ArrayList<Position> knownWater;
     final AnimalSpecies animalSpecies;
     final Behaviour behaviour;
+    final EdibleCollection edibles;
 
     public AnimalImpl (
         float visionRange,
@@ -38,8 +38,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         Texture texture,
         Position position,
         AnimalSpecies animalSpecies,
-        Behaviour behaviour) {
-
+        Behaviour behaviour, EdibleCollection edibles) {
 
         this.visionRange = visionRange;
         this.age = age;
@@ -52,6 +51,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         this.setPosition(position.getX(), position.getY()); //inherited from Actor
         this.animalSpecies = animalSpecies;
         this.behaviour = behaviour;
+        this.edibles = edibles;
     }
 
     @Override
@@ -90,16 +90,6 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     }
 
     @Override
-    public ArrayList<Position> getKnownFood() {
-        return knownFood;
-    }
-
-    @Override
-    public ArrayList<Position> getKnownWater() {
-        return knownWater;
-    }
-
-    @Override
     public AnimalType getAnimalType() {
         return animalSpecies.getAnimalType();
     }
@@ -117,13 +107,13 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     @Override
     public void act(float delta) {
         super.act(delta);
+        behaviour.detectFood(this, edibles);
 
-        if (behaviour.shouldCreateNewAction(this)) {
-            System.out.println("animalImpl: should create new action");
+        if (getActions().isEmpty() && behaviour.shouldCreateNewAction(this)) {
             addAction(behaviour.createFittingAction(this));
-            System.out.println("animalimpl: acions size: " + this.getActions().size);
-            System.out.println("animalImpl: position: " + this.getX() + " " + this.getY());
+            System.out.println("animalimpl: action added");
         }
+
     }
 
     //todo detect water
