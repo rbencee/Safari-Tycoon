@@ -3,14 +3,17 @@ package io.github.safari.lwjgl3.maingame;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -18,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
@@ -46,12 +50,15 @@ public class GameView implements Screen {
     private final float cameraSpeed;
     private OrthographicCamera camera;
 
+    private OrthographicCamera minimapCamera;
+    private FitViewport minimapViewport;
+    private SpriteBatch minimapBatch;
+
 
     private final Texture treeTexture;
     private final Texture lakeTexture;
     private final Texture grassTexture;
     private final Texture bushTexture;
-    private final Texture animaltexture;
 
     private SpriteBatch spriteBatch;
 
@@ -59,6 +66,16 @@ public class GameView implements Screen {
     private float cameraMaxZoom = 1.4f;
     private float cameraMinZoom = 0.6f;
 
+    private static final float MINIMAP_SCALE = 0.2f;
+    private static final int MINIMAP_SIZE = (int) (3200 * MINIMAP_SCALE);
+    private static final int MINIMAP_BORDER = 20;
+    private ShapeRenderer shapeRenderer;
+
+    private boolean isDragging = false;
+    private float lastX = 0;
+    private float lastY = 0;
+    private float minimapX = 0;
+    private float minimapY = 0;
 
 
     public GameView(Game game, int difficulty)
@@ -77,10 +94,10 @@ public class GameView implements Screen {
         lakeTexture = new Texture("textures/lake1.png");
         grassTexture = new Texture("textures/grass4.png");
         bushTexture = new Texture("textures/bush2.png");
-        animaltexture = new Texture("textures/bush2.png");
 
-
+        this.shapeRenderer = new ShapeRenderer();
         this.spriteBatch = new SpriteBatch();
+        this.minimapBatch = new SpriteBatch();
         this.game = game;
         this.gameModel = new GameModel(difficulty);
     }
@@ -88,23 +105,23 @@ public class GameView implements Screen {
 
     @Override
     public void show() {
-
         camera = new OrthographicCamera();
         viewport = new ScreenViewport(camera);
 
+        minimapCamera = new OrthographicCamera();
+        minimapViewport = new FitViewport(mapWidth * MINIMAP_SCALE, mapHeight * MINIMAP_SCALE, minimapCamera);
+        minimapCamera.setToOrtho(false, mapWidth * MINIMAP_SCALE, mapHeight * MINIMAP_SCALE);
+
         camera.setToOrtho(false, 1920, 1080);
 
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage(new FitViewport(1920, 1080));
         Gdx.input.setInputProcessor(stage);
-
         skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
 
         Table table = new Table();
         table.setFillParent(true);
 
-
         shop = new Shop(skin, stage, this.gameModel);
-
 
         TextButton openShopButton = new TextButton("Shop", skin);
         openShopButton.setPosition(0, 0);
@@ -128,16 +145,15 @@ public class GameView implements Screen {
         gameController = new GameController(shop,this.gameModel);
         this.scorePanel = new ScorePanel(skin,stage, gameModel);
         setupPlace();
+        minimapInput();
     }
 
     @Override
     public void render(float delta) {
         cameraMovement();
-
         camera.update();
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 
         mapRenderer.setView(camera);
         mapRenderer.render();
@@ -145,32 +161,159 @@ public class GameView implements Screen {
         spriteBatch.setProjectionMatrix(camera.combined);
 
         spriteBatch.begin();
-        for (Environment env : gameModel.getEnvironments()) {
-            if (env instanceof Tree) {
-                spriteBatch.draw(treeTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
-            } else if (env instanceof Bush) {
-                spriteBatch.draw(bushTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
-            } else if (env instanceof Lake) {
-                spriteBatch.draw(lakeTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
-            } else if (env instanceof Grass) {
-                spriteBatch.draw(grassTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
-            }
-        }
-
-        for( Herd herd : gameModel.getHerds()){
-            for (Animal animal : herd.getAnimals()) {
-                spriteBatch.draw(animal.getTexture(), animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());
-
-            }
-        }
+            drawSprites(spriteBatch,1);
         spriteBatch.end();
-
 
         stage.act(delta);
         stage.draw();
 
         scorePanel.updateScore();
         gameModel.Simulation(delta);
+
+        renderMinimap();
+    }
+
+    private void renderMinimap() {
+        int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE;
+        int minimapY = MINIMAP_BORDER;
+
+        Gdx.gl.glViewport(minimapX - MINIMAP_BORDER, minimapY - MINIMAP_BORDER,
+            MINIMAP_SIZE + 2*MINIMAP_BORDER, MINIMAP_SIZE + 2*MINIMAP_BORDER);
+
+        shapeRenderer.setProjectionMatrix(minimapCamera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.GRAY);
+        shapeRenderer.rect(-MINIMAP_BORDER, -MINIMAP_BORDER,
+            mapWidth * MINIMAP_SCALE + 2*MINIMAP_BORDER,
+            mapHeight * MINIMAP_SCALE + 2*MINIMAP_BORDER);
+        shapeRenderer.end();
+
+        Gdx.gl.glViewport(minimapX, minimapY, MINIMAP_SIZE, MINIMAP_SIZE);
+        Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
+        Gdx.gl.glScissor(minimapX, minimapY, MINIMAP_SIZE, MINIMAP_SIZE);
+
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        float scale = MINIMAP_SIZE / (float)Math.max(mapWidth, mapHeight);
+
+        minimapBatch.setProjectionMatrix(minimapCamera.combined);
+        minimapBatch.begin();
+        mapRenderer.setView(minimapCamera);
+        mapRenderer.render();
+        minimapBatch.end();
+
+        minimapBatch.begin();
+            drawSprites(minimapBatch,scale);
+        minimapBatch.end();
+
+        shapeRenderer.setProjectionMatrix(minimapCamera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+
+        float frameX = (camera.position.x - camera.viewportWidth * camera.zoom / 2) * scale;
+        float frameY = (camera.position.y - camera.viewportHeight * camera.zoom / 2) * scale;
+        float frameWidth = camera.viewportWidth * camera.zoom * scale;
+        float frameHeight = camera.viewportHeight * camera.zoom * scale;
+
+        shapeRenderer.rect(frameX, frameY, frameWidth, frameHeight);
+        shapeRenderer.end();
+
+        Gdx.gl.glDisable(GL20.GL_SCISSOR_TEST);
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    }
+
+    private void minimapInput() {
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE - MINIMAP_BORDER;
+                int minimapY = MINIMAP_BORDER;
+
+                if (x > minimapX && x < minimapX + MINIMAP_SIZE &&
+                    y > minimapY && y < minimapY + MINIMAP_SIZE) {
+
+                    float clickX = (x - minimapX) / MINIMAP_SIZE * mapWidth * MINIMAP_SCALE;
+                    float clickY = ((y - minimapY) / MINIMAP_SIZE) * mapHeight * MINIMAP_SCALE;
+
+                    camera.position.set(clickX / MINIMAP_SCALE, clickY / MINIMAP_SCALE, 0);
+
+                    clampCameraPosition();
+                    camera.update();
+
+                    isDragging = true;
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                if (isDragging) {
+                    int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE - MINIMAP_BORDER;
+                    int minimapY = MINIMAP_BORDER;
+
+                    if (x > minimapX && x < minimapX + MINIMAP_SIZE &&
+                        y > minimapY && y < minimapY + MINIMAP_SIZE) {
+
+                        float dragX = (x - minimapX) / MINIMAP_SIZE * mapWidth * MINIMAP_SCALE;
+                        float dragY = ((y - minimapY)) / MINIMAP_SIZE * mapHeight * MINIMAP_SCALE;
+
+                        camera.position.set(dragX / MINIMAP_SCALE, dragY / MINIMAP_SCALE, 0);
+
+                        clampCameraPosition();
+                        camera.update();
+                    }
+                }
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                isDragging = false;
+            }
+        });
+    }
+
+
+    private void clampCameraPosition() {
+        float halfViewportWidth = camera.viewportWidth * camera.zoom / 2;
+        float halfViewportHeight = camera.viewportHeight * camera.zoom / 2;
+
+        if (camera.position.x - halfViewportWidth < 0) {
+            camera.position.x = halfViewportWidth;
+        }
+
+        if (camera.position.x + halfViewportWidth > mapWidth) {
+            camera.position.x = mapWidth - halfViewportWidth;
+        }
+
+        if (camera.position.y - halfViewportHeight < 0) {
+            camera.position.y = halfViewportHeight;
+        }
+
+        if (camera.position.y + halfViewportHeight > mapHeight) {
+            camera.position.y = mapHeight - halfViewportHeight;
+        }
+    }
+
+    private void drawSprites(SpriteBatch spriteBatch, float scale){
+        for (Environment env : gameModel.getEnvironments()) {
+            if (env instanceof Tree) {
+                spriteBatch.draw(treeTexture, env.getPosition().getX() * scale, env.getPosition().getY() * scale, env.getPosition().getWidth() * scale, env.getPosition().getHeight() * scale);
+            } else if (env instanceof Bush) {
+                spriteBatch.draw(bushTexture, env.getPosition().getX() * scale, env.getPosition().getY() * scale, env.getPosition().getWidth() * scale, env.getPosition().getHeight() * scale);
+            } else if (env instanceof Lake) {
+                spriteBatch.draw(lakeTexture, env.getPosition().getX() * scale, env.getPosition().getY() * scale, env.getPosition().getWidth() * scale, env.getPosition().getHeight() * scale);
+            } else if (env instanceof Grass) {
+                spriteBatch.draw(grassTexture, env.getPosition().getX() * scale, env.getPosition().getY() * scale, env.getPosition().getWidth() * scale, env.getPosition().getHeight() * scale);
+            }
+        }
+
+        for( Herd herd : gameModel.getHerds()){
+            for (Animal animal : herd.getAnimals()) {
+                spriteBatch.draw(animal.getTexture(), animal.getPosition().getX() * scale, animal.getPosition().getY() * scale, animal.getPosition().getWidth() * scale, animal.getPosition().getHeight()* scale);
+
+            }
+        }
     }
 
     private void zoomContolButtons(){
@@ -267,22 +410,7 @@ public class GameView implements Screen {
             camera.translate(0, -cameraSpeed);
         }
 
-        float halfWidth = camera.viewportWidth / 2 * camera.zoom;
-        float halfHeight = camera.viewportHeight / 2 * camera.zoom;
-
-
-        if (camera.position.x - halfWidth < 0) {
-            camera.position.x = halfWidth;
-        }
-        if (camera.position.x + halfWidth > mapWidth) {
-            camera.position.x = mapWidth - halfWidth;
-        }
-        if (camera.position.y - halfHeight < 0) {
-            camera.position.y = halfHeight;
-        }
-        if (camera.position.y + halfHeight > mapHeight) {
-            camera.position.y = mapHeight - halfHeight;
-        }
+        clampCameraPosition();
 
         camera.update();
 
@@ -293,6 +421,13 @@ public class GameView implements Screen {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+        camera.setToOrtho(false, width, height);
+
+        stage.getViewport().update(width, height, true);
+
+        int newMinimapSize = (int)(MINIMAP_SIZE * (width / 1920f));
+        minimapViewport.update(newMinimapSize, newMinimapSize);
+        camera.update();
     }
 
     @Override
@@ -316,6 +451,13 @@ public class GameView implements Screen {
         mapRenderer.dispose();
         stage.dispose();
         skin.dispose();
+        spriteBatch.dispose();
+        minimapBatch.dispose();
+        shapeRenderer.dispose();
+        treeTexture.dispose();
+        lakeTexture.dispose();
+        grassTexture.dispose();
+        bushTexture.dispose();
     }
 
 
