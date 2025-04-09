@@ -36,6 +36,7 @@ public class GameModel {
     private ArrayList<Jeep> jeeps;
     private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
+    private ArrayList<Road> roads;
 
     private int objectNumber = 50;
     private float mapWidth = 3200;
@@ -58,6 +59,7 @@ public class GameModel {
 
         environments = new ArrayList<>();
         this.jeeps = new ArrayList<>();
+        this.roads = new ArrayList<>();
         this.money = 50000000;
 
         InitializeGame();
@@ -95,6 +97,9 @@ public class GameModel {
     public ArrayList<Herd> getHerds() {return herds;}
 
     public ArrayList<Jeep> getJeeps() {return jeeps;}
+
+    public ArrayList<Road> getRoads(){ return roads;}
+
 
     public void InitializeGame()
     {
@@ -158,6 +163,29 @@ public class GameModel {
                 objectCount++;
             }
         }
+
+
+        //Belepo kilepo
+        int roadtoplace = 2;
+            while(roadtoplace > 0) {
+
+                float entranceY = random.nextInt((int) (mapHeight / 32)) * 32;
+                if(positionFound(0,entranceY,64,64)) {
+                    Road entrance = new Road(new Position(0, entranceY, 64, 64), 2);
+                    roads.add(entrance);
+                    roadtoplace--;
+                }
+
+                if(positionFound(0,entranceY,64,64)) {
+                    float exitY = random.nextInt((int) (mapHeight / 32)) * 32;
+                    Road exit = new Road(new Position(mapWidth - 32, exitY, 64, 64), 3);
+                    roads.add(exit);
+                    roadtoplace--;
+                }
+            }
+
+
+
     }
 
     public boolean positionFound(float x, float y, int width, int height) {
@@ -344,7 +372,7 @@ public class GameModel {
                 break;
             case "Road":
                 Road road= new Road(new Position(x,y, width, height));
-                environments.add(road);
+                roads.add(road);
                 break;
             case "Jeep":
                 Jeep jeep= new Jeep(new Position(x,y, width, height));
@@ -359,16 +387,14 @@ public class GameModel {
 
     public boolean Is_There_Road(float x, float y)
     {
-        for(Environment environment : environments)
+        for(Road road : roads)
         {
-            if (environment instanceof Road)
-            {
-                if(Math.abs(environment.getPosition().getX() - x) < 32 )
-                    if(Math.abs(environment.getPosition().getY() - y) < 32)
+
+                if(Math.abs(road.getPosition().getX() - x) < 32 )
+                    if(Math.abs(road.getPosition().getY() - y) < 32)
                     {
                         return true;
                     }
-            }
 
         }
 

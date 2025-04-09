@@ -156,11 +156,15 @@ public class GameView implements Screen {
                 spriteBatch.draw(lakeTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             } else if (env instanceof Grass) {
                 spriteBatch.draw(grassTexture, env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
-            } else if (env instanceof Road) {
-                spriteBatch.draw(((Road) env).getTexture(), env.getPosition().getX(), env.getPosition().getY(), env.getPosition().getWidth(), env.getPosition().getHeight());
             }
         }
 
+
+        for(Road road : gameModel.getRoads())
+        {
+            spriteBatch.draw(road.getTexture(), road.getPosition().getX(), road.getPosition().getY(), road.getPosition().getWidth(), road.getPosition().getHeight());
+
+        }
         for (Herd herd : gameModel.getHerds()) {
             for (Animal animal : herd.getAnimals()) {
                 spriteBatch.draw(animal.getTexture(), animal.getPosition().getX(), animal.getPosition().getY(), animal.getPosition().getWidth(), animal.getPosition().getHeight());

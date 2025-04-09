@@ -8,17 +8,33 @@ import io.github.safari.lwjgl3.util.Positionable;
 
 public class Road extends Environment implements Positionable {
     private Texture texture;
+    private int roadtype; //1--3
+
 
 
 
     public Road(Position position) {
-        super(position);
-        this.texture = createGrayTexture();
+        this(position, 1);
     }
 
-    private Texture createGrayTexture() {
+    public Road(Position position, int roadtype) {
+        super(position);
+        this.texture = createGrayTexture(roadtype);
+    }
+
+    private Texture createGrayTexture(int roadtype) {
+
+
         Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.GRAY);
+        if (roadtype == 2) {
+            pixmap.setColor(Color.GREEN);
+        } else if (roadtype == 3) {
+            pixmap.setColor(Color.RED);
+        } else {
+            pixmap.setColor(Color.GRAY);
+        }
+
+
         pixmap.fill();
         Texture tex = new Texture(pixmap);
         pixmap.dispose();
@@ -29,15 +45,5 @@ public class Road extends Environment implements Positionable {
     public Texture getTexture() {
         return texture;
     }
-
-
-
-
-
-
-
-
-
-
 
 }
