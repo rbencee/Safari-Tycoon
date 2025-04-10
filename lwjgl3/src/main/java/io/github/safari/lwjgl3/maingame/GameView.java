@@ -241,7 +241,7 @@ public class GameView implements Screen {
     }
 
     private void minimapInput() {
-        stage.addListener(new InputListener() {
+        uiStage.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE - MINIMAP_BORDER;
@@ -339,8 +339,7 @@ public class GameView implements Screen {
             }
         }
 
-        for(Jeep jeep : gameModel.getJeeps())
-        {
+        for (Jeep jeep : gameModel.getJeeps()) {
             spriteBatch.draw(jeep.getTexture(),
                 jeep.getPosition().getX() * scale,
                 jeep.getPosition().getY() * scale,
@@ -530,7 +529,7 @@ public class GameView implements Screen {
                     if(item.getName().equals("Jeep")) isjeep = true;
 
 
-                    boolean placed = gameController.TryToPlace(world.x - 32 , world.y - 32, 64, 64, 0, 0, isjeep);
+                    boolean placed = gameController.TryToPlace(world.x -32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
                         shop.clearSelection();

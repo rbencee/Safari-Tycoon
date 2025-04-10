@@ -3,7 +3,6 @@ package io.github.safari.lwjgl3.positionable.visitors;
 import com.badlogic.gdx.graphics.Texture;
 import io.github.safari.lwjgl3.positionable.Moveable;
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.objects.Environment;
 import io.github.safari.lwjgl3.util.Positionable;
 
 public class Jeep implements Positionable, Moveable {
@@ -28,7 +27,7 @@ public class Jeep implements Positionable, Moveable {
     public void move() {}
 
     @Override
-    public int GetSpeed() { return 0;}
+    public int getSpeed() { return 0;}
 
     @Override
     public void setSpeed(int speed) {
