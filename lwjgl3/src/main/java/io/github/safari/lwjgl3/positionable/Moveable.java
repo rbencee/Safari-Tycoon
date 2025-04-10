@@ -4,7 +4,7 @@ public interface Moveable {
 
 
     public void move();
-    public int GetSpeed();
+    public int getSpeed();
     public void setSpeed(int speed);
 
 }

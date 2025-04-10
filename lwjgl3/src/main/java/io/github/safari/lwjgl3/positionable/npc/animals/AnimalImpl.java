@@ -15,13 +15,9 @@ import io.github.safari.lwjgl3.util.Positionable;
 import java.util.ArrayList;
 
 public class AnimalImpl extends Actor implements Animal, Positionable {
-    final float visionRange;
-
     double age;
-    final double maxAge;
     double hunger;
     double thirst;
-    final double speed;
     final Texture texture;
     Position position;
     final AnimalSpecies animalSpecies;
@@ -29,23 +25,18 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     final EdibleCollection edibles;
 
     public AnimalImpl (
-        float visionRange,
         double age,
-        double maxAge,
         double hunger,
         double thirst,
-        double speed,
         Texture texture,
         Position position,
         AnimalSpecies animalSpecies,
-        Behaviour behaviour, EdibleCollection edibles) {
+        Behaviour behaviour,
+        EdibleCollection edibles) {
 
-        this.visionRange = visionRange;
         this.age = age;
-        this.maxAge = maxAge;
         this.hunger = hunger;
         this.thirst = thirst;
-        this.speed = speed;
         this.texture = texture;
         this.position = position;
         this.setPosition(position.getX(), position.getY()); //inherited from Actor
@@ -56,7 +47,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public float getVisionRange() {
-        return visionRange;
+        return animalSpecies.getVisionRange();
     }
 
     @Override
@@ -66,7 +57,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public double getMaxAge() {
-        return maxAge;
+        return animalSpecies.getMaxAge();
     }
 
     @Override
@@ -81,7 +72,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public double getSpeed() {
-        return speed;
+        return animalSpecies.getSpeed();
     }
 
     @Override
@@ -108,15 +99,15 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     public void act(float delta) {
         super.act(delta);
         behaviour.detectFood(this, edibles);
+        behaviour.detectWater(this, edibles);
 
-        if (getActions().isEmpty() && behaviour.shouldCreateNewAction(this)) {
+        if (getActions().isEmpty()) {
             addAction(behaviour.createFittingAction(this));
-            System.out.println("animalimpl: action added");
         }
-
+        this.hunger -= delta;
+        this.thirst -= delta;
+        //todo egyen is, ha odaért
     }
-
-    //todo detect water
 
     @Override
     public void draw(Batch batch, float parentAlpha) {

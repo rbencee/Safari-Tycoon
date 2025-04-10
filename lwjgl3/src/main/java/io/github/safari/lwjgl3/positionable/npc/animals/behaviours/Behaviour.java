@@ -11,6 +11,6 @@ public interface Behaviour {
     Action createFittingAction(Animal animal);
     boolean shouldCreateNewAction(Animal animal);
     void detectFood(Animal animal, EdibleCollection foodPositions);
-    void detectWater(Animal animal, List<Drinkable> allDrinkable);
+    void detectWater(Animal animal, EdibleCollection drinkPositions);
 
 }

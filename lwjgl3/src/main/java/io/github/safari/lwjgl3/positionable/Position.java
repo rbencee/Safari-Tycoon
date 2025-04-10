@@ -55,6 +55,23 @@ public class Position {
         return new Position(x,y,width,height);
     }
 
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Position other = (Position) obj;
+        return other.getX() == this.getX() &&
+            other.getY() == this.getY() &&
+            other.getHeight() == this.getHeight() &&
+            other.getWidth() == this.getWidth();
+    }
+
     public static float distance(Position pos1, Position pos2){
         Vector2 vect1 = new Vector2(pos1.getX(), pos1.getY());
         Vector2 vect2 = new Vector2(pos2.getX(), pos2.getY());

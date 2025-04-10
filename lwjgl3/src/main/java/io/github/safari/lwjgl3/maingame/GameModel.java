@@ -32,6 +32,7 @@ public class GameModel implements EdibleCollection{
 
     ArrayList<Animal> allHerbivores = new ArrayList<>();
     ArrayList<HerbivoreEdible> allHerbivoreEdible = new ArrayList<>();
+    ArrayList<Drinkable> allDrinkable = new ArrayList<>();
 
 
     @Override
@@ -42,6 +43,11 @@ public class GameModel implements EdibleCollection{
     @Override
     public ArrayList<Animal> getAllHerbivores() {
         return allHerbivores;
+    }
+
+    @Override
+    public ArrayList<Drinkable> getAllDrinkable() {
+        return allDrinkable;
     }
 
     private int objectNumber = 50;
@@ -148,6 +154,7 @@ public class GameModel implements EdibleCollection{
             if (positionFound(x, y, width, height)) {
                 Lake lake = new Lake(new Position(x, y, width, height));
                 environments.add(lake);
+                allDrinkable.add(lake);
                 objectCount++;
             }
         }

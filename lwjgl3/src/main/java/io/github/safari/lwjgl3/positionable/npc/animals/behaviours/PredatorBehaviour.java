@@ -14,7 +14,7 @@ import java.util.List;
 public class PredatorBehaviour implements Behaviour {
 
     HashMap<Animal, Position> preyPositions = new HashMap<>();
-    List<Drinkable> knownDrinkables = new ArrayList<>();
+    HashMap<Drinkable, Position> knownDrinkables = new HashMap<>();
 
     @Override
     public Action createFittingAction(Animal animal) {
@@ -47,18 +47,8 @@ public class PredatorBehaviour implements Behaviour {
 
 
     @Override
-    public void detectWater(Animal animal, List<Drinkable> allDrinkable) {
-        Vector2 animalPos = new Vector2(animal.getPosition().getX(), animal.getPosition().getY());
-        for (Drinkable drink : allDrinkable) {
-            if (knownDrinkables.contains(drink)){
-                continue;
-            }
-
-            Vector2 foodPos = new Vector2(drink.getPosition().getX(), drink.getPosition().getY());
-            if(animalPos.dst(foodPos) <= animal.getVisionRange()) {
-                knownDrinkables.add(drink);
-            }
-        }
+    public void detectWater(Animal animal, EdibleCollection drinkables) {
+        System.out.println("predator detectwater not ready yet");
     }
 
 
