@@ -3,10 +3,8 @@ package io.github.safari.lwjgl3.maingame;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
-import io.github.safari.lwjgl3.positionable.objects.Bush;
-import io.github.safari.lwjgl3.positionable.objects.Grass;
-import io.github.safari.lwjgl3.positionable.objects.Lake;
-import io.github.safari.lwjgl3.positionable.objects.Tree;
+import io.github.safari.lwjgl3.positionable.objects.*;
+import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 
 public class GameController {
     Shop shop;
@@ -30,14 +28,14 @@ public class GameController {
             if (gameModel.positionFound(x, y, width, height) || isjeep){
                 if (gameModel.CanBuy(selectedItem)) {
                     if(!isjeep) {
-                        gameModel.BuyItem(selectedItem, x, y, width, height);
+                        BuyItem(selectedItem, x, y, width, height);
                         //shop.clearSelection();
                         return true;
                     } else
                     {
                         if(gameModel.Is_There_Road(x, y))
                         {
-                            gameModel.BuyItem(selectedItem,x,y,width,height);
+                            BuyItem(selectedItem,x,y,width,height);
 
                         } else
                         {
@@ -61,9 +59,10 @@ public class GameController {
         return false;
 
     }
-    public void buyItem(ShopItem item, float x,float y,int width, int height) {
+    private void BuyItem(ShopItem item, float x,float y,int width, int height) {
         System.out.println(item.getName());
 
+        gameModel.Decrease_My_Money(item.getPrice());
         Animal animal = null;
         Herd herd = null;
 
@@ -90,15 +89,27 @@ public class GameController {
                 break;
             case "Bush":
                 Bush bush = new Bush(new Position(x, y, width, height));
+                gameModel.addtoenvironment(bush);
                 break;
             case "Tree":
                 Tree tree = new Tree(new Position(x, y, width, height));
+                gameModel.addtoenvironment(tree);
                 break;
             case "Lake":
                 Lake lake = new Lake(new Position(x, y, width, height));
+                gameModel.addtoenvironment(lake);
                 break;
             case "Grass":
                 Grass grass = new Grass(new Position(x, y, width, height));
+                gameModel.addtoenvironment(grass);
+                break;
+            case "Road":
+                Road road= new Road(new Position(x,y, width, height));
+                gameModel.addtoroads(road);
+                break;
+            case "Jeep":
+                Jeep jeep= new Jeep(new Position(x,y, width, height));
+                gameModel.addtojeeps(jeep);
                 break;
             default:
                 System.out.println("Not Implemented yet!");
