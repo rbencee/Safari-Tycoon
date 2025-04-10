@@ -332,14 +332,7 @@ public class GameView implements Screen {
                 jeep.getPosition().getHeight() * scale);
 
         }
-        spriteBatch.end();
 
-
-        stage.act(delta);
-        stage.draw();
-
-        scorePanel.updateScore();
-        gameModel.Simulation(delta);
     }
 
     private void zoomContolButtons() {
