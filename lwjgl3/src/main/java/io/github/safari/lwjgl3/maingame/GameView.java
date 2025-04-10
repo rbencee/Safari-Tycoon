@@ -172,10 +172,10 @@ public class GameView implements Screen {
         scorePanel.updateScore();
         gameModel.Simulation(delta);
 
-        renderMinimap();
+        renderMinimap(delta);
     }
 
-    private void renderMinimap() {
+    private void renderMinimap(float delta) {
         int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE;
         int minimapY = MINIMAP_BORDER;
 
@@ -205,7 +205,7 @@ public class GameView implements Screen {
         minimapBatch.end();
 
         minimapBatch.begin();
-            drawSprites(minimapBatch,scaledelta);
+            drawSprites(minimapBatch,scale,delta);
         minimapBatch.end();
 
         shapeRenderer.setProjectionMatrix(minimapCamera.combined);
@@ -313,12 +313,12 @@ public class GameView implements Screen {
 
         for(Road road : gameModel.getRoads())
         {
-            spriteBatch.draw(road.getTexture(), road.getPosition().getX(), road.getPosition().getY(), road.getPosition().getWidth(), road.getPosition().getHeight());
+            spriteBatch.draw(road.getTexture(), road.getPosition().getX() * scale, road.getPosition().getY() * scale, road.getPosition().getWidth() * scale, road.getPosition().getHeight() * scale);
 
         }
         for (Herd herd : gameModel.getHerds()) {
             for (Animal animal : herd.getAnimals()) {
-                spriteBatch.draw(animal.getTexture(), animal.getPosition().getX() * scale, animal.getPosition().getY() * scale, animal.getPosition().getWidth() * scale, animal.getPosition().getHeight()* scale);
+                spriteBatch.draw(animal.getTexture() , animal.getPosition().getX() * scale, animal.getPosition().getY() * scale, animal.getPosition().getWidth() * scale, animal.getPosition().getHeight()* scale);
 
             }
         }
@@ -326,10 +326,10 @@ public class GameView implements Screen {
         for(Jeep jeep : gameModel.getJeeps())
         {
             spriteBatch.draw(jeep.getTexture(),
-                jeep.getPosition().getX(),
-                jeep.getPosition().getY(),
-                jeep.getPosition().getWidth(),
-                jeep.getPosition().getHeight());
+                jeep.getPosition().getX() * scale,
+                jeep.getPosition().getY() * scale,
+                jeep.getPosition().getWidth() * scale,
+                jeep.getPosition().getHeight() * scale);
 
         }
         spriteBatch.end();
