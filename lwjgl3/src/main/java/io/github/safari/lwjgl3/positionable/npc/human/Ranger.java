@@ -32,7 +32,7 @@ public class Ranger implements Moveable, Positionable {
     }
 
     @Override
-    public int GetSpeed() {
+    public int getSpeed() {
         return 0;
     }
 

@@ -2,6 +2,7 @@ package io.github.safari.lwjgl3.maingame;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -36,7 +37,8 @@ public class GameView implements Screen {
 
     private Skin skin;
 
-    private Stage stage;
+    private Stage gameStage;
+    private Stage uiStage;
     private final GameModel gameModel;
     private Shop shop;
     private final Game game;
@@ -64,11 +66,11 @@ public class GameView implements Screen {
     private final Texture grassTexture;
     private final Texture bushTexture;
 
-    private SpriteBatch spriteBatch;
+    private final SpriteBatch spriteBatch;
 
     private ScreenViewport viewport;
-    private float cameraMaxZoom = 1.4f;
-    private float cameraMinZoom = 0.6f;
+    private final float cameraMaxZoom = 1.4f;
+    private final float cameraMinZoom = 0.6f;
 
     private static final float MINIMAP_SCALE = 0.2f;
     private static final int MINIMAP_SIZE = (int) (3200 * MINIMAP_SCALE);
@@ -105,8 +107,10 @@ public class GameView implements Screen {
     }
 
 
+
     @Override
     public void show() {
+
         camera = new OrthographicCamera();
         viewport = new ScreenViewport(camera);
 
@@ -116,14 +120,23 @@ public class GameView implements Screen {
 
         camera.setToOrtho(false, 1920, 1080);
 
-        stage = new Stage(new FitViewport(1920, 1080));
-        Gdx.input.setInputProcessor(stage);
+
+        uiStage = new Stage(new ScreenViewport());
+        gameStage = new Stage(viewport);
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(uiStage);
+        multiplexer.addProcessor(gameStage);
+
+        Gdx.input.setInputProcessor(multiplexer);
+
         skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
 
         Table table = new Table();
         table.setFillParent(true);
 
-        shop = new Shop(skin, stage, this.gameModel);
+
+        shop = new Shop(skin, uiStage, this.gameModel);
 
         TextButton openShopButton = new TextButton("Shop", skin);
         openShopButton.setPosition(0, 0);
@@ -141,11 +154,11 @@ public class GameView implements Screen {
         zoomContolButtons();
         speedbutton();
 
-        stage.addActor(openShopButton);
-        stage.addActor(table);
+        uiStage.addActor(openShopButton);
+        uiStage.addActor(table);
 
-        gameController = new GameController(shop, this.gameModel);
-        this.scorePanel = new ScorePanel(skin, stage, gameModel);
+        gameController = new GameController(shop,this.gameModel, this);
+        this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
         setupPlace();
         minimapInput();
     }
@@ -166,8 +179,11 @@ public class GameView implements Screen {
             drawSprites(spriteBatch,1,delta);
         spriteBatch.end();
 
-        stage.act(delta);
-        stage.draw();
+        gameStage.act(delta);
+        gameStage.draw();
+
+        uiStage.act(delta);
+        uiStage.draw();
 
         scorePanel.updateScore();
         gameModel.Simulation(delta);
@@ -330,8 +346,8 @@ public class GameView implements Screen {
                 jeep.getPosition().getY() * scale,
                 jeep.getPosition().getWidth() * scale,
                 jeep.getPosition().getHeight() * scale);
+            }
 
-        }
 
     }
 
@@ -363,9 +379,9 @@ public class GameView implements Screen {
             }
         });
 
-        stage.addActor(zoomLabel);
-        stage.addActor(zoomOutButton);
-        stage.addActor(zoomInButton);
+        uiStage.addActor(zoomLabel);
+        uiStage.addActor(zoomOutButton);
+        uiStage.addActor(zoomInButton);
     }
 
     private void speedbutton() {
@@ -409,9 +425,9 @@ public class GameView implements Screen {
 
 
 
-        stage.addActor(daySpeedButton);
-        stage.addActor(weekSpeedButton);
-        stage.addActor(monthSpeedButton);
+        uiStage.addActor(daySpeedButton);
+        uiStage.addActor(weekSpeedButton);
+        uiStage.addActor(monthSpeedButton);
     }
 
 
@@ -442,7 +458,8 @@ public class GameView implements Screen {
         viewport.update(width, height, true);
         camera.setToOrtho(false, width, height);
 
-        stage.getViewport().update(width, height, true);
+        uiStage.getViewport().update(width, height, true);
+        gameStage.getViewport().update(width, height, true);
 
         int newMinimapSize = (int)(MINIMAP_SIZE * (width / 1920f));
         minimapViewport.update(newMinimapSize, newMinimapSize);
@@ -468,7 +485,8 @@ public class GameView implements Screen {
     public void dispose() {
         map.dispose();
         mapRenderer.dispose();
-        stage.dispose();
+        gameStage.dispose();
+        uiStage.dispose();
         skin.dispose();
         spriteBatch.dispose();
         minimapBatch.dispose();
@@ -480,14 +498,20 @@ public class GameView implements Screen {
     }
 
 
+    public Stage getGameStage() {
+        return gameStage;
+    }
 
+    public Stage getUiStage() {
+        return uiStage;
+    }
 
     private void setupPlace()
     {
-        stage.addListener(new ClickListener() {
+        gameStage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Actor target = stage.hit(x, y, true);
+                Actor target = gameStage.hit(x, y, true);
                 if (target != null) return false;
 
                 ShopItem item = shop.getShopItems();
@@ -505,7 +529,7 @@ public class GameView implements Screen {
 
                     if(item.getName().equals("Jeep")) isjeep = true;
 
-                    
+
                     boolean placed = gameController.TryToPlace(world.x - 32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);

@@ -27,7 +27,7 @@ public class Poacher implements Moveable, Positionable {
     }
 
     @Override
-    public int GetSpeed() {
+    public int getSpeed() {
         return 0;
     }
 

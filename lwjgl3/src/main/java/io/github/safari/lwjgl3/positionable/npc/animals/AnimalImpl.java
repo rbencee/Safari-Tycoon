@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import io.github.safari.lwjgl3.maingame.GameModel;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.util.Positionable;
@@ -14,50 +15,39 @@ import io.github.safari.lwjgl3.util.Positionable;
 import java.util.ArrayList;
 
 public class AnimalImpl extends Actor implements Animal, Positionable {
-    final float visionRange;
-
     double age;
-    final double maxAge;
     double hunger;
     double thirst;
-    final double speed;
-    //??? picture;
     final Texture texture;
     Position position;
-    ArrayList<Position> knownFood;
-    ArrayList<Position> knownWater;
     final AnimalSpecies animalSpecies;
     final Behaviour behaviour;
+    final EdibleCollection edibles;
 
     public AnimalImpl (
-        float visionRange,
         double age,
-        double maxAge,
         double hunger,
         double thirst,
-        double speed,
         Texture texture,
         Position position,
         AnimalSpecies animalSpecies,
-        Behaviour behaviour) {
+        Behaviour behaviour,
+        EdibleCollection edibles) {
 
-
-        this.visionRange = visionRange;
         this.age = age;
-        this.maxAge = maxAge;
         this.hunger = hunger;
         this.thirst = thirst;
-        this.speed = speed;
         this.texture = texture;
         this.position = position;
         this.setPosition(position.getX(), position.getY()); //inherited from Actor
         this.animalSpecies = animalSpecies;
         this.behaviour = behaviour;
+        this.edibles = edibles;
     }
 
     @Override
     public float getVisionRange() {
-        return visionRange;
+        return animalSpecies.getVisionRange();
     }
 
     @Override
@@ -67,7 +57,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public double getMaxAge() {
-        return maxAge;
+        return animalSpecies.getMaxAge();
     }
 
     @Override
@@ -82,22 +72,12 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public double getSpeed() {
-        return speed;
+        return animalSpecies.getSpeed();
     }
 
     @Override
     public Position getPosition() {
-        return position;
-    }
-
-    @Override
-    public ArrayList<Position> getKnownFood() {
-        return knownFood;
-    }
-
-    @Override
-    public ArrayList<Position> getKnownWater() {
-        return knownWater;
+        return new Position(this.getX(), this.getY(), this.position.getWidth(), this.position.getHeight());
     }
 
     @Override
@@ -115,17 +95,23 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         return texture;
     }
 
-    //todo detect water
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        behaviour.detectFood(this, edibles);
+        behaviour.detectWater(this, edibles);
+
+        if (getActions().isEmpty()) {
+            addAction(behaviour.createFittingAction(this));
+        }
+        this.hunger -= delta;
+        this.thirst -= delta;
+        //todo egyen is, ha odaért
+    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        if(!this.hasActions() || behaviour.shouldCreateNewAction(this)){
-            this.clearActions();
-            Action b = behaviour.createFittingAction(this);
-            if (b != null) {
-                this.addAction(b);
-            }
-        }
+        batch.draw(texture, this.getX(), this.getY());
     }
 }
