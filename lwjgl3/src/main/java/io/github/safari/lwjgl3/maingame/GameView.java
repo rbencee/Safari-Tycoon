@@ -69,8 +69,9 @@ public class GameView implements Screen {
     private final SpriteBatch spriteBatch;
 
     private ScreenViewport viewport;
-    private final float cameraMaxZoom = 1.4f;
-    private final float cameraMinZoom = 0.6f;
+    private final float cameraMaxZoom = 1.9f;
+    private final float cameraMinZoom = 0.5f;
+    private final float targetZoom = 0.05f;
 
     private static final float MINIMAP_SCALE = 0.2f;
     private static final int MINIMAP_SIZE = (int) (3200 * MINIMAP_SCALE);
@@ -78,10 +79,7 @@ public class GameView implements Screen {
     private ShapeRenderer shapeRenderer;
 
     private boolean isDragging = false;
-    private float lastX = 0;
-    private float lastY = 0;
-    private float minimapX = 0;
-    private float minimapY = 0;
+
 
     public GameView(Game game, int difficulty) {
 
@@ -152,6 +150,7 @@ public class GameView implements Screen {
         });
 
         zoomContolButtons();
+        zoomControlScroll();
         speedbutton();
 
         uiStage.addActor(openShopButton);
@@ -190,6 +189,7 @@ public class GameView implements Screen {
 
         renderMinimap(delta);
     }
+
 
     private void renderMinimap(float delta) {
         int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE;
@@ -381,6 +381,23 @@ public class GameView implements Screen {
         uiStage.addActor(zoomLabel);
         uiStage.addActor(zoomOutButton);
         uiStage.addActor(zoomInButton);
+    }
+
+    private void zoomControlScroll() {
+        InputListener scrollListener = new InputListener() {
+            @Override
+            public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
+                float newZoom = camera.zoom + (amountY * targetZoom);
+                newZoom = Math.max(cameraMinZoom, Math.min(cameraMaxZoom, newZoom));
+                camera.zoom += (newZoom - camera.zoom) * 0.2f;
+
+                clampCameraPosition();
+                camera.update();
+                return true;
+            }
+        };
+
+        gameStage.addListener(scrollListener);
     }
 
     private void speedbutton() {
