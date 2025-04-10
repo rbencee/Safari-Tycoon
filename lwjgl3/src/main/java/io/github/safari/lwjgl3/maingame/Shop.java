@@ -33,7 +33,7 @@ public class Shop {
         shopWindow = new Window("", skin);
         shopWindow.setSize(600, 600);
         shopWindow.setPosition(0,(Gdx.graphics.getHeight() / 2f - 150)); //dx.graphics.getHeight() / 2f - 200
-        shopWindow.setMovable(false);
+        shopWindow.setMovable(true);
         shopWindow.setResizable(false);
 
 

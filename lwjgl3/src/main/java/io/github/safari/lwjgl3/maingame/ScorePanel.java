@@ -1,9 +1,11 @@
 package io.github.safari.lwjgl3.maingame;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 public class ScorePanel {
     private Label scoreLabel;
@@ -13,16 +15,22 @@ public class ScorePanel {
     public ScorePanel(Skin skin, Stage stage, GameModel gameModel) {
         this.gameModel = gameModel;
 
-        table = new Table();
+        table = new Table(skin);
         table.setFillParent(true);
         table.left().top();
 
 
         scoreLabel = new Label("", skin);
+        Table labelTable = new Table(skin);
+
+        labelTable.add(scoreLabel).pad(10);
+        labelTable.setBackground(skin.getDrawable("cell"));
+
+        table.add(labelTable).pad(10);
+
+
         scoreLabel.setText(getScoreText());
 
-
-        table.add(scoreLabel).pad(10);
         stage.addActor(table);
     }
 

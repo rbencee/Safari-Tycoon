@@ -39,6 +39,8 @@ public class Lwjgl3Launcher {
             music.setLooping(true);
             music.setVolume(0.5f);
             music.play();
+
+
         }
 
         @Override
