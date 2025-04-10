@@ -505,7 +505,7 @@ public class GameView implements Screen {
 
                     if(item.getName().equals("Jeep")) isjeep = true;
 
-                    // Normál egy dara.bos elhelyezés
+                    
                     boolean placed = gameController.TryToPlace(world.x - 32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);

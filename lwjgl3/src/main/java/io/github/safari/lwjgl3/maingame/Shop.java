@@ -1,11 +1,14 @@
 package io.github.safari.lwjgl3.maingame;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import io.github.safari.lwjgl3.util.ShopType;
+
+import java.util.ArrayList;
 
 public class Shop {
     private Window shopWindow;
@@ -14,7 +17,8 @@ public class Shop {
     private Table contentTable;
     private Skin skin;
     private GameModel MainGame;
-    private TextButton[] PShownbuttons;
+    private TextButton[] PShownbuttons; //Ez is lehetne Arraylistes megoldas
+    private ArrayList<TextButton> allItemButtons;
     private ShopItem SelectedItem;
 
 
@@ -29,7 +33,7 @@ public class Shop {
         shopWindow = new Window("", skin);
         shopWindow.setSize(600, 600);
         shopWindow.setPosition(0,(Gdx.graphics.getHeight() / 2f - 150)); //dx.graphics.getHeight() / 2f - 200
-        shopWindow.setMovable(false);
+        shopWindow.setMovable(true);
         shopWindow.setResizable(false);
 
 
@@ -40,6 +44,7 @@ public class Shop {
 
 
         this.PShownbuttons = new TextButton[3];
+        this.allItemButtons = new ArrayList<>();
 
         PShownbuttons[0] = plantsButton;
         PShownbuttons[1] = animalsButton;
@@ -124,6 +129,8 @@ public class Shop {
 
     private void showPlantsPage() {
         pageShown = ShopType.PLANTS;
+        resetPageButtonColors();
+        PShownbuttons[0].getLabel().setColor(Color.YELLOW);
         updateContent(new ShopItem[]{
             new ShopItem("Tree", 50),
             new ShopItem("Lake", 20),
@@ -134,6 +141,8 @@ public class Shop {
 
     private void showAnimalsPage() {
         pageShown = ShopType.ANIMALS;
+        resetPageButtonColors();
+        PShownbuttons[1].getLabel().setColor(Color.YELLOW); // Animals gomb kiemelése
         updateContent(new ShopItem[]{
             new ShopItem("Capybara", 100),
             new ShopItem("Mammoth", 500),
@@ -144,6 +153,8 @@ public class Shop {
 
     private void showOthersPage() {
         pageShown = ShopType.OTHERS;
+        resetPageButtonColors();
+        PShownbuttons[2].getLabel().setColor(Color.YELLOW); // Others gomb kiemelése
         updateContent(new ShopItem[]{
             new ShopItem("Road", 200),
             new ShopItem("Ranger", 500),
@@ -152,35 +163,44 @@ public class Shop {
         });
     }
 
+
     private void updateContent(ShopItem[] items) {
         contentTable.clear();
+        allItemButtons.clear();
 
         for (ShopItem item : items) {
             TextButton itemButton = new TextButton(item.getName() + " - " + item.getPrice() + "$", skin);
+            allItemButtons.add(itemButton);
             SetFontsize(0.8f, itemButton);
             itemButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    resetItemButtonColors();
+                    itemButton.getLabel().setColor(Color.YELLOW);
                     SelectedItem = item;
                     System.out.println(item.getName() + " selected! Price: " + item.getPrice());
 
                 }
             });
             TextButton sellbutton = new TextButton("Sell" + " - " + item.getPrice() * 0.7 + "$", skin);
-            SetFontsize(0.8f, sellbutton);
-            itemButton.addListener(new ClickListener() {
+            allItemButtons.add(sellbutton);
+            SetFontsize(0.6f, sellbutton);
+            sellbutton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    resetItemButtonColors();
+                    sellbutton.getLabel().setColor(Color.YELLOW);
                     SelectedItem = item;
                     System.out.println(item.getName() + " selected for sell! Price: " + item.getPrice() * 0.7);
-
 
                 }
             });
 
 
 
-            contentTable.add(itemButton).pad(5).row();
+            contentTable.add(itemButton).pad(5);
+            contentTable.add(sellbutton).width(150).height(75).pad(5);
+            contentTable.row();
         }
     }
 
@@ -198,4 +218,21 @@ public class Shop {
 
         }
     }
+
+
+    private void resetPageButtonColors() {
+        for (TextButton button : PShownbuttons) {
+            button.getLabel().setColor(Color.WHITE);
+        }
+    }
+
+    private void resetItemButtonColors() {
+        for (TextButton button : allItemButtons) {
+            button.getLabel().setColor(Color.WHITE);
+        }
+    }
+
+
+
+
 }
