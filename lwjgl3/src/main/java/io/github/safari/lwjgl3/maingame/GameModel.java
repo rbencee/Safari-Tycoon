@@ -52,13 +52,12 @@ public class GameModel implements EdibleCollection{
         return allDrinkable;
     }
 
-    private int objectNumber = 50;
+    private int objectNumber = 20;
     private float mapWidth = 3200;
     private float mapHeight = 3200;
     private Random random;
     private boolean isDaytime = true;
     private float minDistance = 64;
-    private float timeOfDay = 6.0f;
 
     private float timeacc = 0;
 
@@ -269,17 +268,12 @@ public class GameModel implements EdibleCollection{
             int previousDays = dayspassed;
             timeacc += delta;
 
-            float timeSpeed = 0.1f * speed;
-            timeOfDay += delta * timeSpeed;
-            if (timeOfDay >= 24.0f)
-                timeOfDay -= 24.0f;
-
-            isDaytime = timeOfDay >= 6.0f && timeOfDay < 18.0f;
 
             if(timeacc >= 3.0f)
             {
                 dayspassed += timeinterval;
                 timeacc = 0;
+                isDaytime = !isDaytime;
 
                 if((dayspassed - previousDays) % 30 == 0) {
                     calculateIncome();
@@ -291,10 +285,6 @@ public class GameModel implements EdibleCollection{
 
     public boolean isDaytime() {
         return isDaytime;
-    }
-
-    public float getTimeOfDay() {
-        return timeOfDay;
     }
 
     public void increasemoney(int money)
