@@ -6,8 +6,10 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -80,6 +82,10 @@ public class GameView implements Screen {
 
     private boolean isDragging = false;
 
+    private FrameBuffer fogBuffer;
+    private Texture fogTexture;
+    private SpriteBatch fogBatch;
+
 
     public GameView(Game game, int difficulty) {
 
@@ -102,6 +108,8 @@ public class GameView implements Screen {
         this.minimapBatch = new SpriteBatch();
         this.game = game;
         this.gameModel = new GameModel(difficulty);
+        fogBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        fogBatch = new SpriteBatch();
     }
 
 
@@ -188,6 +196,47 @@ public class GameView implements Screen {
         gameModel.Simulation(delta);
 
         renderMinimap(delta);
+        renderFogOfWar();
+    }
+
+    public void renderFogOfWar() {
+        if (!gameModel.isDaytime()) return;
+
+        fogBuffer.begin();
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (Environment env : gameModel.getEnvironments()) {
+            float x = env.getPosition().getX();
+            float y = env.getPosition().getY();
+            float radius = 80f;
+
+            shapeRenderer.setColor(0, 0, 0, 0);
+            shapeRenderer.circle(x, y, radius);
+        }
+
+        shapeRenderer.end();
+
+        fogBuffer.end();
+
+        fogTexture = fogBuffer.getColorBufferTexture();
+        fogTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        fogTexture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+
+        fogBatch.begin();
+        fogBatch.setProjectionMatrix(camera.combined);
+
+        fogBatch.setColor(1, 1, 1, 0.85f);
+        fogBatch.draw(fogTexture,
+            camera.position.x - camera.viewportWidth / 2,
+            camera.position.y - camera.viewportHeight / 2,
+            camera.viewportWidth,
+            camera.viewportHeight);
+        fogBatch.end();
     }
 
 

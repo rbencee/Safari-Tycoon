@@ -8,6 +8,7 @@ import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 
+
 import java.util.*;
 
 
@@ -55,7 +56,9 @@ public class GameModel implements EdibleCollection{
     private float mapWidth = 3200;
     private float mapHeight = 3200;
     private Random random;
+    private boolean isDaytime = true;
     private float minDistance = 64;
+    private float timeOfDay = 6.0f;
 
     private float timeacc = 0;
 
@@ -266,6 +269,13 @@ public class GameModel implements EdibleCollection{
             int previousDays = dayspassed;
             timeacc += delta;
 
+            float timeSpeed = 0.1f * speed;
+            timeOfDay += delta * timeSpeed;
+            if (timeOfDay >= 24.0f)
+                timeOfDay -= 24.0f;
+
+            isDaytime = timeOfDay >= 6.0f && timeOfDay < 18.0f;
+
             if(timeacc >= 3.0f)
             {
                 dayspassed += timeinterval;
@@ -277,6 +287,14 @@ public class GameModel implements EdibleCollection{
             }
         }
 
+    }
+
+    public boolean isDaytime() {
+        return isDaytime;
+    }
+
+    public float getTimeOfDay() {
+        return timeOfDay;
     }
 
     public void increasemoney(int money)
