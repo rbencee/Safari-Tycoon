@@ -642,10 +642,10 @@ public class GameView implements Screen {
 
     private void setupPlace()
     {
-        gameStage.addListener(new ClickListener() {
+        uiStage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Actor target = gameStage.hit(x, y, true);
+                Actor target = uiStage.hit(x, y, true);
                 if (target != null) return false;
 
                 ShopItem item = shop.getShopItems();
