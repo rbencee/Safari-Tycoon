@@ -192,19 +192,20 @@ public class GameModel implements EdibleCollection{
 
                 float gridSize = 64f;
 
-                float entranceY = random.nextInt((int)(mapHeight / gridSize)) * gridSize - 32;
-                float exitY = random.nextInt((int)(mapHeight / gridSize)) * gridSize - 32;
+                float entranceY =(random.nextInt((int)(mapHeight / gridSize))) * gridSize;
+                float exitY = (random.nextInt((int)(mapHeight / gridSize))) * gridSize;
 
 
 
                 if(positionFound(0,entranceY,64,64)) {
-                    Road entrance = new Road(new Position(32, entranceY, 64, 64), 2);
+                    Road entrance = new Road(new Position(0, entranceY, 64, 64), 2);
                     roads.add(entrance);
+                    //System.out.println("entrance:" + entrance.getRoadtype() + "   " + entrance.getPosition().getX() + "   " + entrance.getPosition().getY());
                     entranceb = true;
                 }
 
-                if(positionFound(0,exitY,64,64)) {
-                    Road exit = new Road(new Position(mapWidth - 64 - 32, exitY, 64, 64), 3);
+                if(positionFound(mapWidth - 64,exitY,64,64)) {
+                    Road exit = new Road(new Position(mapWidth - 64 , exitY, 64, 64), 3);
                     roads.add(exit);
                     exitb = true;
                 }
@@ -274,6 +275,19 @@ public class GameModel implements EdibleCollection{
                 if((dayspassed - previousDays) % 30 == 0) {
                     calculateIncome();
                 }
+            }
+
+            for(Jeep jeep : jeeps)
+            {
+                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
+                if(roadtogo != null) {
+                    jeep.moveTowards(roadtogo.getPosition(), timeinterval);
+                    //System.out.println("ROAD TO GO: " + roadtogo.getPosition());
+                }else
+                {
+                    //System.out.println("ROAD TO GO NOT FOUND");
+                }
+
             }
         }
 
@@ -366,6 +380,27 @@ public class GameModel implements EdibleCollection{
         return false;
     }
 
+    public void SellThis(float x, float y, ShopItem item)
+    {
+
+        String item_to_sell = item.getName();
+
+
+
+        switch (item_to_sell)
+        {
+            case "Grass":
+            case "Tree":
+            case "Bush":
+            case "Lake":
+                for(Environment environment : environments)
+                {
+
+                }
+
+        }
+    }
+
     public void addtoenvironment(Environment environment)
     {
         this.environments.add(environment);
@@ -405,7 +440,156 @@ public class GameModel implements EdibleCollection{
 
     }
 
+    /*
+    public boolean isPathToEntrance(Jeep jeep) {
+        Position startPos = jeep.getPosition();
+        Road startRoad = getClosestRoad(startPos);
+        Road entrance = getEntranceRoad();
 
+        if (startRoad == null || entrance == null) return false;
+
+        Set<Road> visited = new HashSet<>();
+        Queue<Road> queue = new LinkedList<>();
+        queue.add(startRoad);
+
+        while (!queue.isEmpty()) {
+            Road current = queue.poll();
+            if (current.equals(entrance)) return true;
+
+            visited.add(current);
+
+            for (Road neighbor : getAdjacentRoads(current)) {
+                if (!visited.contains(neighbor)) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        return false;
+    }
+    */
+
+    public Road getClosestRoad(Position pos) {
+        Road closest = null;
+        float minDist = Float.MAX_VALUE;
+
+        for (Road road : roads) {
+            float dx = pos.getX() - road.getPosition().getX();
+            float dy = pos.getY() - road.getPosition().getY();
+            float dist = dx * dx + dy * dy;
+
+            if (dist < minDist) {
+                minDist = dist;
+                closest = road;
+            }
+        }
+
+        return closest;
+    }
+
+    public Road getEntranceRoad() {
+        for (Road road : roads) {
+            if (road.getRoadtype() == 2) {
+                return road;
+            }
+        }
+        return null;
+    }
+
+    public Road getExitRoad() {
+        for (Road road : roads) {
+            if (road.getRoadtype() == 3) {
+                return road;
+            }
+        }
+        System.out.println("RETURNING NULL!");
+        return null;
+    }
+
+
+    public List<Road> getAdjacentRoads(Road road) {
+        List<Road> adjacent = new ArrayList<>();
+        Position pos = road.getPosition();
+
+        for (Road other : roads) {
+            if (other == road) continue;
+
+            Position otherPos = other.getPosition();
+
+            float dx = Math.abs(pos.getX() - otherPos.getX());
+            float dy = Math.abs(pos.getY() - otherPos.getY());
+
+            if ((dx == 64 && dy == 0) || (dx == 0 && dy == 64)) {
+                adjacent.add(other);
+            }
+        }
+
+        return adjacent;
+    }
+
+
+    public Road getNextRoadTowardsEntrance(Jeep jeep, boolean isentrancedestionation) {
+        System.out.println("GOTO: " +  isentrancedestionation);
+        Position startPos = jeep.getPosition();
+        Road startRoad = getClosestRoad(startPos);
+        Road entrance;
+        if(isentrancedestionation) {
+            entrance = getEntranceRoad();
+        } else
+        {
+            entrance = getExitRoad();
+        }
+
+        System.out.println("STARTROAD: " + startRoad.getPosition());
+        System.out.println("entrance: " + entrance.getPosition());
+
+
+
+        if (startRoad == null || entrance == null) return null;
+        System.out.println("Not triggered");
+
+
+        if (startRoad.getPosition().equals(entrance.getPosition())) {
+            System.out.println("TARGET CHANGED");
+            jeep.setTostart(!jeep.isTostart());
+        }
+
+
+        Map<Road, Road> cameFrom = new HashMap<>();
+        Queue<Road> queue = new LinkedList<>();
+        Set<Road> visited = new HashSet<>();
+
+        queue.add(startRoad);
+        visited.add(startRoad);
+        cameFrom.put(startRoad, null);
+
+        while (!queue.isEmpty()) {
+            Road current = queue.poll();
+
+            if (current.equals(entrance)) {
+
+                Road step = current;
+                Road prev = cameFrom.get(step);
+
+                while (prev != null && !prev.equals(startRoad)) {
+                    step = prev;
+                    prev = cameFrom.get(step);
+                }
+
+                return step;
+            }
+
+            for (Road neighbor : getAdjacentRoads(current)) {
+                if (!visited.contains(neighbor)) {
+                    queue.add(neighbor);
+                    visited.add(neighbor);
+                    cameFrom.put(neighbor, current);
+                }
+            }
+        }
+
+        return null; // Nincs út
+    }
 
     /*
     private CheckInRange()

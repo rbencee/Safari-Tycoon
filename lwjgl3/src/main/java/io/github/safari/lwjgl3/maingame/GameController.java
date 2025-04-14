@@ -25,28 +25,30 @@ public class GameController {
         ShopItem selectedItem = shop.getShopItems();
 
         if (selectedItem != null) {
-            if (gameModel.positionFound(x, y, width, height) || isjeep){
-                if (gameModel.CanBuy(selectedItem)) {
-                    if(!isjeep) {
-                        BuyItem(selectedItem, x, y, width, height);
-                        //shop.clearSelection();
-                        return true;
-                    } else
-                    {
-                        if(gameModel.Is_There_Road(x, y))
-                        {
-                            BuyItem(selectedItem,x,y,width,height);
+            if(shop.isBuying()) {
+                if (gameModel.positionFound(x, y, width, height) || isjeep) {
+                    if (gameModel.CanBuy(selectedItem)) {
+                        if (!isjeep) {
+                            BuyItem(selectedItem, x, y, width, height);
+                            //shop.clearSelection();
+                            return true;
+                        } else {
+                            if (gameModel.Is_There_Road(x, y)) {
+                                BuyItem(selectedItem, x, y, width, height);
 
-                        } else
-                        {
-                            System.out.println("No suitable Road Found");
+                            } else {
+                                System.out.println("No suitable Road Found");
+                            }
                         }
+                    } else {
+                        System.out.println("InSufficient FundsException!");
                     }
                 } else {
-                    System.out.println("InSufficient FundsException!");
+                    System.out.println("Target place ObstrcutedException!");
                 }
-            } else {
-                System.out.println("Target place ObstrcutedException!");
+            } else
+            {
+                SellThis(x,y,selectedItem);
             }
 
 
@@ -114,6 +116,53 @@ public class GameController {
             default:
                 System.out.println("Not Implemented yet!");
                 break;
+        }
+    }
+
+
+
+    private void SellThis(float x, float y, ShopItem item) {
+
+        String item_to_sell = item.getName();
+
+        Environment closest = null;
+        float minDistSq = Float.MAX_VALUE;
+        float sellRadius = 100f;
+
+        for (Environment environment : gameModel.getEnvironments()) {
+            boolean matches = false;
+
+            switch (item_to_sell) {
+                case "Grass":
+                    matches = environment instanceof Grass;
+                    break;
+                case "Tree":
+                    matches = environment instanceof Tree;
+                    break;
+                case "Bush":
+                    matches = environment instanceof Bush;
+                    break;
+                case "Lake":
+                    matches = environment instanceof Lake;
+                    break;
+            }
+
+            if (matches) {
+                float dx = environment.getPosition().getX() - x;
+                float dy = environment.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closest = environment;
+                }
+            }
+        }
+
+        if (closest != null) {
+            gameModel.getEnvironments().remove(closest);
+            gameModel.increasemoney((int)(item.getPrice() * 0.7f));
+
         }
     }
 

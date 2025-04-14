@@ -20,6 +20,7 @@ public class Shop {
     private TextButton[] PShownbuttons; //Ez is lehetne Arraylistes megoldas
     private ArrayList<TextButton> allItemButtons;
     private ShopItem SelectedItem;
+    private boolean IsBuying;
 
 
 
@@ -28,13 +29,16 @@ public class Shop {
         this.pageShown = ShopType.PLANTS;
         this.MainGame = MainGame;
         this.isVisible = false;
+        this.IsBuying = true;
 
 
         shopWindow = new Window("", skin);
         shopWindow.setSize(600, 600);
         shopWindow.setPosition(0,(Gdx.graphics.getHeight() / 2f - 150)); //dx.graphics.getHeight() / 2f - 200
-        shopWindow.setMovable(true);
+        shopWindow.setMovable(false);
         shopWindow.setResizable(false);
+
+
 
 
         TextButton plantsButton = new TextButton("Plants", skin);
@@ -94,6 +98,12 @@ public class Shop {
                 hide();
             }
         });
+
+
+        Make_It_MoveAble();
+
+
+
         shopWindow.add(closeButton).pad(10).row();
 
 
@@ -107,6 +117,8 @@ public class Shop {
     public ShopItem getShopItems() {
         return  this.SelectedItem;
     }
+
+    public boolean isBuying() {return IsBuying;}
 
     public void clearSelection()
     {
@@ -178,6 +190,7 @@ public class Shop {
                     resetItemButtonColors();
                     itemButton.getLabel().setColor(Color.YELLOW);
                     SelectedItem = item;
+                    IsBuying = true;
                     System.out.println(item.getName() + " selected! Price: " + item.getPrice());
 
                 }
@@ -191,6 +204,7 @@ public class Shop {
                     resetItemButtonColors();
                     sellbutton.getLabel().setColor(Color.YELLOW);
                     SelectedItem = item;
+                    IsBuying = false;
                     System.out.println(item.getName() + " selected for sell! Price: " + item.getPrice() * 0.7);
 
                 }
@@ -232,7 +246,27 @@ public class Shop {
         }
     }
 
+    private void Make_It_MoveAble()
+    {
+        shopWindow.addListener(new ClickListener() {
+            private float dragOffsetX, dragOffsetY;
 
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                super.touchDown(event, x, y, pointer, button);
+                dragOffsetX = x;
+                dragOffsetY = y;
+                return true;
+            }
+
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                float newX = shopWindow.getX() + (x - dragOffsetX);
+                float newY = shopWindow.getY() + (y - dragOffsetY);
+                shopWindow.setPosition(newX, newY);
+            }
+        });
+    }
 
 
 }

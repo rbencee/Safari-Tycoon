@@ -72,6 +72,7 @@ public class GameView implements Screen {
     private final float cameraMaxZoom = 1.4f;
     private final float cameraMinZoom = 0.6f;
 
+
     private static final float MINIMAP_SCALE = 0.2f;
     private static final int MINIMAP_SIZE = (int) (3200 * MINIMAP_SCALE);
     private static final int MINIMAP_BORDER = 20;
@@ -312,6 +313,38 @@ public class GameView implements Screen {
             camera.position.y = mapHeight - halfViewportHeight;
         }
     }
+    /*
+    private void handleEdgeScrolling(float delta) {
+        int mouseX = Gdx.input.getX();
+        int mouseY = Gdx.input.getY();
+        int screenWidth = Gdx.graphics.getWidth();
+        int screenHeight = Gdx.graphics.getHeight();
+
+        Vector3 move = new Vector3();
+
+        // Bal szél
+        if (mouseX < EDGE_MARGIN) {
+            move.x -= CAMERA_SPEED * delta;
+        }
+        // Jobb szél
+        else if (mouseX > screenWidth - EDGE_MARGIN) {
+            move.x += CAMERA_SPEED * delta;
+        }
+
+        // Alsó szél (Y lefelé nő!)
+        if (mouseY > screenHeight - EDGE_MARGIN) {
+            move.y -= CAMERA_SPEED * delta;
+        }
+        // Felső szél
+        else if (mouseY < EDGE_MARGIN) {
+            move.y += CAMERA_SPEED * delta;
+        }
+
+        camera.position.add(move);
+        camera.update();
+    }
+
+     */
 
     private void drawSprites(SpriteBatch spriteBatch, float scale, float delta){
         for (Environment env : gameModel.getEnvironments()) {
@@ -400,7 +433,6 @@ public class GameView implements Screen {
             }
         });
 
-        // Week gomb
         TextButton weekSpeedButton = new TextButton("Week", skin);
         weekSpeedButton.setPosition(initialX + buttonWidth + spacing, 80);
         weekSpeedButton.setSize(buttonWidth, buttonHeight);
@@ -507,10 +539,10 @@ public class GameView implements Screen {
 
     private void setupPlace()
     {
-        gameStage.addListener(new ClickListener() {
+        uiStage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Actor target = gameStage.hit(x, y, true);
+                Actor target = uiStage.hit(x, y, true);
                 if (target != null) return false;
 
                 ShopItem item = shop.getShopItems();
@@ -532,7 +564,7 @@ public class GameView implements Screen {
                     boolean placed = gameController.TryToPlace(world.x -32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
-                        shop.clearSelection();
+
                     }
                     return true;
                 }
@@ -544,8 +576,8 @@ public class GameView implements Screen {
                     Vector3 world = camera.unproject(new Vector3(x, Gdx.graphics.getHeight() - y, 0));
 
                     float gridSize = 64f;
-                    float roundedX = Math.round(world.x / gridSize) * gridSize - gridSize / 2;
-                    float roundedY = Math.round(world.y / gridSize) * gridSize - gridSize / 2;
+                    float roundedX = (float)Math.floor(world.x / gridSize) * gridSize ;
+                    float roundedY = (float)Math.floor(world.y / gridSize) * gridSize;
 
 
                     if (Math.abs(lastPlacedPos.x - roundedX) >= gridSize || Math.abs(lastPlacedPos.y - roundedY) >= gridSize) {

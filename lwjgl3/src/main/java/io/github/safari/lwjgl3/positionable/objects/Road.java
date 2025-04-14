@@ -33,13 +33,17 @@ public class Road extends Environment implements Positionable {
         } else {
             pixmap.setColor(Color.GRAY);
         }
-
+        this.roadtype = roadtype;
 
         pixmap.fill();
         Texture tex = new Texture(pixmap);
         pixmap.dispose();
         return tex;
 
+    }
+
+    public int getRoadtype() {
+        return roadtype;
     }
 
     public Texture getTexture() {
