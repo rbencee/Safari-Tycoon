@@ -11,7 +11,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.PredatorBehav
 public class AnimalFactory {
     public static GameModel gameModel;
     public static Animal createCapybara(Position position){
-        return new AnimalImpl(0, 50, 50, createTexture("textures/animals/capybara.png"), position, AnimalSpecies.CAPYBARA, new HerbivoreBehaviour(), gameModel);
+        return new AnimalImpl(0, 32, 100, createTexture("textures/animals/capybara.png"), position, AnimalSpecies.CAPYBARA, new HerbivoreBehaviour(), gameModel);
     }
     /*public static Animal createMammoth(Position position){
         return new AnimalImpl(30f, 0, 30, 100, 100, 5, position, AnimalSpecies.MAMMOTH, new HerbivoreBehaviour());

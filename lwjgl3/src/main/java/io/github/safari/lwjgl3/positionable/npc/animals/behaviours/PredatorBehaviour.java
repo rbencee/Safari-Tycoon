@@ -7,9 +7,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.EdibleCollection;
 import io.github.safari.lwjgl3.positionable.objects.Drinkable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class PredatorBehaviour implements Behaviour {
 
@@ -17,15 +15,9 @@ public class PredatorBehaviour implements Behaviour {
     HashMap<Drinkable, Position> knownDrinkables = new HashMap<>();
 
     @Override
-    public Action createFittingAction(Animal animal) {
+    public void createFittingAction(Animal animal) {
         //todo ha éhes, felkeresi a knownfoodokat szép sorban
         // ha útközben talál kaját, eszik
-        return null;
-    }
-
-    @Override
-    public boolean shouldCreateNewAction(Animal animal) {
-        return false;
     }
 
     @Override

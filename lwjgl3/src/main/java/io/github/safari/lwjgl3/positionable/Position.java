@@ -73,8 +73,12 @@ public class Position {
     }
 
     public static float distance(Position pos1, Position pos2){
-        Vector2 vect1 = new Vector2(pos1.getX(), pos1.getY());
-        Vector2 vect2 = new Vector2(pos2.getX(), pos2.getY());
-        return vect1.dst(vect2);
+        //normal distance
+        return new Vector2(pos1.getX(), pos1.getY()).dst(new Vector2(pos2.getX(), pos2.getY()));
+    }
+
+    public static float distance2(Position pos1, Position pos2) {
+        //squared distance (faster to compute because of no root square)
+        return new Vector2(pos1.getX(), pos1.getY()).dst2(new Vector2(pos2.getX(), pos2.getY()));
     }
 }
