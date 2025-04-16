@@ -130,7 +130,7 @@ public class GameModel implements EdibleCollection {
 
     private void generateMap() {
         int objectCount = 0;
-        /*while (objectCount < objectNumber) {
+        while (objectCount < objectNumber) {
             float x = random.nextInt((int) (mapWidth / 32)) * 32;
             float y = random.nextInt((int) (mapHeight / 32)) * 32;
             int width = 96;
@@ -188,7 +188,7 @@ public class GameModel implements EdibleCollection {
                 allHerbivoreEdible.add(grass);
                 objectCount++;
             }
-        }*/
+        }
 
 
         //Belepo kilepo
