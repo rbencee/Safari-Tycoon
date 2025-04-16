@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.maingame;
 
+import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.human.*;
 import io.github.safari.lwjgl3.positionable.objects.*;
@@ -7,6 +8,7 @@ import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
+import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
 
 import java.util.*;
 
@@ -174,6 +176,11 @@ public class GameModel implements EdibleCollection{
                 objectCount++;
             }
         }
+        ArrayList<Position> obstacles = new ArrayList<>();
+        for(Environment e : environments){
+            obstacles.add(e.getPosition());
+        }
+        PathGraph.generateStaticNodes(obstacles);
     }
 
     public boolean positionFound(float x, float y, int width, int height) {

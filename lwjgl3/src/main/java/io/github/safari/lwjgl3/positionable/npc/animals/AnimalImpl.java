@@ -98,7 +98,6 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     @Override
     public void act(float delta) {
         super.act(delta);
-        System.out.println("acted after: " + delta);
 
         behaviour.detectFood(this, edibles);
         behaviour.detectWater(this, edibles);
