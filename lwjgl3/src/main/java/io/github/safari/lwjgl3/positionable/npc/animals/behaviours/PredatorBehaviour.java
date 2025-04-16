@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.EdibleCollection;
 import io.github.safari.lwjgl3.positionable.objects.Drinkable;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
@@ -75,8 +76,9 @@ public class PredatorBehaviour implements Behaviour {
     }
 
     @Override
-    public void detectFood(Animal animal, EdibleCollection foodPositions) {
-        for (Animal prey : foodPositions.getAllHerbivores()) {
+    public void detectFood(Animal animal) {
+        List<Animal> preys = AnimalFactory.gameModel.getAllHerbivores();
+        for (Animal prey : preys) {
             if (preyPositions.containsKey(prey)){
                 if (preyPositions.get(prey).equals(prey.getPosition())){
                     continue;
@@ -89,8 +91,9 @@ public class PredatorBehaviour implements Behaviour {
     }
 
     @Override
-    public void detectWater(Animal animal, EdibleCollection drinkPositions) {
-        for (Drinkable drink : drinkPositions.getAllDrinkable()) {
+    public void detectWater(Animal animal) {
+        List<Drinkable> drinkPositions = AnimalFactory.gameModel.getAllDrinkable();
+        for (Drinkable drink : drinkPositions) {
             if (knownDrinkables.containsKey(drink)){
                 if (knownDrinkables.get(drink).equals(drink.getPosition())){
                     continue;

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public record PathGraph(Array<Node> nodes) implements IndexedGraph<Node> {
     public static Array<Node> STATIC_NODES = new Array<>();
+    private static int index = 0;
 
     public PathGraph(Array<Node> nodes) {
         this.nodes = nodes;
@@ -33,15 +34,18 @@ public record PathGraph(Array<Node> nodes) implements IndexedGraph<Node> {
 
     public static void generateStaticNodes(ArrayList<Position> obstacles) {
         STATIC_NODES.clear();
-        int index = 0;
         for (Position o : obstacles) {
-            STATIC_NODES.add(new Node(new Vector2(o.getX(), o.getY()), index++));
-            STATIC_NODES.add(new Node(new Vector2(o.getX() + o.getWidth(), o.getY()), index++));
-            STATIC_NODES.add(new Node(new Vector2(o.getX(), o.getY() + o.getHeight()), index++));
-            STATIC_NODES.add(new Node(new Vector2(o.getX() + o.getWidth(), o.getY() + o.getHeight()), index++));
+            addObstacle(o);
         }
         connectVisibleNodes(obstacles);
         System.out.println("(PathGraph) Static nodes generated");
+    }
+
+    public static void addObstacle(Position obstacle) {
+        STATIC_NODES.add(new Node(new Vector2(obstacle.getX(), obstacle.getY()), index++));
+        STATIC_NODES.add(new Node(new Vector2(obstacle.getX() + obstacle.getWidth(), obstacle.getY()), index++));
+        STATIC_NODES.add(new Node(new Vector2(obstacle.getX(), obstacle.getY() + obstacle.getHeight()), index++));
+        STATIC_NODES.add(new Node(new Vector2(obstacle.getX() + obstacle.getWidth(), obstacle.getY() + obstacle.getHeight()), index++));
     }
 
     private static void connectVisibleNodes(ArrayList<Position> obstacles) {

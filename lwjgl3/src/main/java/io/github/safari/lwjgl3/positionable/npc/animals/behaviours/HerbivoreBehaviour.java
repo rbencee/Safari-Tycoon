@@ -50,13 +50,15 @@ public class HerbivoreBehaviour implements Behaviour{
             }
         }
         else if (!animal.hasActions()) {
-            int n = rand.nextInt(AnimalFactory.gameModel.getEnvironments().size());
-            Environment e = AnimalFactory.gameModel.getEnvironments().get(n);
-            Vector2 randomDestination = new Vector2(
-                e.getPosition().getX(),
-                e.getPosition().getY()
-            );
-            addMoveToActions(animal, new Vector2(animal.getPosition().getX(), animal.getPosition().getY()), randomDestination, obstacles);
+            if (!AnimalFactory.gameModel.getEnvironments().isEmpty()) {
+                int n = rand.nextInt(AnimalFactory.gameModel.getEnvironments().size());
+                Environment e = AnimalFactory.gameModel.getEnvironments().get(n);
+                Vector2 randomDestination = new Vector2(
+                    e.getPosition().getX(),
+                    e.getPosition().getY()
+                );
+                addMoveToActions(animal, new Vector2(animal.getPosition().getX(), animal.getPosition().getY()), randomDestination, obstacles);
+            }
         }
     }
 
@@ -71,8 +73,9 @@ public class HerbivoreBehaviour implements Behaviour{
 
 
     @Override
-    public void detectFood(Animal animal, EdibleCollection foodPositions) {
-        for (HerbivoreEdible plant : foodPositions.getAllHerbivoreEdible()) {
+    public void detectFood(Animal animal) {
+        List<HerbivoreEdible> foodPositions = AnimalFactory.gameModel.getAllHerbivoreEdible();
+        for (HerbivoreEdible plant : foodPositions) {
             if (knownFood.containsKey(plant)){
                 if (knownFood.get(plant).equals(plant.getPosition())){
                     continue;
@@ -86,8 +89,9 @@ public class HerbivoreBehaviour implements Behaviour{
     }
 
     @Override
-    public void detectWater(Animal animal, EdibleCollection drinkPositions) {
-        for (Drinkable drink : drinkPositions.getAllDrinkable()) {
+    public void detectWater(Animal animal) {
+        List<Drinkable> drinkPositions = AnimalFactory.gameModel.getAllDrinkable();
+        for (Drinkable drink : drinkPositions) {
             if (knownDrinkables.containsKey(drink)){
                 if (knownDrinkables.get(drink).equals(drink.getPosition())){
                     continue;

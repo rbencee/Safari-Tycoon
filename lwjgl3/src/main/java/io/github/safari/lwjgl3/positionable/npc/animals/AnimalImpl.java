@@ -22,7 +22,6 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     Position position;
     final AnimalSpecies animalSpecies;
     final Behaviour behaviour;
-    final EdibleCollection edibles;
 
     public AnimalImpl (
         double age,
@@ -31,8 +30,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         Texture texture,
         Position position,
         AnimalSpecies animalSpecies,
-        Behaviour behaviour,
-        EdibleCollection edibles) {
+        Behaviour behaviour) {
 
         this.age = age;
         this.hunger = hunger;
@@ -42,7 +40,6 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         this.setPosition(position.getX(), position.getY()); //inherited from Actor
         this.animalSpecies = animalSpecies;
         this.behaviour = behaviour;
-        this.edibles = edibles;
     }
 
     @Override
@@ -109,20 +106,14 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     public void act(float delta) {
         super.act(delta);
 
-        behaviour.detectFood(this, edibles);
-        behaviour.detectWater(this, edibles);
+        behaviour.detectFood(this);
+        behaviour.detectWater(this);
 
         if (getActions().isEmpty()) {
             behaviour.createFittingAction(this);
         }
         this.hunger -= delta;
         this.thirst -= delta;
-        //todo egyen is, ha odaért
     }
 
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
-        batch.draw(texture, this.getX(), this.getY());
-    }
 }

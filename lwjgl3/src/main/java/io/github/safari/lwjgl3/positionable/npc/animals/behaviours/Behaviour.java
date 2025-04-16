@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface Behaviour {
     void createFittingAction(Animal animal);
-    void detectFood(Animal animal, EdibleCollection foodPositions);
-    void detectWater(Animal animal, EdibleCollection drinkPositions);
+    void detectFood(Animal animal);
+    void detectWater(Animal animal);
 
 }

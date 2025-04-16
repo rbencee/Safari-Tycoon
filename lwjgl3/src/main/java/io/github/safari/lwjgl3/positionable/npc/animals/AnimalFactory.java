@@ -11,7 +11,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.PredatorBehav
 public class AnimalFactory {
     public static GameModel gameModel;
     public static Animal createCapybara(Position position){
-        return new AnimalImpl(0, 40, 80, createTexture("textures/animals/capybara.png"), position, AnimalSpecies.CAPYBARA, new HerbivoreBehaviour(), gameModel);
+        return new AnimalImpl(0, 40, 80, createTexture("textures/animals/capybara.png"), position, AnimalSpecies.CAPYBARA, new HerbivoreBehaviour());
     }
     /*public static Animal createMammoth(Position position){
         return new AnimalImpl(30f, 0, 30, 100, 100, 5, position, AnimalSpecies.MAMMOTH, new HerbivoreBehaviour());
@@ -20,19 +20,10 @@ public class AnimalFactory {
         return new AnimalImpl(30f, 0, 10, 100, 100, 6, position, AnimalSpecies.LION, new PredatorBehaviour());
     }*/
     public static Animal createDinosaur(Position position){
-        return new AnimalImpl(0, 100, 100, createTexture("textures/animals/dino.png"), position, AnimalSpecies.DINOSAUR, new PredatorBehaviour(), gameModel);
+        return new AnimalImpl(0, 100, 100, createTexture("textures/animals/dino.png"), position, AnimalSpecies.DINOSAUR, new PredatorBehaviour());
     }
 
     private static Texture createTexture(String path){
-        Pixmap pixmap1 = new Pixmap(Gdx.files.internal(path));
-        Pixmap pixmap2 = new Pixmap(30, 30, pixmap1.getFormat());
-        pixmap2.drawPixmap(pixmap1,
-            0, 0, pixmap1.getWidth(), pixmap1.getHeight(),
-            0, 0, pixmap2.getWidth(), pixmap2.getHeight()
-        );
-        Texture texture = new Texture(pixmap2);
-        pixmap1.dispose();
-        pixmap2.dispose();
-        return texture;
+        return new Texture(path);
     }
 }

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PathFinderHelper {
-    private PathGraph graph;
 
     public PathFinderHelper() {}
 
@@ -35,10 +34,10 @@ public class PathFinderHelper {
         allNodes.add(startNode);
         allNodes.add(endNode);
 
-        this.graph = new PathGraph(allNodes);
+        PathGraph tempGraph = new PathGraph(allNodes);
 
 
-        IndexedAStarPathFinder<Node> pathFinder = new IndexedAStarPathFinder<>(this.graph);
+        IndexedAStarPathFinder<Node> pathFinder = new IndexedAStarPathFinder<>(tempGraph);
         DefaultGraphPath<Connection<Node>> path = new DefaultGraphPath<>();
 
         boolean found = pathFinder.searchConnectionPath(startNode, endNode, new PathHeuristic(), path);
