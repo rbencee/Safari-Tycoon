@@ -32,4 +32,6 @@ public interface Animal {
     Array<Action> getActions();
     boolean hasActions();
     Texture getTexture();
+    void eat();
+    void drink();
 }

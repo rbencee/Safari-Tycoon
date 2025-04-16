@@ -96,6 +96,16 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     }
 
     @Override
+    public void eat() {
+        this.hunger = 100;
+    }
+
+    @Override
+    public void drink() {
+        this.thirst = 100;
+    }
+
+    @Override
     public void act(float delta) {
         super.act(delta);
 

@@ -14,12 +14,11 @@ import java.util.List;
 public class PathFinderHelper {
     private PathGraph graph;
 
-    public PathFinderHelper() {
-        System.out.println("pathfinderhelper created");
-    }
+    public PathFinderHelper() {}
 
     public List<Vector2> findRoute(Vector2 startPos, Vector2 endPos, ArrayList<Position> obstacles) {
         int index = PathGraph.STATIC_NODES.size;
+        if (startPos.equals(endPos)) return new ArrayList<>();
 
         Node startNode = new Node(startPos, index);
         Node endNode = new Node(endPos, index +1 );
@@ -43,13 +42,10 @@ public class PathFinderHelper {
         DefaultGraphPath<Connection<Node>> path = new DefaultGraphPath<>();
 
         boolean found = pathFinder.searchConnectionPath(startNode, endNode, new PathHeuristic(), path);
-        System.out.println("(graph) route found: " + found);
 
         List<Vector2> result = new ArrayList<>();
         if (found) {
-            System.out.println("(graph) route:");
             for (Connection<Node> c : path) {
-                System.out.println(c.getToNode().getVector2());
                 result.add(c.getToNode().getVector2());
             }
         }

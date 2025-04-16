@@ -41,6 +41,7 @@ public class PredatorBehaviour implements Behaviour {
                 Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
                 addMoveToActions(animal, start, destination, obstacles);
                 //todo ha odaért és már nincs ott, törli + vhogy keres másikat
+                animal.addAction(Actions.after(new EatAction(animal)));
             }
         }
         else if (animal.getThirst() <= 30) {
@@ -50,6 +51,7 @@ public class PredatorBehaviour implements Behaviour {
                 Vector2 destination = new Vector2(nearestWater.getPosition().getX(), nearestWater.getPosition().getY());
                 addMoveToActions(animal, start, destination, obstacles);
                 //todo ha odaért és már nincs ott a tó, törli a knownból
+                animal.addAction(Actions.after(new DrinkAction(animal)));
             }
         }
         else if (!animal.hasActions()) {
