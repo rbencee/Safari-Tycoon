@@ -6,7 +6,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 
 import java.util.ArrayList;
 
-public interface Behaviour {
+public interface Behaviour{
     boolean canCreateAction(Herd herd);
     void doRepeatedly(Herd herd);
     Array<Action> createActions(Herd herd);

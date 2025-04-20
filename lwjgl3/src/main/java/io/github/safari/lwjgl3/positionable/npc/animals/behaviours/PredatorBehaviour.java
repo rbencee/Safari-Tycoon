@@ -6,14 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.actions.EatAction;
 
 import java.util.HashMap;
 import java.util.List;
 
-import static io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper.addMoveToActions;
+import static io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper.createMoveToActions;
 
 public class PredatorBehaviour implements Behaviour {
 
@@ -61,7 +60,7 @@ public class PredatorBehaviour implements Behaviour {
         Vector2 start = new Vector2(herd.getPosition().getX(), herd.getPosition().getY());
         Herd nearestFood = getNearestFood(herd);
         Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
-        Array<Action> actions = addMoveToActions(herd, start, destination);
+        Array<Action> actions = createMoveToActions(herd, start, destination);
         //todo ha odaért és már nincs ott, törli + vhogy keres másikat
         actions.add(Actions.after(new EatAction(herd)));
         return actions;

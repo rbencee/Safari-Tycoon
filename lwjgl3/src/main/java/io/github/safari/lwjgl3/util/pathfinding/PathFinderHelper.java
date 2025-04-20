@@ -2,25 +2,32 @@ package io.github.safari.lwjgl3.util.pathfinding;
 
 import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
-import com.badlogic.gdx.ai.pfa.Graph;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.positionable.objects.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PathFinderHelper {
 
-    public PathFinderHelper() {}
+    public PathFinderHelper() {
+    }
 
-    public List<Vector2> findRoute(Vector2 startPos, Vector2 endPos, ArrayList<Position> obstacles) {
+    public List<Vector2> findRoute(Vector2 startPos, Vector2 endPos) {
+        ArrayList<Position> obstacles = new ArrayList<>();
+        for (Environment e : GamemodelInstance.gameModel.getEnvironments()) {
+            obstacles.add(e.getPosition());
+        }
+
         int index = PathGraph.STATIC_NODES.size;
         if (startPos.equals(endPos)) return new ArrayList<>();
 
         Node startNode = new Node(startPos, index);
-        Node endNode = new Node(endPos, index +1 );
+        Node endNode = new Node(endPos, index + 1);
 
         for (Node node : PathGraph.STATIC_NODES) {
             if (PathGraph.isNodeVisible(startNode.getVector2(), node.getVector2(), obstacles)) {
@@ -52,9 +59,9 @@ public class PathFinderHelper {
         startNode.getConnections().clear();
         for (Node node : PathGraph.STATIC_NODES) {
             Array<Connection<Node>> connections = node.getConnections();
-            for (Connection<Node> c : node.getConnections()){
-                if (c.getToNode().equals(endNode)){
-                    connections.removeValue(c,true);
+            for (Connection<Node> c : node.getConnections()) {
+                if (c.getToNode().equals(endNode)) {
+                    connections.removeValue(c, true);
                 }
             }
         }

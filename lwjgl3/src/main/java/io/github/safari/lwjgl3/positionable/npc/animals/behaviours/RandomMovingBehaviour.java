@@ -29,6 +29,6 @@ public class RandomMovingBehaviour implements Behaviour {
             e.getPosition().getX(),
             e.getPosition().getY()
         );
-        return BehaviourHelper.addMoveToActions(herd, new Vector2(herd.getPosition().getX(), herd.getPosition().getY()), randomDestination);
+        return BehaviourHelper.createMoveToActions(herd, new Vector2(herd.getPosition().getX(), herd.getPosition().getY()), randomDestination);
     }
 }

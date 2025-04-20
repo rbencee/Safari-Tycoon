@@ -93,7 +93,6 @@ public class Herd extends Group implements Positionable {
         }
         GamemodelInstance.gameModel.getHerds().removeAll(herdsToRemove);
 
-
         for (Behaviour behaviour : behaviours) {
             behaviour.doRepeatedly(this);
 
@@ -105,9 +104,11 @@ public class Herd extends Group implements Positionable {
                 Array<Action> actions = behaviour.createActions(this);
                 for (Action a : actions) {
                     addAction(a);
+
                 }
             }
         }
+
     }
 
     @Override
