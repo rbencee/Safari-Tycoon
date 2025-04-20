@@ -42,7 +42,7 @@ public class DrinkingBehaviour implements Behaviour {
         Vector2 start = new Vector2(herd.getPosition().getX(), herd.getPosition().getY());
         Drinkable nearestWater = getNearestWater(herd);
         Vector2 destination = new Vector2(nearestWater.getPosition().getX(), nearestWater.getPosition().getY());
-        Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd, start, destination));
+        Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination));
         //todo ha odaért és már nincs ott tó, törli a knownból
         actions.add(Actions.after(new DrinkAction(herd)));
         return actions;

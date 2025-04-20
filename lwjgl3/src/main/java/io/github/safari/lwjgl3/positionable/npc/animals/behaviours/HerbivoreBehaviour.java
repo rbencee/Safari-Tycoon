@@ -42,7 +42,7 @@ public class HerbivoreBehaviour implements Behaviour {
         Vector2 start = new Vector2(herd.getPosition().getX(), herd.getPosition().getY());
         HerbivoreEdible nearestFood = getNearestFood(herd);
         Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
-        Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd, start, destination));
+        Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination));
         actions.add(Actions.after(new EatAction(herd)));
         //todo ha odaért és már nincs ott növény, törli a knownból
         return actions;

@@ -60,7 +60,7 @@ public class PredatorBehaviour implements Behaviour {
         Vector2 start = new Vector2(herd.getPosition().getX(), herd.getPosition().getY());
         Herd nearestFood = getNearestFood(herd);
         Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
-        Array<Action> actions = createMoveToActions(herd, start, destination);
+        Array<Action> actions = createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination);
         //todo ha odaért és már nincs ott, törli + vhogy keres másikat
         actions.add(Actions.after(new EatAction(herd)));
         return actions;

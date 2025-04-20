@@ -16,14 +16,17 @@ import java.util.List;
 
 public class BehaviourHelper {
 
-    public static Array<Action> createMoveToActions(Herd herd, Vector2 start, Vector2 destination) {
+    public static Array<Action> createMoveToActions(float speed, Vector2 start, Vector2 destination) {
 
         PathFinderHelper pfh = new PathFinderHelper();
         List<Vector2> path = pfh.findRoute(start, destination);
 
         Array<Action> actions = new Array<>();
+        Vector2 last = start;
         for (Vector2 vector2 : path) {
-            actions.add(Actions.after(Actions.moveTo(vector2.x, vector2.y, 5))); //todo speed
+            float dist = vector2.dst(last);
+            actions.add(Actions.after(Actions.moveTo(vector2.x, vector2.y, dist/speed)));
+            last = vector2;
         }
         MoveToAction move = null;
         return actions;
