@@ -81,4 +81,12 @@ public class Position {
         //squared distance (faster to compute because of no root square)
         return new Vector2(pos1.getX(), pos1.getY()).dst2(new Vector2(pos2.getX(), pos2.getY()));
     }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+            "y=" + y +
+            ", x=" + x +
+            '}';
+    }
 }

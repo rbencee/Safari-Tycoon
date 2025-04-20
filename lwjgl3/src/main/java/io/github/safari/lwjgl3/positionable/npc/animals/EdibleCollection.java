@@ -6,7 +6,7 @@ import io.github.safari.lwjgl3.positionable.objects.HerbivoreEdible;
 import java.util.List;
 
 public interface EdibleCollection {
-    List<Animal> getAllHerbivores();
+    List<Herd> getAllHerbivores();
     List<HerbivoreEdible> getAllHerbivoreEdible();
     List<Drinkable> getAllDrinkable();
 }

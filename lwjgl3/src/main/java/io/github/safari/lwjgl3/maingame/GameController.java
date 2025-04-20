@@ -3,6 +3,7 @@ package io.github.safari.lwjgl3.maingame;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
@@ -13,8 +14,7 @@ public class GameController {
     GameView gameView;
 
 
-    public GameController(Shop shop, GameModel model, GameView gameView)
-    {
+    public GameController(Shop shop, GameModel model, GameView gameView) {
         this.shop = shop;
         this.gameModel = model;
         this.gameView = gameView;
@@ -26,20 +26,17 @@ public class GameController {
         ShopItem selectedItem = shop.getShopItems();
 
         if (selectedItem != null) {
-            if (gameModel.positionFound(x, y, width, height) || isjeep){
+            if (gameModel.positionFound(x, y, width, height) || isjeep) {
                 if (gameModel.CanBuy(selectedItem)) {
-                    if(!isjeep) {
+                    if (!isjeep) {
                         BuyItem(selectedItem, x, y, width, height);
                         //shop.clearSelection();
                         return true;
-                    } else
-                    {
-                        if(gameModel.Is_There_Road(x, y))
-                        {
-                            BuyItem(selectedItem,x,y,width,height);
+                    } else {
+                        if (gameModel.Is_There_Road(x, y)) {
+                            BuyItem(selectedItem, x, y, width, height);
 
-                        } else
-                        {
+                        } else {
                             System.out.println("No suitable Road Found");
                         }
                     }
@@ -51,16 +48,15 @@ public class GameController {
             }
 
 
-
-        }else
-        {
+        } else {
             System.out.println("Nincs Megveve semmi");
         }
 
         return false;
 
     }
-    private void BuyItem(ShopItem item, float x,float y,int width, int height) {
+
+    private void BuyItem(ShopItem item, float x, float y, int width, int height) {
         System.out.println(item.getName());
 
         gameModel.Decrease_My_Money(item.getPrice());
@@ -70,20 +66,20 @@ public class GameController {
         switch (item.getName()) {
             case "Capybara":
                 animal = AnimalFactory.createCapybara(new Position(x, y, width, height));  // Új Capybara példány létrehozása a megadott koordinátákkal
-                herd = new Herd(AnimalSpecies.CAPYBARA);
-                herd.addToHerd(animal);
+                herd = new Herd(AnimalSpecies.CAPYBARA, Behaviour.createHerbivoreBehaviours());
+                herd.addToHerd((AnimalImpl) animal);
                 gameModel.getHerds().add(herd);
+                gameModel.getAllHerbivores().add(herd);
                 System.out.println("Capybara buy successful!");
-                gameView.getGameStage().addActor((AnimalImpl) animal);
-                System.out.println("Animal added to gameStage: " + (gameView.getGameStage().getActors().contains((Actor)animal, true)));
+                gameView.getGameStage().addActor(herd);
 
                 break;
             case "Mammoth":
                 break;
             case "Dinosaur":
                 animal = AnimalFactory.createDinosaur(new Position(x, y, width, height));
-                herd = new Herd(AnimalSpecies.DINOSAUR);
-                herd.addToHerd(animal);
+                herd = new Herd(AnimalSpecies.DINOSAUR, Behaviour.createPredatorBehaviours());
+                herd.addToHerd((AnimalImpl) animal);
                 System.out.println("Dinosaur buy successful!");
                 break;
             case "Lion":
@@ -109,11 +105,11 @@ public class GameController {
                 PathGraph.addObstacle(grass.getPosition());
                 break;
             case "Road":
-                Road road= new Road(new Position(x,y, width, height));
+                Road road = new Road(new Position(x, y, width, height));
                 gameModel.addtoroads(road);
                 break;
             case "Jeep":
-                Jeep jeep= new Jeep(new Position(x,y, width, height));
+                Jeep jeep = new Jeep(new Position(x, y, width, height));
                 gameModel.addtojeeps(jeep);
                 break;
             default:

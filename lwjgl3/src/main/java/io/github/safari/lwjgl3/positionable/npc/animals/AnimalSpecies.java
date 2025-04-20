@@ -1,7 +1,7 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
 public enum AnimalSpecies {
-    CAPYBARA(AnimalType.HERBIVORE, 5, 20, 1000f),
+    CAPYBARA(AnimalType.HERBIVORE, 5, 20, 300f),
     MAMMOTH(AnimalType.HERBIVORE, 20, 30, 100f),
     LION(AnimalType.PREDATOR, 20, 50, 100f),
     DINOSAUR(AnimalType.PREDATOR, 100, 40, 100f);

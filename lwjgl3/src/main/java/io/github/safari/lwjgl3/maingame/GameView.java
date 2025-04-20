@@ -10,13 +10,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -24,9 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
@@ -107,7 +105,6 @@ public class GameView implements Screen {
     }
 
 
-
     @Override
     public void show() {
 
@@ -157,7 +154,7 @@ public class GameView implements Screen {
         uiStage.addActor(openShopButton);
         uiStage.addActor(table);
 
-        gameController = new GameController(shop,this.gameModel, this);
+        gameController = new GameController(shop, this.gameModel, this);
         this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
         setupPlace();
         minimapInput();
@@ -176,7 +173,7 @@ public class GameView implements Screen {
         spriteBatch.setProjectionMatrix(camera.combined);
 
         spriteBatch.begin();
-            drawSprites(spriteBatch,1,delta);
+        drawSprites(spriteBatch, 1, delta);
         spriteBatch.end();
 
         gameStage.act(delta);
@@ -196,14 +193,14 @@ public class GameView implements Screen {
         int minimapY = MINIMAP_BORDER;
 
         Gdx.gl.glViewport(minimapX - MINIMAP_BORDER, minimapY - MINIMAP_BORDER,
-            MINIMAP_SIZE + 2*MINIMAP_BORDER, MINIMAP_SIZE + 2*MINIMAP_BORDER);
+            MINIMAP_SIZE + 2 * MINIMAP_BORDER, MINIMAP_SIZE + 2 * MINIMAP_BORDER);
 
         shapeRenderer.setProjectionMatrix(minimapCamera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.GRAY);
         shapeRenderer.rect(-MINIMAP_BORDER, -MINIMAP_BORDER,
-            mapWidth * MINIMAP_SCALE + 2*MINIMAP_BORDER,
-            mapHeight * MINIMAP_SCALE + 2*MINIMAP_BORDER);
+            mapWidth * MINIMAP_SCALE + 2 * MINIMAP_BORDER,
+            mapHeight * MINIMAP_SCALE + 2 * MINIMAP_BORDER);
         shapeRenderer.end();
 
         Gdx.gl.glViewport(minimapX, minimapY, MINIMAP_SIZE, MINIMAP_SIZE);
@@ -212,7 +209,7 @@ public class GameView implements Screen {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float scale = MINIMAP_SIZE / (float)Math.max(mapWidth, mapHeight);
+        float scale = MINIMAP_SIZE / (float) Math.max(mapWidth, mapHeight);
 
         minimapBatch.setProjectionMatrix(minimapCamera.combined);
         minimapBatch.begin();
@@ -221,7 +218,7 @@ public class GameView implements Screen {
         minimapBatch.end();
 
         minimapBatch.begin();
-            drawSprites(minimapBatch,scale,delta);
+        drawSprites(minimapBatch, scale, delta);
         minimapBatch.end();
 
         shapeRenderer.setProjectionMatrix(minimapCamera.combined);
@@ -313,7 +310,7 @@ public class GameView implements Screen {
         }
     }
 
-    private void drawSprites(SpriteBatch spriteBatch, float scale, float delta){
+    private void drawSprites(SpriteBatch spriteBatch, float scale, float delta) {
         for (Environment env : gameModel.getEnvironments()) {
             if (env instanceof Tree) {
                 spriteBatch.draw(treeTexture, env.getPosition().getX() * scale, env.getPosition().getY() * scale, env.getPosition().getWidth() * scale, env.getPosition().getHeight() * scale);
@@ -327,15 +324,13 @@ public class GameView implements Screen {
         }
 
 
-        for(Road road : gameModel.getRoads())
-        {
+        for (Road road : gameModel.getRoads()) {
             spriteBatch.draw(road.getTexture(), road.getPosition().getX() * scale, road.getPosition().getY() * scale, road.getPosition().getWidth() * scale, road.getPosition().getHeight() * scale);
 
         }
         for (Herd herd : gameModel.getHerds()) {
             for (Animal animal : herd.getAnimals()) {
-                spriteBatch.draw(animal.getTexture() , animal.getPosition().getX() * scale, animal.getPosition().getY() * scale, animal.getPosition().getWidth() * scale, animal.getPosition().getHeight()* scale);
-
+                spriteBatch.draw(animal.getTexture(), animal.getPosition().getX() * scale, animal.getPosition().getY() * scale, animal.getPosition().getWidth() * scale, animal.getPosition().getHeight() * scale);
             }
         }
 
@@ -345,7 +340,7 @@ public class GameView implements Screen {
                 jeep.getPosition().getY() * scale,
                 jeep.getPosition().getWidth() * scale,
                 jeep.getPosition().getHeight() * scale);
-            }
+        }
 
 
     }
@@ -423,7 +418,6 @@ public class GameView implements Screen {
         });
 
 
-
         uiStage.addActor(daySpeedButton);
         uiStage.addActor(weekSpeedButton);
         uiStage.addActor(monthSpeedButton);
@@ -451,7 +445,6 @@ public class GameView implements Screen {
     }
 
 
-
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
@@ -460,7 +453,7 @@ public class GameView implements Screen {
         uiStage.getViewport().update(width, height, true);
         gameStage.getViewport().update(width, height, true);
 
-        int newMinimapSize = (int)(MINIMAP_SIZE * (width / 1920f));
+        int newMinimapSize = (int) (MINIMAP_SIZE * (width / 1920f));
         minimapViewport.update(newMinimapSize, newMinimapSize);
         camera.update();
     }
@@ -505,8 +498,7 @@ public class GameView implements Screen {
         return uiStage;
     }
 
-    private void setupPlace()
-    {
+    private void setupPlace() {
         gameStage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -526,10 +518,10 @@ public class GameView implements Screen {
 
                     boolean isjeep = false;
 
-                    if(item.getName().equals("Jeep")) isjeep = true;
+                    if (item.getName().equals("Jeep")) isjeep = true;
 
 
-                    boolean placed = gameController.TryToPlace(world.x -32 , world.y - 32, 64, 64, 0, 0, isjeep);
+                    boolean placed = gameController.TryToPlace(world.x - 32, world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
                         shop.clearSelection();
@@ -549,7 +541,7 @@ public class GameView implements Screen {
 
 
                     if (Math.abs(lastPlacedPos.x - roundedX) >= gridSize || Math.abs(lastPlacedPos.y - roundedY) >= gridSize) {
-                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0,false);
+                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0, false);
                         if (placed) {
                             System.out.println("Road placed at : " + roundedX + ", " + roundedY);
                             lastPlacedPos.set(roundedX, roundedY, 0);

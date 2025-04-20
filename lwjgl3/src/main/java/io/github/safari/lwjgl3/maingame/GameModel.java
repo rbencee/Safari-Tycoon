@@ -1,12 +1,11 @@
 package io.github.safari.lwjgl3.maingame;
 
-import com.badlogic.gdx.utils.Array;
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
-import io.github.safari.lwjgl3.positionable.npc.human.*;
-import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
-import io.github.safari.lwjgl3.positionable.objects.Environment;
+import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
 
@@ -33,7 +32,7 @@ public class GameModel implements EdibleCollection {
     private ArrayList<Road> roads;
 
 
-    ArrayList<Animal> allHerbivores = new ArrayList<>();
+    ArrayList<Herd> allHerbivores = new ArrayList<>();
     ArrayList<HerbivoreEdible> allHerbivoreEdible = new ArrayList<>();
     ArrayList<Drinkable> allDrinkable = new ArrayList<>();
 
@@ -44,7 +43,7 @@ public class GameModel implements EdibleCollection {
     }
 
     @Override
-    public ArrayList<Animal> getAllHerbivores() {
+    public ArrayList<Herd> getAllHerbivores() {
         return allHerbivores;
     }
 
@@ -77,7 +76,7 @@ public class GameModel implements EdibleCollection {
         this.money = 50000000;
 
         InitializeGame();
-        AnimalFactory.gameModel = this;
+        GamemodelInstance.gameModel = this;
     }
 
     //Setters and getters
@@ -314,7 +313,7 @@ public class GameModel implements EdibleCollection {
     {
         int sum = 0;
         for (Herd herd : herds) {
-            sum += herd.animalcount(); //Lehet meg kell nezni hogy biztos el e.
+            sum += herd.animalCount(); //Lehet meg kell nezni hogy biztos el e.
         }
 
         return sum;
@@ -333,7 +332,7 @@ public class GameModel implements EdibleCollection {
         int sum = 0;
         for (Herd herd : herds) {
             if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.HERBIVORE)) {
-                sum += herd.animalcount();
+                sum += herd.animalCount();
             }
         }
         return sum;
@@ -343,7 +342,7 @@ public class GameModel implements EdibleCollection {
         int sum = 0;
         for (Herd herd : herds) {
             if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.PREDATOR)) {
-                sum += herd.animalcount();
+                sum += herd.animalCount();
             }
         }
         return sum;

@@ -3,115 +3,30 @@ package io.github.safari.lwjgl3.positionable.npc.animals.behaviours;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Array;
+import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
-import io.github.safari.lwjgl3.positionable.npc.animals.EdibleCollection;
-import io.github.safari.lwjgl3.positionable.objects.Drinkable;
-import io.github.safari.lwjgl3.positionable.objects.Environment;
-import io.github.safari.lwjgl3.positionable.objects.HerbivoreEdible;
-import io.github.safari.lwjgl3.util.pathfinding.PathFinderHelper;
+import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
+import io.github.safari.lwjgl3.positionable.npc.animals.actions.EatAction;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+
+import static io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper.addMoveToActions;
 
 public class PredatorBehaviour implements Behaviour {
 
-    HashMap<Animal, Position> preyPositions = new HashMap<>();
-    HashMap<Drinkable, Position> knownDrinkables = new HashMap<>();
+    HashMap<Herd, Position> preyPositions = new HashMap<>();
 
-    @Override
-    public void createFittingAction(Animal animal) {
-        Random rand = new Random();
-        System.out.println(LocalDateTime.now());
 
-        ArrayList<Position> obstacles = new ArrayList<>();
-        for (Environment e : AnimalFactory.gameModel.getEnvironments()){
-            obstacles.add(e.getPosition());
-        }
-
-        System.out.println("hunger: " + animal.getHunger() + " thirst: " + animal.getThirst());
-        if (animal.getHunger() <= 30) {
-            if (!preyPositions.isEmpty()) {
-                Vector2 start = new Vector2(animal.getPosition().getX(), animal.getPosition().getY());
-                Animal nearestFood = getNearestFood(animal);
-                Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
-                addMoveToActions(animal, start, destination, obstacles);
-                //todo ha odaért és már nincs ott, törli + vhogy keres másikat
-                animal.addAction(Actions.after(new EatAction(animal)));
-            }
-        }
-        else if (animal.getThirst() <= 30) {
-            if (!knownDrinkables.isEmpty()) {
-                Vector2 start = new Vector2(animal.getPosition().getX(), animal.getPosition().getY());
-                Drinkable nearestWater = getNearestWater(animal);
-                Vector2 destination = new Vector2(nearestWater.getPosition().getX(), nearestWater.getPosition().getY());
-                addMoveToActions(animal, start, destination, obstacles);
-                //todo ha odaért és már nincs ott a tó, törli a knownból
-                animal.addAction(Actions.after(new DrinkAction(animal)));
-            }
-        }
-        else if (!animal.hasActions()) {
-            int n = rand.nextInt(AnimalFactory.gameModel.getEnvironments().size());
-            Environment e = AnimalFactory.gameModel.getEnvironments().get(n);
-            Vector2 randomDestination = new Vector2(
-                e.getPosition().getX(),
-                e.getPosition().getY()
-            );
-            System.out.println("random dest: " + randomDestination);
-            addMoveToActions(animal, new Vector2(animal.getPosition().getX(), animal.getPosition().getY()), randomDestination, obstacles);
-        }
-    }
-    private static void addMoveToActions(Animal animal, Vector2 start, Vector2 destination, ArrayList<Position> obstacles) {
-        PathFinderHelper pfh = new PathFinderHelper();
-        List<Vector2> path = pfh.findRoute(start, destination, obstacles);
-
-        for (Vector2 vector2 : path) {
-            animal.addAction(Actions.after(Actions.moveTo(vector2.x, vector2.y, 5)));
-        }
-    }
-
-    @Override
-    public void detectFood(Animal animal) {
-        List<Animal> preys = AnimalFactory.gameModel.getAllHerbivores();
-        for (Animal prey : preys) {
-            if (preyPositions.containsKey(prey)){
-                if (preyPositions.get(prey).equals(prey.getPosition())){
-                    continue;
-                }
-            }
-            if(Position.distance(animal.getPosition(), prey.getPosition()) <= animal.getVisionRange()) {
-                preyPositions.put(prey, prey.getPosition().clone());
-            }
-        }
-    }
-
-    @Override
-    public void detectWater(Animal animal) {
-        List<Drinkable> drinkPositions = AnimalFactory.gameModel.getAllDrinkable();
-        for (Drinkable drink : drinkPositions) {
-            if (knownDrinkables.containsKey(drink)){
-                if (knownDrinkables.get(drink).equals(drink.getPosition())){
-                    continue;
-                }
-            }
-            if(Position.distance(animal.getPosition(), drink.getPosition()) <= animal.getVisionRange()) {
-                knownDrinkables.put(drink, drink.getPosition().clone());
-            }
-        }
-    }
-
-    private Animal getNearestFood(Animal animal){
-        Animal closest = null;
+    private Herd getNearestFood(Herd Herd) {
+        Herd closest = null;
         float closestDist2 = Float.MAX_VALUE;
 
-        for (Animal prey : preyPositions.keySet()) {
+        for (Herd prey : preyPositions.keySet()) {
             Position foodPos = prey.getPosition();
-            float dist2 = Position.distance2(animal.getPosition(), foodPos);
+            float dist2 = Position.distance2(Herd.getPosition(), foodPos);
             if (dist2 < closestDist2) {
                 closestDist2 = dist2;
                 closest = prey;
@@ -119,20 +34,36 @@ public class PredatorBehaviour implements Behaviour {
         }
         return closest;
     }
-    private Drinkable getNearestWater(Animal animal){
-        Drinkable closest = null;
-        float closestDist2 = Float.MAX_VALUE;
 
-        for (Drinkable water : knownDrinkables.keySet()) {
-            Position drinkPos = water.getPosition();
-            float dist2 = Position.distance2(animal.getPosition(), drinkPos);
-            if (dist2 < closestDist2) {
-                closestDist2 = dist2;
-                closest = water;
-            }
-        }
-        return closest;
+
+    @Override
+    public boolean canCreateAction(Herd herd) {
+        return herd.getHunger() <= 30 && !preyPositions.isEmpty();
     }
 
+    @Override
+    public void doRepeatedly(Herd herd) {
+        List<Herd> preys = GamemodelInstance.gameModel.getAllHerbivores();
+        for (Herd prey : preys) {
+            if (preyPositions.containsKey(prey)) {
+                if (preyPositions.get(prey).equals(prey.getPosition())) {
+                    continue;
+                }
+            }
+            if (Position.distance(herd.getPosition(), prey.getPosition()) <= herd.getVisionRange()) {
+                preyPositions.put(prey, prey.getPosition().clone());
+            }
+        }
+    }
 
+    @Override
+    public Array<Action> createActions(Herd herd) {
+        Vector2 start = new Vector2(herd.getPosition().getX(), herd.getPosition().getY());
+        Herd nearestFood = getNearestFood(herd);
+        Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
+        Array<Action> actions = addMoveToActions(herd, start, destination);
+        //todo ha odaért és már nincs ott, törli + vhogy keres másikat
+        actions.add(Actions.after(new EatAction(herd)));
+        return actions;
+    }
 }

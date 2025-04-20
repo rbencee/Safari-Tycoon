@@ -2,17 +2,9 @@ package io.github.safari.lwjgl3.positionable.npc.animals;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import io.github.safari.lwjgl3.maingame.GameModel;
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.util.Positionable;
-
-import java.util.ArrayList;
 
 public class AnimalImpl extends Actor implements Animal, Positionable {
     double age;
@@ -21,16 +13,14 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     final Texture texture;
     Position position;
     final AnimalSpecies animalSpecies;
-    final Behaviour behaviour;
 
-    public AnimalImpl (
+    public AnimalImpl(
         double age,
         double hunger,
         double thirst,
         Texture texture,
         Position position,
-        AnimalSpecies animalSpecies,
-        Behaviour behaviour) {
+        AnimalSpecies animalSpecies) {
 
         this.age = age;
         this.hunger = hunger;
@@ -39,7 +29,6 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         this.position = position;
         this.setPosition(position.getX(), position.getY()); //inherited from Actor
         this.animalSpecies = animalSpecies;
-        this.behaviour = behaviour;
     }
 
     @Override
@@ -106,14 +95,13 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     public void act(float delta) {
         super.act(delta);
 
-        behaviour.detectFood(this);
-        behaviour.detectWater(this);
 
-        if (getActions().isEmpty()) {
-            behaviour.createFittingAction(this);
-        }
         this.hunger -= delta;
         this.thirst -= delta;
     }
 
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+    }
 }
