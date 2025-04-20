@@ -30,6 +30,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
+import io.github.safari.lwjgl3.positionable.visitors.Tourist;
 import org.lwjgl.opengl.GL20;
 
 
@@ -380,6 +381,13 @@ public class GameView implements Screen {
                 jeep.getPosition().getHeight() * scale);
             }
 
+        for (Tourist tourist : gameModel.getTourists()) {
+            spriteBatch.draw(tourist.getTexture(),
+                tourist.getPosition().getX() * scale,
+                tourist.getPosition().getY() * scale,
+                tourist.getPosition().getWidth() * scale,
+                tourist.getPosition().getHeight() * scale);
+        }
 
     }
 

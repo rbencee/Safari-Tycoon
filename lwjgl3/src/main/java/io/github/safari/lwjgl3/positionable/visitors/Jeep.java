@@ -5,16 +5,20 @@ import io.github.safari.lwjgl3.positionable.Moveable;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.util.Positionable;
 
+import java.util.ArrayList;
+
 public class Jeep implements Positionable, Moveable {
     private Texture texture;
     private Position position;
     private boolean tostart; // true ha bejarathoz megy, false ha a kijarathoz
+    private ArrayList<Tourist> tourists;
 
     public Jeep(Position position)
     {
         this.position = position;
         this.texture = new Texture("textures/others/jeep.png");
         this.tostart = true;
+        this.tourists = new ArrayList<>();
     }
 
     public void moveTowards(Position targetPosition, float speed) {
@@ -32,6 +36,24 @@ public class Jeep implements Positionable, Moveable {
     }
 
 
+    public boolean trytoaddtourist(Tourist tourist)
+    {
+        if(tourists.size() >= 4)
+        {
+            return false;
+        } else
+        {
+            tourists.add(tourist);
+            return true;
+        }
+    }
+
+    public int Drop_Off_Tourists()
+    {
+        int to_drop = tourists.size();
+        tourists.clear();
+        return to_drop;
+    }
 
     @Override
     public Position getPosition() {
