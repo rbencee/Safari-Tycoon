@@ -2,7 +2,6 @@ package io.github.safari.lwjgl3.positionable.npc.animals.behaviours;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
@@ -37,7 +36,7 @@ public class PredatorBehaviour implements Behaviour {
 
     @Override
     public boolean canCreateAction(Herd herd) {
-        return herd.getHunger() <= 30 && !preyPositions.isEmpty();
+        return herd.getMinHunger() <= 30 && !preyPositions.isEmpty();
     }
 
     @Override
@@ -62,7 +61,7 @@ public class PredatorBehaviour implements Behaviour {
         Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
         Array<Action> actions = createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination);
         //todo ha odaért és már nincs ott, törli + vhogy keres másikat
-        actions.add(Actions.after(new EatAction(herd)));
+        actions.add(new EatAction());
         return actions;
     }
 }

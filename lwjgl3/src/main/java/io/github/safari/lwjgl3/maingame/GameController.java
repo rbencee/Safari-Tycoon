@@ -1,6 +1,5 @@
 package io.github.safari.lwjgl3.maingame;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
@@ -88,21 +87,25 @@ public class GameController {
                 Bush bush = new Bush(new Position(x, y, width, height));
                 gameModel.addtoenvironment(bush);
                 PathGraph.addObstacle(bush.getPosition());
+                gameModel.getAllHerbivoreEdible().add(bush);
                 break;
             case "Tree":
                 Tree tree = new Tree(new Position(x, y, width, height));
                 gameModel.addtoenvironment(tree);
                 PathGraph.addObstacle(tree.getPosition());
+                gameModel.getAllHerbivoreEdible().add(tree);
                 break;
             case "Lake":
                 Lake lake = new Lake(new Position(x, y, width, height));
                 gameModel.addtoenvironment(lake);
                 PathGraph.addObstacle(lake.getPosition());
+                gameModel.getAllDrinkable().add(lake);
                 break;
             case "Grass":
                 Grass grass = new Grass(new Position(x, y, width, height));
                 gameModel.addtoenvironment(grass);
                 PathGraph.addObstacle(grass.getPosition());
+                gameModel.getAllHerbivoreEdible().add(grass);
                 break;
             case "Road":
                 Road road = new Road(new Position(x, y, width, height));
