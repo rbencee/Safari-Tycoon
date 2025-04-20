@@ -1,0 +1,11 @@
+stages:
+  - build
+
+build_job:
+  stage: build
+  image: gradle:8.0-jdk17l
+  script:
+    - gradle build
+  artifacts:
+    paths:
+      - build/libs/
