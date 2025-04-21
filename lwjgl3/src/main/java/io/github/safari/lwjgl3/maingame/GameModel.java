@@ -270,35 +270,31 @@ public class GameModel implements EdibleCollection {
             timeinterval = 30;
         }
 
-            if(!isGameOver())
-            {
+            if(!isGameOver()) {
                 int previousDays = dayspassed;
                 timeacc += delta;
                 SummonTourist();
 
-            if(timeacc >= 3.0f)
-            {
-                dayspassed += timeinterval;
-                timeacc = 0;
+                if (timeacc >= 3.0f) {
+                    dayspassed += timeinterval;
+                    timeacc = 0;
 
-                if((dayspassed - previousDays) % 30 == 0) {
-                    calculateIncome();
-                }
-
-                for(Jeep jeep : jeeps)
-                {
-                    Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
-                    if(roadtogo != null) {
-                        jeep.moveTowards(roadtogo.getPosition(), timeinterval);
-                        //System.out.println("ROAD TO GO: " + roadtogo.getPosition());
-                    }else
-                    {
-                        //System.out.println("ROAD TO GO NOT FOUND");
+                    if ((dayspassed - previousDays) % 30 == 0) {
+                        calculateIncome();
                     }
 
+                    for (Jeep jeep : jeeps) {
+                        Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
+                        if (roadtogo != null) {
+                            jeep.moveTowards(roadtogo.getPosition(), timeinterval);
+                            //System.out.println("ROAD TO GO: " + roadtogo.getPosition());
+                        } else {
+                            //System.out.println("ROAD TO GO NOT FOUND");
+                        }
+
+                    }
                 }
             }
-
     }
 
     public void increasemoney(int money) {
@@ -357,7 +353,7 @@ public class GameModel implements EdibleCollection {
         int sum = 0;
         for (Herd herd : herds)
         {
-            sum += herd.animalcount(); //Lehet meg kell nezni hogy biztos el e.
+            sum += herd.animalCount(); //Lehet meg kell nezni hogy biztos el e.
         }
 
         return sum;
@@ -377,7 +373,7 @@ public class GameModel implements EdibleCollection {
         int sum = 0;
         for (Herd herd : herds){
             if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.HERBIVORE)){
-                sum += herd.animalcount();
+                sum += herd.animalCount();
             }
         }
         return sum;
@@ -387,7 +383,7 @@ public class GameModel implements EdibleCollection {
         int sum = 0;
         for (Herd herd : herds){
             if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.PREDATOR)){
-                sum += herd.animalcount();
+                sum += herd.animalCount();
             }
         }
         return sum;
@@ -588,3 +584,4 @@ public class GameModel implements EdibleCollection {
     }
     */
 }
+
