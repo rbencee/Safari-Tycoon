@@ -28,6 +28,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
+import io.github.safari.lwjgl3.positionable.visitors.Tourist;
 import org.lwjgl.opengl.GL20;
 
 
@@ -154,7 +155,7 @@ public class GameView implements Screen {
         uiStage.addActor(openShopButton);
         uiStage.addActor(table);
 
-        gameController = new GameController(shop, this.gameModel, this);
+        gameController = new GameController(shop,this.gameModel, this);
         this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
         setupPlace();
         minimapInput();
@@ -193,14 +194,14 @@ public class GameView implements Screen {
         int minimapY = MINIMAP_BORDER;
 
         Gdx.gl.glViewport(minimapX - MINIMAP_BORDER, minimapY - MINIMAP_BORDER,
-            MINIMAP_SIZE + 2 * MINIMAP_BORDER, MINIMAP_SIZE + 2 * MINIMAP_BORDER);
+            MINIMAP_SIZE + 2*MINIMAP_BORDER, MINIMAP_SIZE + 2*MINIMAP_BORDER);
 
         shapeRenderer.setProjectionMatrix(minimapCamera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.GRAY);
         shapeRenderer.rect(-MINIMAP_BORDER, -MINIMAP_BORDER,
-            mapWidth * MINIMAP_SCALE + 2 * MINIMAP_BORDER,
-            mapHeight * MINIMAP_SCALE + 2 * MINIMAP_BORDER);
+            mapWidth * MINIMAP_SCALE + 2*MINIMAP_BORDER,
+            mapHeight * MINIMAP_SCALE + 2*MINIMAP_BORDER);
         shapeRenderer.end();
 
         Gdx.gl.glViewport(minimapX, minimapY, MINIMAP_SIZE, MINIMAP_SIZE);
@@ -209,7 +210,7 @@ public class GameView implements Screen {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float scale = MINIMAP_SIZE / (float) Math.max(mapWidth, mapHeight);
+        float scale = MINIMAP_SIZE / (float)Math.max(mapWidth, mapHeight);
 
         minimapBatch.setProjectionMatrix(minimapCamera.combined);
         minimapBatch.begin();
@@ -218,7 +219,7 @@ public class GameView implements Screen {
         minimapBatch.end();
 
         minimapBatch.begin();
-        drawSprites(minimapBatch, scale, delta);
+            drawSprites(minimapBatch,scale,delta);
         minimapBatch.end();
 
         shapeRenderer.setProjectionMatrix(minimapCamera.combined);
@@ -309,6 +310,38 @@ public class GameView implements Screen {
             camera.position.y = mapHeight - halfViewportHeight;
         }
     }
+    /*
+    private void handleEdgeScrolling(float delta) {
+        int mouseX = Gdx.input.getX();
+        int mouseY = Gdx.input.getY();
+        int screenWidth = Gdx.graphics.getWidth();
+        int screenHeight = Gdx.graphics.getHeight();
+
+        Vector3 move = new Vector3();
+
+        // Bal szél
+        if (mouseX < EDGE_MARGIN) {
+            move.x -= CAMERA_SPEED * delta;
+        }
+        // Jobb szél
+        else if (mouseX > screenWidth - EDGE_MARGIN) {
+            move.x += CAMERA_SPEED * delta;
+        }
+
+        // Alsó szél (Y lefelé nő!)
+        if (mouseY > screenHeight - EDGE_MARGIN) {
+            move.y -= CAMERA_SPEED * delta;
+        }
+        // Felső szél
+        else if (mouseY < EDGE_MARGIN) {
+            move.y += CAMERA_SPEED * delta;
+        }
+
+        camera.position.add(move);
+        camera.update();
+    }
+
+     */
 
     private void drawSprites(SpriteBatch spriteBatch, float scale, float delta) {
         for (Environment env : gameModel.getEnvironments()) {
@@ -342,6 +375,13 @@ public class GameView implements Screen {
                 jeep.getPosition().getHeight() * scale);
         }
 
+        for (Tourist tourist : gameModel.getTourists()) {
+            spriteBatch.draw(tourist.getTexture(),
+                tourist.getPosition().getX() * scale,
+                tourist.getPosition().getY() * scale,
+                tourist.getPosition().getWidth() * scale,
+                tourist.getPosition().getHeight() * scale);
+        }
 
     }
 
@@ -395,7 +435,6 @@ public class GameView implements Screen {
             }
         });
 
-        // Week gomb
         TextButton weekSpeedButton = new TextButton("Week", skin);
         weekSpeedButton.setPosition(initialX + buttonWidth + spacing, 80);
         weekSpeedButton.setSize(buttonWidth, buttonHeight);
@@ -498,11 +537,12 @@ public class GameView implements Screen {
         return uiStage;
     }
 
-    private void setupPlace() {
-        gameStage.addListener(new ClickListener() {
+    private void setupPlace()
+    {
+        uiStage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Actor target = gameStage.hit(x, y, true);
+                Actor target = uiStage.hit(x, y, true);
                 if (target != null) return false;
 
                 ShopItem item = shop.getShopItems();
@@ -521,7 +561,7 @@ public class GameView implements Screen {
                     if (item.getName().equals("Jeep")) isjeep = true;
 
 
-                    boolean placed = gameController.TryToPlace(world.x - 32, world.y - 32, 64, 64, 0, 0, isjeep);
+                    boolean placed = gameController.TryToPlace(world.x -32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
                         shop.clearSelection();
@@ -536,12 +576,12 @@ public class GameView implements Screen {
                     Vector3 world = camera.unproject(new Vector3(x, Gdx.graphics.getHeight() - y, 0));
 
                     float gridSize = 64f;
-                    float roundedX = Math.round(world.x / gridSize) * gridSize - gridSize / 2;
-                    float roundedY = Math.round(world.y / gridSize) * gridSize - gridSize / 2;
+                    float roundedX = (float)Math.floor(world.x / gridSize) * gridSize ;
+                    float roundedY = (float)Math.floor(world.y / gridSize) * gridSize;
 
 
                     if (Math.abs(lastPlacedPos.x - roundedX) >= gridSize || Math.abs(lastPlacedPos.y - roundedY) >= gridSize) {
-                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0, false);
+                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0,false);
                         if (placed) {
                             System.out.println("Road placed at : " + roundedX + ", " + roundedY);
                             lastPlacedPos.set(roundedX, roundedY, 0);

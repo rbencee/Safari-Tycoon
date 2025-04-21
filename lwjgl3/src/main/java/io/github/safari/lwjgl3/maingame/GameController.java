@@ -26,25 +26,30 @@ public class GameController {
         ShopItem selectedItem = shop.getShopItems();
 
         if (selectedItem != null) {
-            if (gameModel.positionFound(x, y, width, height) || isjeep) {
-                if (gameModel.CanBuy(selectedItem)) {
-                    if (!isjeep) {
-                        BuyItem(selectedItem, x, y, width, height);
-                        //shop.clearSelection();
-                        return true;
-                    } else {
-                        if (gameModel.Is_There_Road(x, y)) {
+            if(shop.isBuying()) {
+                if (gameModel.positionFound(x, y, width, height) || isjeep) {
+                    if (gameModel.CanBuy(selectedItem)) {
+                        if (!isjeep) {
                             BuyItem(selectedItem, x, y, width, height);
-
+                            //shop.clearSelection();
+                            return true;
                         } else {
-                            System.out.println("No suitable Road Found");
+                            if (gameModel.Is_There_Road(x, y)) {
+                                BuyItem(selectedItem, x, y, width, height);
+
+                            } else {
+                                System.out.println("No suitable Road Found");
+                            }
                         }
+                    } else {
+                        System.out.println("InSufficient FundsException!");
                     }
                 } else {
-                    System.out.println("InSufficient FundsException!");
+                    System.out.println("Target place ObstrcutedException!");
                 }
-            } else {
-                System.out.println("Target place ObstrcutedException!");
+            } else
+            {
+                SellThis(x,y,selectedItem);
             }
 
 
@@ -117,6 +122,111 @@ public class GameController {
                 break;
         }
     }
+
+
+
+    private void SellThis(float x, float y, ShopItem item) {
+        String item_to_sell = item.getName();
+        float sellRadius = 100f;
+        float minDistSq = Float.MAX_VALUE;
+        Environment closestEnvironment = null;
+        Herd closestHerd = null;
+        Road closestRoad = null;
+        Jeep closestJeep = null;
+
+        for (Environment environment : gameModel.getEnvironments()) {
+            boolean matches = switch (item_to_sell) {
+                case "Grass" -> environment instanceof Grass;
+                case "Tree" -> environment instanceof Tree;
+                case "Bush" -> environment instanceof Bush;
+                case "Lake" -> environment instanceof Lake;
+                default -> false;
+            };
+
+            if (matches) {
+                float dx = environment.getPosition().getX() - x;
+                float dy = environment.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestEnvironment = environment;
+                }
+            }
+        }
+        for (Herd herd : gameModel.getHerds()) {
+            boolean matches = switch (item_to_sell) {
+                case "Capybara" -> herd.getAnimalSpecies() == AnimalSpecies.CAPYBARA;
+                case "Dinosaur" -> herd.getAnimalSpecies() == AnimalSpecies.DINOSAUR;
+                case "Mammoth" -> herd.getAnimalSpecies() == AnimalSpecies.MAMMOTH;
+                case "Lion" -> herd.getAnimalSpecies() == AnimalSpecies.LION;
+                default -> false;
+            };
+
+            if (matches && !herd.getAnimals().isEmpty()) {
+                Animal animal = herd.getAnimals().get(0);
+                float dx = animal.getPosition().getX() - x;
+                float dy = animal.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestHerd = herd;
+                }
+            }
+        }
+
+        for (Road road : gameModel.getRoads()) {
+            if (item_to_sell.equals("Road")) {
+                float dx = road.getPosition().getX() - x;
+                float dy = road.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestRoad = road;
+                }
+            }
+        }
+
+        for (Jeep jeep : gameModel.getJeeps()) {
+            if (item_to_sell.equals("Jeep")) {
+                float dx = jeep.getPosition().getX() - x;
+                float dy = jeep.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestJeep = jeep;
+                }
+            }
+        }
+
+        // Eltávolítás prioritás: Environment > Herd > Road > Jeep
+        if (closestEnvironment != null) {
+            gameModel.getEnvironments().remove(closestEnvironment);
+            gameModel.increasemoney((int) (item.getPrice() * 0.7f));
+            return;
+        }
+
+        if (closestHerd != null) {
+            gameModel.getHerds().remove(closestHerd);
+            gameModel.increasemoney((int) (item.getPrice() * 0.7f));
+            return;
+        }
+
+        if (closestRoad != null) {
+            gameModel.getRoads().remove(closestRoad);
+            gameModel.increasemoney((int) (item.getPrice() * 0.7f));
+            return;
+        }
+
+        if (closestJeep != null) {
+            gameModel.getJeeps().remove(closestJeep);
+            gameModel.increasemoney((int) (item.getPrice() * 0.7f));
+        }
+    }
+
 
 }
 
