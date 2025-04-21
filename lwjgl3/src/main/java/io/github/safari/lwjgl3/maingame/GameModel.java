@@ -21,44 +21,44 @@ public class GameModel implements EdibleCollection {
     private int difficulty; // 1 - 3
     private int dayspassed;
 
-        private int ticketprice;
-        private int touristcount;
-        private Position entrancepos;
+    private int ticketprice;
+    private int touristcount;
+    private Position entrancepos;
 
-        private ArrayList<Herd> herds;
-        private ArrayList<Poacher> poachers;
-        private ArrayList<Ranger> rangers;
-        private ArrayList<Jeep> jeeps;
-        private ArrayList<Security> securities;
-        private ArrayList<Environment> environments;
-        private ArrayList<Road> roads;
-        private ArrayList<Tourist> tourists;
-
+    private ArrayList<Herd> herds;
+    private ArrayList<Poacher> poachers;
+    private ArrayList<Ranger> rangers;
+    private ArrayList<Jeep> jeeps;
+    private ArrayList<Security> securities;
+    private ArrayList<Environment> environments;
+    private ArrayList<Road> roads;
+    private ArrayList<Tourist> tourists;
 
     ArrayList<Herd> allHerbivores = new ArrayList<>();
     ArrayList<HerbivoreEdible> allHerbivoreEdible = new ArrayList<>();
     ArrayList<Drinkable> allDrinkable = new ArrayList<>();
 
 
-        @Override
-        public List<HerbivoreEdible> getAllHerbivoreEdible() {
-            return allHerbivoreEdible;
-        }
+    @Override
+    public List<HerbivoreEdible> getAllHerbivoreEdible() {
+        return allHerbivoreEdible;
+    }
 
     @Override
     public ArrayList<Herd> getAllHerbivores() {
         return allHerbivores;
     }
 
-        @Override
-        public ArrayList<Drinkable> getAllDrinkable() {
-            return allDrinkable;
-        }
+    @Override
+    public ArrayList<Drinkable> getAllDrinkable() {
+        return allDrinkable;
+    }
 
-    private int objectNumber = 50;
+    private int objectNumber = 20;
     private float mapWidth = 3200;
     private float mapHeight = 3200;
     private Random random;
+    private boolean isDaytime = true;
     private float minDistance = 64;
 
     private float timeacc = 0;
@@ -111,20 +111,20 @@ public class GameModel implements EdibleCollection {
         return touristcount;
     }
 
-        public ArrayList<Environment> getEnvironments() {return environments;}
+    public ArrayList<Environment> getEnvironments() {return environments;}
 
-        public ArrayList<Herd> getHerds() {return herds;}
+    public ArrayList<Herd> getHerds() {return herds;}
 
-        public ArrayList<Jeep> getJeeps() {return jeeps;}
+    public ArrayList<Jeep> getJeeps() {return jeeps;}
 
-        public ArrayList<Road> getRoads(){ return roads;}
+    public ArrayList<Road> getRoads(){ return roads;}
 
         public ArrayList<Tourist> getTourists() {return tourists;}
 
-        public void InitializeGame()
-        {
-            generateMap();
-        }
+    public void InitializeGame()
+    {
+        generateMap();
+    }
 
     private void generateMap()
     {
@@ -135,13 +135,13 @@ public class GameModel implements EdibleCollection {
             int width = 96;
             int height = 110;
 
-                if (positionFound(x, y, width, height)) {
-                    Tree tree = new Tree(new Position(x, y, width, height));
-                    environments.add(tree);
-                    allHerbivoreEdible.add(tree);
-                    objectCount++;
-                }
+            if (positionFound(x, y, width, height)) {
+                Tree tree = new Tree(new Position(x, y, width, height));
+                environments.add(tree);
+                allHerbivoreEdible.add(tree);
+                objectCount++;
             }
+        }
 
         objectCount = 0;
         while (objectCount < objectNumber) {
@@ -150,13 +150,13 @@ public class GameModel implements EdibleCollection {
             int width = 64;
             int height = 64;
 
-                if (positionFound(x, y, width, height)) {
-                    Bush bush = new Bush(new Position(x, y, width, height));
-                    environments.add(bush);
-                    allHerbivoreEdible.add(bush);
-                    objectCount++;
-                }
+            if (positionFound(x, y, width, height)) {
+                Bush bush = new Bush(new Position(x, y, width, height));
+                environments.add(bush);
+                allHerbivoreEdible.add(bush);
+                objectCount++;
             }
+        }
 
         objectCount = 0;
         while (objectCount < objectNumber) {
@@ -198,8 +198,8 @@ public class GameModel implements EdibleCollection {
 
                 float gridSize = 64f;
 
-                    float entranceY =(random.nextInt((int)(mapHeight / gridSize))) * gridSize;
-                    float exitY = (random.nextInt((int)(mapHeight / gridSize))) * gridSize;
+                float entranceY =(random.nextInt((int)(mapHeight / gridSize))) * gridSize;
+                float exitY = (random.nextInt((int)(mapHeight / gridSize))) * gridSize;
 
 
 
@@ -275,9 +275,12 @@ public class GameModel implements EdibleCollection {
                 timeacc += delta;
                 SummonTourist();
 
-                if (timeacc >= 3.0f) {
-                    dayspassed += timeinterval;
-                    timeacc = 0;
+
+            if(timeacc >= 3.0f)
+            {
+                dayspassed += timeinterval;
+                timeacc = 0;
+                isDaytime = !isDaytime;
 
                     if ((dayspassed - previousDays) % 30 == 0) {
                         calculateIncome();
@@ -297,7 +300,12 @@ public class GameModel implements EdibleCollection {
             }
     }
 
-    public void increasemoney(int money) {
+    public boolean isDaytime() {
+        return isDaytime;
+    }
+
+    public void increasemoney(int money)
+    {
         this.money += money;
     }
 
@@ -584,4 +592,3 @@ public class GameModel implements EdibleCollection {
     }
     */
 }
-

@@ -1,13 +1,12 @@
 package io.github.safari.lwjgl3.maingame;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -68,8 +67,9 @@ public class GameView implements Screen {
     private final SpriteBatch spriteBatch;
 
     private ScreenViewport viewport;
-    private final float cameraMaxZoom = 1.4f;
-    private final float cameraMinZoom = 0.6f;
+    private final float cameraMaxZoom = 1.5f;
+    private final float cameraMinZoom = 0.5f;
+    private final float targetZoom = 0.5f;
 
     private static final float MINIMAP_SCALE = 0.2f;
     private static final int MINIMAP_SIZE = (int) (3200 * MINIMAP_SCALE);
@@ -77,10 +77,12 @@ public class GameView implements Screen {
     private ShapeRenderer shapeRenderer;
 
     private boolean isDragging = false;
-    private float lastX = 0;
-    private float lastY = 0;
-    private float minimapX = 0;
-    private float minimapY = 0;
+
+    private FrameBuffer fogBuffer;
+    private Texture fogTexture;
+    private SpriteBatch fogBatch;
+    private boolean minimapVisible = false;
+
 
     public GameView(Game game, int difficulty) {
 
@@ -103,6 +105,8 @@ public class GameView implements Screen {
         this.minimapBatch = new SpriteBatch();
         this.game = game;
         this.gameModel = new GameModel(difficulty);
+        fogBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        fogBatch = new SpriteBatch();
     }
 
 
@@ -110,7 +114,7 @@ public class GameView implements Screen {
     public void show() {
 
         camera = new OrthographicCamera();
-        viewport = new ScreenViewport(camera);
+        viewport = new ScreenViewport();
 
         minimapCamera = new OrthographicCamera();
         minimapViewport = new FitViewport(mapWidth * MINIMAP_SCALE, mapHeight * MINIMAP_SCALE, minimapCamera);
@@ -149,7 +153,8 @@ public class GameView implements Screen {
             }
         });
 
-        zoomContolButtons();
+        //zoomContolButtons();
+        zoomControlScroll();
         speedbutton();
 
         uiStage.addActor(openShopButton);
@@ -166,6 +171,10 @@ public class GameView implements Screen {
         cameraMovement();
         camera.update();
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            minimapVisible = !minimapVisible;
+        }
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         mapRenderer.setView(camera);
@@ -180,13 +189,122 @@ public class GameView implements Screen {
         gameStage.act(delta);
         gameStage.draw();
 
+        renderFogOfWar();
+
         uiStage.act(delta);
         uiStage.draw();
 
         scorePanel.updateScore();
         gameModel.Simulation(delta);
 
-        renderMinimap(delta);
+
+        if (minimapVisible) {
+            renderMinimap(delta);
+            renderMinimapFogOfWar();
+        }
+    }
+
+    public void renderFogOfWar() {
+        if (!gameModel.isDaytime()) return;
+
+
+        if (fogBuffer == null || fogBuffer.getWidth() != Gdx.graphics.getWidth() ||
+            fogBuffer.getHeight() != Gdx.graphics.getHeight()) {
+            if (fogBuffer != null) fogBuffer.dispose();
+            fogBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight(), false);
+        }
+
+
+        fogBuffer.begin();
+        Gdx.gl.glClearColor(0, 0, 0, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (Environment env : gameModel.getEnvironments()) {
+            float centerX = env.getPosition().getX() + env.getPosition().getWidth()/2;
+            float centerY = env.getPosition().getY() + env.getPosition().getHeight()/2;
+            float radius = 200f;
+
+            shapeRenderer.setColor(1, 1, 1, 1.0f);
+            shapeRenderer.circle(centerX, centerY, radius);
+        }
+
+        shapeRenderer.end();
+        fogBuffer.end();
+
+        fogBatch.begin();
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        OrthographicCamera screenCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        screenCamera.position.set(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2, 0);
+        screenCamera.update();
+        fogBatch.setProjectionMatrix(screenCamera.combined);
+
+        fogTexture = fogBuffer.getColorBufferTexture();
+        fogBatch.draw(fogTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
+            0, 0, fogTexture.getWidth(), fogTexture.getHeight(), false, true);
+
+        fogBatch.end();
+    }
+
+
+    public void renderMinimapFogOfWar() {
+        if (!gameModel.isDaytime()) return;
+
+        int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE;
+        int minimapY = MINIMAP_BORDER;
+
+        if (fogBuffer == null || fogBuffer.getWidth() != MINIMAP_SIZE || fogBuffer.getHeight() != MINIMAP_SIZE) {
+            if (fogBuffer != null) fogBuffer.dispose();
+            fogBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, MINIMAP_SIZE, MINIMAP_SIZE, false);
+        }
+
+        float mapScale = MINIMAP_SIZE / (float)Math.max(mapWidth, mapHeight);
+
+        fogBuffer.begin();
+        Gdx.gl.glClearColor(0, 0, 0, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.setProjectionMatrix(minimapCamera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (Environment env : gameModel.getEnvironments()) {
+            float centerX = (env.getPosition().getX() + env.getPosition().getWidth()/2) * mapScale;
+            float centerY = (env.getPosition().getY() + env.getPosition().getHeight()/2) * mapScale;
+            float radius = 200f * mapScale;
+
+            shapeRenderer.setColor(1, 1, 1, 1.0f);
+            shapeRenderer.circle(centerX, centerY, radius);
+        }
+
+        shapeRenderer.end();
+        fogBuffer.end();
+
+        Gdx.gl.glViewport(minimapX, minimapY, MINIMAP_SIZE, MINIMAP_SIZE);
+        Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
+        Gdx.gl.glScissor(minimapX, minimapY, MINIMAP_SIZE, MINIMAP_SIZE);
+
+        fogBatch.begin();
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        fogBatch.setProjectionMatrix(minimapCamera.combined);
+        fogTexture = fogBuffer.getColorBufferTexture();
+
+        fogBatch.draw(fogTexture, 0, 0, mapWidth * mapScale, mapHeight * mapScale,
+            0, 0, fogTexture.getWidth(), fogTexture.getHeight(), false, true);
+
+        fogBatch.end();
+        Gdx.gl.glDisable(GL20.GL_SCISSOR_TEST);
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     private void renderMinimap(float delta) {
@@ -221,6 +339,7 @@ public class GameView implements Screen {
         minimapBatch.begin();
             drawSprites(minimapBatch,scale,delta);
         minimapBatch.end();
+
 
         shapeRenderer.setProjectionMatrix(minimapCamera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -385,6 +504,7 @@ public class GameView implements Screen {
 
     }
 
+    /*
     private void zoomContolButtons() {
         Label zoomLabel = new Label("Zoom", skin);
         zoomLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 45);
@@ -416,6 +536,24 @@ public class GameView implements Screen {
         uiStage.addActor(zoomLabel);
         uiStage.addActor(zoomOutButton);
         uiStage.addActor(zoomInButton);
+    }
+    */
+
+    private void zoomControlScroll() {
+        InputListener scrollListener = new InputListener() {
+            @Override
+            public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
+                float newZoom = camera.zoom + (amountY * targetZoom);
+                newZoom = Math.max(cameraMinZoom, Math.min(cameraMaxZoom, newZoom));
+                camera.zoom += (newZoom - camera.zoom) * 0.2f;
+
+                clampCameraPosition();
+                camera.update();
+                return true;
+            }
+        };
+
+        gameStage.addListener(scrollListener);
     }
 
     private void speedbutton() {
