@@ -403,11 +403,7 @@ public class GameModel implements EdibleCollection {
 
     public boolean CanBuy(ShopItem selectedItem)
     {
-        if(money - selectedItem.getPrice() >= 0)
-        {
-            return true;
-        }
-        return false;
+        return money - selectedItem.getPrice() >= 0;
     }
 
     public void addtoenvironment(Environment environment)

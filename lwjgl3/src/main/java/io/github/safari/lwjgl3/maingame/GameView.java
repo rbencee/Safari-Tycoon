@@ -76,6 +76,9 @@ public class GameView implements Screen {
     private static final int MINIMAP_BORDER = 20;
     private ShapeRenderer shapeRenderer;
 
+    private static final float EDGE_MARGIN = 20f;       // Aktiválódási zóna széleknél
+    private static final float CAMERA_SPEED = 300f;     // Pixel per másodperc
+
     private boolean isDragging = false;
 
     private FrameBuffer fogBuffer;
@@ -168,6 +171,7 @@ public class GameView implements Screen {
 
     @Override
     public void render(float delta) {
+        handleEdgeScrolling(delta);
         cameraMovement();
         camera.update();
 
@@ -429,7 +433,7 @@ public class GameView implements Screen {
             camera.position.y = mapHeight - halfViewportHeight;
         }
     }
-    /*
+
     private void handleEdgeScrolling(float delta) {
         int mouseX = Gdx.input.getX();
         int mouseY = Gdx.input.getY();
@@ -438,21 +442,15 @@ public class GameView implements Screen {
 
         Vector3 move = new Vector3();
 
-        // Bal szél
         if (mouseX < EDGE_MARGIN) {
             move.x -= CAMERA_SPEED * delta;
-        }
-        // Jobb szél
-        else if (mouseX > screenWidth - EDGE_MARGIN) {
+        } else if (mouseX > screenWidth - EDGE_MARGIN) {
             move.x += CAMERA_SPEED * delta;
         }
 
-        // Alsó szél (Y lefelé nő!)
         if (mouseY > screenHeight - EDGE_MARGIN) {
             move.y -= CAMERA_SPEED * delta;
-        }
-        // Felső szél
-        else if (mouseY < EDGE_MARGIN) {
+        } else if (mouseY < EDGE_MARGIN) {
             move.y += CAMERA_SPEED * delta;
         }
 
@@ -460,7 +458,7 @@ public class GameView implements Screen {
         camera.update();
     }
 
-     */
+
 
     private void drawSprites(SpriteBatch spriteBatch, float scale, float delta) {
         for (Environment env : gameModel.getEnvironments()) {
