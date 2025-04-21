@@ -122,30 +122,22 @@ public class GameController {
 
 
     private void SellThis(float x, float y, ShopItem item) {
-
         String item_to_sell = item.getName();
-
-        Environment closest = null;
-        float minDistSq = Float.MAX_VALUE;
         float sellRadius = 100f;
+        float minDistSq = Float.MAX_VALUE;
+        Environment closestEnvironment = null;
+        Herd closestHerd = null;
+        Road closestRoad = null;
+        Jeep closestJeep = null;
 
         for (Environment environment : gameModel.getEnvironments()) {
-            boolean matches = false;
-
-            switch (item_to_sell) {
-                case "Grass":
-                    matches = environment instanceof Grass;
-                    break;
-                case "Tree":
-                    matches = environment instanceof Tree;
-                    break;
-                case "Bush":
-                    matches = environment instanceof Bush;
-                    break;
-                case "Lake":
-                    matches = environment instanceof Lake;
-                    break;
-            }
+            boolean matches = switch (item_to_sell) {
+                case "Grass" -> environment instanceof Grass;
+                case "Tree" -> environment instanceof Tree;
+                case "Bush" -> environment instanceof Bush;
+                case "Lake" -> environment instanceof Lake;
+                default -> false;
+            };
 
             if (matches) {
                 float dx = environment.getPosition().getX() - x;
@@ -154,17 +146,83 @@ public class GameController {
 
                 if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
                     minDistSq = distSq;
-                    closest = environment;
+                    closestEnvironment = environment;
+                }
+            }
+        }
+        for (Herd herd : gameModel.getHerds()) {
+            boolean matches = switch (item_to_sell) {
+                case "Capybara" -> herd.getAnimalSpecies() == AnimalSpecies.CAPYBARA;
+                case "Dinosaur" -> herd.getAnimalSpecies() == AnimalSpecies.DINOSAUR;
+                case "Mammoth" -> herd.getAnimalSpecies() == AnimalSpecies.MAMMOTH;
+                case "Lion" -> herd.getAnimalSpecies() == AnimalSpecies.LION;
+                default -> false;
+            };
+
+            if (matches && !herd.getAnimals().isEmpty()) {
+                Animal animal = herd.getAnimals().get(0);
+                float dx = animal.getPosition().getX() - x;
+                float dy = animal.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestHerd = herd;
                 }
             }
         }
 
-        if (closest != null) {
-            gameModel.getEnvironments().remove(closest);
-            gameModel.increasemoney((int)(item.getPrice() * 0.7f));
+        for (Road road : gameModel.getRoads()) {
+            if (item_to_sell.equals("Road")) {
+                float dx = road.getPosition().getX() - x;
+                float dy = road.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
 
+                if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestRoad = road;
+                }
+            }
+        }
+
+        for (Jeep jeep : gameModel.getJeeps()) {
+            if (item_to_sell.equals("Jeep")) {
+                float dx = jeep.getPosition().getX() - x;
+                float dy = jeep.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= sellRadius * sellRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestJeep = jeep;
+                }
+            }
+        }
+
+        // Eltávolítás prioritás: Environment > Herd > Road > Jeep
+        if (closestEnvironment != null) {
+            gameModel.getEnvironments().remove(closestEnvironment);
+            gameModel.increasemoney((int) (item.getPrice() * 0.7f));
+            return;
+        }
+
+        if (closestHerd != null) {
+            gameModel.getHerds().remove(closestHerd);
+            gameModel.increasemoney((int) (item.getPrice() * 0.7f));
+            return;
+        }
+
+        if (closestRoad != null) {
+            gameModel.getRoads().remove(closestRoad);
+            gameModel.increasemoney((int) (item.getPrice() * 0.7f));
+            return;
+        }
+
+        if (closestJeep != null) {
+            gameModel.getJeeps().remove(closestJeep);
+            gameModel.increasemoney((int) (item.getPrice() * 0.7f));
         }
     }
+
 
 }
 

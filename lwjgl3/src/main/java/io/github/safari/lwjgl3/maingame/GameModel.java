@@ -582,11 +582,6 @@
                     iterator.remove();
                 }
             }
-
-
-
-
-
         }
 
         /*
