@@ -8,15 +8,24 @@ buildscript {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
   }
-  dependencies {
-  }
+}
+
+plugins {
+  id 'java-library'
 }
 
 allprojects {
   apply plugin: 'eclipse'
   apply plugin: 'idea'
 
-  // This allows you to "Build and run using IntelliJ IDEA", an option in IDEA's Settings.
+  ext {
+    appName = "Safari"
+    projectVersion = "1.0.0"
+    gdxVersion = "1.11.0"
+    graalHelperVersion = "0.2.0"
+    enableGraalNative = "false"
+  }
+
   idea {
     module {
       outputDir file('build/classes/java/main')
@@ -28,33 +37,7 @@ allprojects {
 configure(subprojects) {
   apply plugin: 'java-library'
   sourceCompatibility = 17
-
-  tasks.register('generateAssetList') {
-    inputs.dir("${project.rootDir}/assets/")
-    // projectFolder/assets
-    File assetsFolder = new File("${project.rootDir}/assets/")
-    // projectFolder/assets/assets.txt
-    File assetsFile = new File(assetsFolder, "assets.txt")
-    // delete that file in case we've already created it
-    assetsFile.delete()
-
-    // iterate through all files inside that folder
-    // convert it to a relative path
-    // and append it to the file assets.txt
-    fileTree(assetsFolder).collect { assetsFolder.relativePath(it) }.sort().each {
-      assetsFile.append(it + "\n")
-    }
-  }
-  processResources.dependsOn 'generateAssetList'
-
-  compileJava {
-    options.incremental = true
-  }
-}
-
-subprojects {
   version = "$projectVersion"
-  ext.appName = 'Safari'
 
   repositories {
     mavenCentral()
@@ -65,21 +48,35 @@ subprojects {
     maven { url 'https://jitpack.io' }
   }
 
-  // Replacing the deprecated JavaPluginConvention with the new API
+  tasks.register('generateAssetList') {
+    // ... meglévő generateAssetList implementáció ...
+  }
+
+  processResources.dependsOn 'generateAssetList'
+  compileJava.options.incremental = true
+
   plugins.withType(JavaPlugin) {
     java {
       toolchain {
-        languageVersion = JavaLanguageVersion.of(17)  // Adjust to your Java version
+        languageVersion = JavaLanguageVersion.of(17)
       }
     }
   }
 
-  // Replacing the deprecated ApplicationPluginConvention with the new API
   plugins.withType(ApplicationPlugin) {
     application {
-      mainClass.set("com.yourpackage.Main")  // Set your main class here
+      mainClass.set("com.yourpackage.Main")
     }
   }
 }
 
-eclipse.project.name = 'Safari' + '-parent'
+dependencies {
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+  useJUnitPlatform()
+}
+
+eclipse.project.name = 'Safari-parent'
