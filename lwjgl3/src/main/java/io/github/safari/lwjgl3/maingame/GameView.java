@@ -1,9 +1,6 @@
 package io.github.safari.lwjgl3.maingame;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -85,6 +82,7 @@ public class GameView implements Screen {
     private FrameBuffer fogBuffer;
     private Texture fogTexture;
     private SpriteBatch fogBatch;
+    private boolean minimapVisible = false;
 
 
     public GameView(Game game, int difficulty) {
@@ -175,6 +173,10 @@ public class GameView implements Screen {
         cameraMovement();
         camera.update();
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            minimapVisible = !minimapVisible;
+        }
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         mapRenderer.setView(camera);
@@ -198,9 +200,10 @@ public class GameView implements Screen {
         gameModel.Simulation(delta);
 
 
-        renderMinimap(delta);
-        renderMinimapFogOfWar();
-
+        if (minimapVisible) {
+            renderMinimap(delta);
+            renderMinimapFogOfWar();
+        }
     }
 
     public void renderFogOfWar() {
