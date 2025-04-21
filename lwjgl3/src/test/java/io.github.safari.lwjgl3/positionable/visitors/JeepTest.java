@@ -1,4 +1,4 @@
-package io.github.safari.lwjgl3.positionable.Jeep;
+package io.github.safari.lwjgl3.positionable.visitors;
 
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
@@ -16,7 +16,7 @@ public class JeepTest {
             Jeep jeep = new Jeep(startPosition);
 
             assertEquals(startPosition, jeep.getPosition());
-            assertTrue(jeep.isToStart());
+            assertTrue(jeep.isTostart());
             assertNotNull(jeep.getTourists());
             assertTrue(jeep.getTourists().isEmpty());
             assertNotNull(jeep.getTexture());
@@ -64,7 +64,7 @@ public class JeepTest {
                 assertTrue(result, "Turista nem lett hozzáadva, pedig volt hely.");
             }
 
-            boolean result = jeep.trytoaddtourist(new Tourist());
+            boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32)));
             assertTrue(result, "4. turista nem lett hozzáadva, pedig még belefér.");
         }
 
@@ -74,11 +74,11 @@ public class JeepTest {
 
             // 4 turista hozzaadasa
             for (int i = 0; i < 4; i++) {
-                assertTrue(jeep.trytoaddtourist(new Tourist()));
+                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32))));
             }
 
             // 5. turistat nem lehet hozzaadni
-            boolean result = jeep.trytoaddtourist(new Tourist());
+            boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32)));
             assertFalse(result, "5. turista hozzá lett adva, de nem kellett volna.");
         }
 
@@ -87,7 +87,7 @@ public class JeepTest {
             Jeep jeep = new Jeep(new Position(0, 0, 32 , 32));
 
             for (int i = 0; i < 4; i++) {
-                assertTrue(jeep.trytoaddtourist(new Tourist()), "Nem sikerült hozzáadni a(z) " + (i + 1) + ". turistát.");
+                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32))), "Nem sikerült hozzáadni a(z) " + (i + 1) + ". turistát.");
             }
 
             assertEquals(4, jeep.getTourists().size(), "A turisták száma nem pontosan 4.");
@@ -98,9 +98,9 @@ public class JeepTest {
         {
             Jeep jeep = new Jeep(new Position(0, 0, 32 , 32));
 
-            assertTrue(jeep.trytoaddtourist(new Tourist()), "Nem sikerült hozzáadni a turistát!");
+            assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32))), "Nem sikerült hozzáadni a turistát!");
 
-            assertEquals(1, jeep.getTourists().size()), "Turistak szama nem megfelelo!");
+            assertEquals(1, jeep.getTourists().size());
         }
 
         @ParameterizedTest //Turistak leadasanak ellenorzese
@@ -114,7 +114,7 @@ public class JeepTest {
             Jeep jeep = new Jeep(new Position(0, 0, 32, 32));
 
             for (int i = 0; i < toAddTourist; i++) {
-                assertTrue(jeep.trytoaddtourist(new Tourist()), "Nem sikerült hozzáadni a turistát!");
+                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32))), "Nem sikerült hozzáadni a turistát!");
             }
 
             int droppedCount = jeep.Drop_Off_Tourists();
