@@ -216,7 +216,7 @@ public class GameView implements Screen {
 
 
         fogBuffer.begin();
-        Gdx.gl.glClearColor(0, 0, 0, 0.7f);
+        Gdx.gl.glClearColor(0, 0, 0, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -267,7 +267,7 @@ public class GameView implements Screen {
         float mapScale = MINIMAP_SIZE / (float)Math.max(mapWidth, mapHeight);
 
         fogBuffer.begin();
-        Gdx.gl.glClearColor(0, 0, 0, 0.7f);
+        Gdx.gl.glClearColor(0, 0, 0, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
