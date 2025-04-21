@@ -164,6 +164,7 @@ public class GameView implements Screen {
         this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
         setupPlace();
         minimapInput();
+
     }
 
     @Override
@@ -227,8 +228,17 @@ public class GameView implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (Environment env : gameModel.getEnvironments()) {
-            float centerX = env.getPosition().getX() + env.getPosition().getWidth()/2;
-            float centerY = env.getPosition().getY() + env.getPosition().getHeight()/2;
+            float centerX = env.getPosition().getX() + (float) env.getPosition().getWidth() /2;
+            float centerY = env.getPosition().getY() + (float) env.getPosition().getHeight() /2;
+            float radius = 200f;
+
+            shapeRenderer.setColor(1, 1, 1, 1.0f);
+            shapeRenderer.circle(centerX, centerY, radius);
+        }
+
+        for (Road road : gameModel.getRoads()) {
+            float centerX = road.getPosition().getX() + (float) road.getPosition().getWidth() / 2;
+            float centerY = road.getPosition().getY() + (float) road.getPosition().getHeight() / 2;
             float radius = 200f;
 
             shapeRenderer.setColor(1, 1, 1, 1.0f);
@@ -242,7 +252,7 @@ public class GameView implements Screen {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         OrthographicCamera screenCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        screenCamera.position.set(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2, 0);
+        screenCamera.position.set((float) Gdx.graphics.getWidth() /2, (float) Gdx.graphics.getHeight() /2, 0);
         screenCamera.update();
         fogBatch.setProjectionMatrix(screenCamera.combined);
 
@@ -278,9 +288,18 @@ public class GameView implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (Environment env : gameModel.getEnvironments()) {
-            float centerX = (env.getPosition().getX() + env.getPosition().getWidth()/2) * mapScale;
-            float centerY = (env.getPosition().getY() + env.getPosition().getHeight()/2) * mapScale;
+            float centerX = (env.getPosition().getX() + (float) env.getPosition().getWidth() /2) * mapScale;
+            float centerY = (env.getPosition().getY() + (float) env.getPosition().getHeight() /2) * mapScale;
             float radius = 200f * mapScale;
+
+            shapeRenderer.setColor(1, 1, 1, 1.0f);
+            shapeRenderer.circle(centerX, centerY, radius);
+        }
+
+        for (Road road : gameModel.getRoads()) {
+            float centerX = road.getPosition().getX() + (float) road.getPosition().getWidth() / 2;
+            float centerY = road.getPosition().getY() + (float) road.getPosition().getHeight() / 2;
+            float radius = 200f;
 
             shapeRenderer.setColor(1, 1, 1, 1.0f);
             shapeRenderer.circle(centerX, centerY, radius);
@@ -361,6 +380,8 @@ public class GameView implements Screen {
         uiStage.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (!minimapVisible) return false;
+
                 int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE - MINIMAP_BORDER;
                 int minimapY = MINIMAP_BORDER;
 
