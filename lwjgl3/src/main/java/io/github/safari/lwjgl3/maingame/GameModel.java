@@ -336,6 +336,7 @@
                 this.tourists.add(new Tourist(newPos));
             }
 
+            this.money += ticketprice;
         }
 
         private int payrangers()

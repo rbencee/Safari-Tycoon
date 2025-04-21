@@ -81,4 +81,6 @@ public class Jeep implements Positionable, Moveable {
     public void setTostart(boolean tostart) {
         this.tostart = tostart;
     }
+
+    public ArrayList<Tourist> getTourists() {return tourists;}
 }
