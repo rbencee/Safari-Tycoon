@@ -276,7 +276,7 @@ public class GameModel implements EdibleCollection {
                 SummonTourist();
 
 
-            if(timeacc >= 3.0f)
+            if(timeacc >= 10.0f)
             {
                 dayspassed += timeinterval;
                 timeacc = 0;
@@ -285,19 +285,19 @@ public class GameModel implements EdibleCollection {
                     if ((dayspassed - previousDays) % 30 == 0) {
                         calculateIncome();
                     }
-
-                    for (Jeep jeep : jeeps) {
-                        Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
-                        if (roadtogo != null) {
-                            jeep.moveTowards(roadtogo.getPosition(), timeinterval);
-                            //System.out.println("ROAD TO GO: " + roadtogo.getPosition());
-                        } else {
-                            //System.out.println("ROAD TO GO NOT FOUND");
-                        }
+            }
+            for (Jeep jeep : jeeps) {
+                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
+                if (roadtogo != null) {
+                    jeep.moveTowards(roadtogo.getPosition(), timeinterval);
+                    //System.out.println("ROAD TO GO: " + roadtogo.getPosition());
+                } else {
+                    //System.out.println("ROAD TO GO NOT FOUND");
+                    }
 
                     }
                 }
-            }
+
     }
 
     public boolean isDaytime() {

@@ -301,9 +301,9 @@ public class GameView implements Screen {
         }
 
         for (Road road : gameModel.getRoads()) {
-            float centerX = road.getPosition().getX() + (float) road.getPosition().getWidth() / 2;
-            float centerY = road.getPosition().getY() + (float) road.getPosition().getHeight() / 2;
-            float radius = 200f;
+            float centerX = (road.getPosition().getX() + (float) road.getPosition().getWidth() / 2) * mapScale;
+            float centerY = (road.getPosition().getY() + (float) road.getPosition().getHeight() / 2) * mapScale;
+            float radius = 200f * mapScale;
 
             shapeRenderer.setColor(1, 1, 1, 1.0f);
             shapeRenderer.circle(centerX, centerY, radius);
