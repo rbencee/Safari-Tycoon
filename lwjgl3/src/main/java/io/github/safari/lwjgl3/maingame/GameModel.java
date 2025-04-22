@@ -69,6 +69,7 @@ public class GameModel implements EdibleCollection {
         this.random = new Random();
         this.herds = new ArrayList<>();
         this.rangers = new ArrayList<>();
+        this.poachers = new ArrayList<>();
         this.dayspassed = 0;
         this.income = 0;
         this.touristcount = 0;
@@ -111,6 +112,14 @@ public class GameModel implements EdibleCollection {
         return touristcount;
     }
 
+    public float getMapWidth(){
+        return mapWidth;
+    }
+
+    public float getMapHeight(){
+        return mapWidth;
+    }
+
     public ArrayList<Environment> getEnvironments() {return environments;}
 
     public ArrayList<Herd> getHerds() {return herds;}
@@ -124,6 +133,7 @@ public class GameModel implements EdibleCollection {
     public void InitializeGame()
     {
         generateMap();
+        initializePoachers();
     }
 
     private void generateMap()
@@ -282,10 +292,15 @@ public class GameModel implements EdibleCollection {
                 timeacc = 0;
                 isDaytime = !isDaytime;
 
+
                     if ((dayspassed - previousDays) % 30 == 0) {
                         calculateIncome();
                     }
             }
+            for (Poacher poacher : poachers) {
+                poacher.update(delta);
+            }
+
             for (Jeep jeep : jeeps) {
                 Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
                 if (roadtogo != null) {
@@ -298,6 +313,24 @@ public class GameModel implements EdibleCollection {
                     }
                 }
 
+    }
+
+    public void initializePoachers() {
+        poachers = new ArrayList<>();
+
+        Random random = new Random();
+        for (int i = 0; i < 3; i++) {
+            float x = random.nextFloat() * getMapWidth();
+            float y = random.nextFloat() * getMapHeight();
+
+            Position position = new Position(x, y,64,64);
+            Poacher poacher = new Poacher(position);
+            poachers.add(poacher);
+        }
+    }
+
+    public ArrayList<Poacher> getPoachers() {
+        return poachers;
     }
 
     public boolean isDaytime() {
@@ -483,26 +516,6 @@ public class GameModel implements EdibleCollection {
         }
 
 
-        public List<Road> getAdjacentRoads(Road road) {
-            List<Road> adjacent = new ArrayList<>();
-            Position pos = road.getPosition();
-
-            for (Road other : roads) {
-                if (other == road) continue;
-
-                Position otherPos = other.getPosition();
-
-                float dx = Math.abs(pos.getX() - otherPos.getX());
-                float dy = Math.abs(pos.getY() - otherPos.getY());
-
-                if ((dx == 64 && dy == 0) || (dx == 0 && dy == 64)) {
-                    adjacent.add(other);
-                }
-            }
-
-            return adjacent;
-        }
-
 
         public Road getNextRoadTowardsEntrance(Jeep jeep, boolean isentrancedestionation) {
             System.out.println("GOTO: " +  isentrancedestionation);
@@ -580,6 +593,25 @@ public class GameModel implements EdibleCollection {
                 }
             }
         }
+    public List<Road> getAdjacentRoads(Road road) {
+        List<Road> adjacent = new ArrayList<>();
+        Position pos = road.getPosition();
+
+        for (Road other : roads) {
+            if (other == road) continue;
+
+            Position otherPos = other.getPosition();
+
+            float dx = Math.abs(pos.getX() - otherPos.getX());
+            float dy = Math.abs(pos.getY() - otherPos.getY());
+
+            if ((dx == 64 && dy == 0) || (dx == 0 && dy == 64)) {
+                adjacent.add(other);
+            }
+        }
+
+        return adjacent;
+    }
 
     /*
     private CheckInRange()
