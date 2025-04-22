@@ -90,7 +90,30 @@ public class GameModel implements EdibleCollection {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+        clearAllActions();
     }
+
+    private void clearAllActions() {
+        for (Herd herd : herds) {
+            for (AnimalImpl animal : herd.getAnimals()) {
+                animal.clearActions();
+            }
+        }
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getTimeMultiplicator() {
+        return switch (speed) {
+            case 1 -> 1;
+            case 2 -> 7;
+            case 3 -> 30;
+            default -> throw new UnsupportedOperationException();
+        };
+    }
+
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;

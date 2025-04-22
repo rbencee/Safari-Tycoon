@@ -2,7 +2,6 @@ package io.github.safari.lwjgl3.positionable.npc.animals.behaviours;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
@@ -18,7 +17,7 @@ public class HerbivoreBehaviour implements Behaviour {
 
     @Override
     public boolean canCreateAction(Herd herd) {
-        return herd.getHunger() <= 30 && !knownFood.isEmpty();
+        return herd.getMinHunger() <= 30 && !knownFood.isEmpty();
     }
 
     @Override
@@ -43,7 +42,7 @@ public class HerbivoreBehaviour implements Behaviour {
         HerbivoreEdible nearestFood = getNearestFood(herd);
         Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
         Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination));
-        actions.add(Actions.after(new EatAction(herd)));
+        actions.add(new EatAction());
         //todo ha odaért és már nincs ott növény, törli a knownból
         return actions;
     }

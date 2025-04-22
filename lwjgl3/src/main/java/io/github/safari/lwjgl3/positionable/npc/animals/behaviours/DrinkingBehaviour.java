@@ -2,7 +2,6 @@ package io.github.safari.lwjgl3.positionable.npc.animals.behaviours;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
@@ -18,7 +17,7 @@ public class DrinkingBehaviour implements Behaviour {
 
     @Override
     public boolean canCreateAction(Herd herd) {
-        return !knownDrinkables.isEmpty() && herd.getThirst() <= 30;
+        return !knownDrinkables.isEmpty() && herd.getMinThirst() <= 30;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class DrinkingBehaviour implements Behaviour {
         Vector2 destination = new Vector2(nearestWater.getPosition().getX(), nearestWater.getPosition().getY());
         Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination));
         //todo ha odaért és már nincs ott tó, törli a knownból
-        actions.add(Actions.after(new DrinkAction(herd)));
+        actions.add(new DrinkAction());
         return actions;
     }
 
