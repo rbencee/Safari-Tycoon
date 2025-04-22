@@ -721,7 +721,6 @@ public class GameView implements Screen {
                     boolean placed = gameController.TryToPlace(world.x -32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
-                        shop.clearSelection();
                     }
                     return true;
                 }
