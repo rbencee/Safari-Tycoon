@@ -23,8 +23,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
+import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.positionable.visitors.Tourist;
@@ -44,7 +46,7 @@ public class GameView implements Screen {
     private ScorePanel scorePanel;
 
     private boolean isDraggingRoad = false;
-    private Vector3 lastPlacedPos = new Vector3();
+    private final Vector3 lastPlacedPos = new Vector3();
 
     private final int mapWidth;
     private final int mapHeight;
@@ -56,7 +58,7 @@ public class GameView implements Screen {
 
     private OrthographicCamera minimapCamera;
     private FitViewport minimapViewport;
-    private SpriteBatch minimapBatch;
+    private final SpriteBatch minimapBatch;
 
 
     private final Texture treeTexture;
@@ -74,16 +76,16 @@ public class GameView implements Screen {
     private static final float MINIMAP_SCALE = 0.2f;
     private static final int MINIMAP_SIZE = (int) (3200 * MINIMAP_SCALE);
     private static final int MINIMAP_BORDER = 20;
-    private ShapeRenderer shapeRenderer;
+    private final ShapeRenderer shapeRenderer;
 
-    private static final float EDGE_MARGIN = 20f;       // Aktiválódási zóna széleknél
-    private static final float CAMERA_SPEED = 300f;     // Pixel per másodperc
+    private static final float EDGE_MARGIN = 100f;       // Aktiválódási zóna széleknél
+    private static final float CAMERA_SPEED = 700f;     // Pixel per másodperc
 
     private boolean isDragging = false;
 
     private FrameBuffer fogBuffer;
     private Texture fogTexture;
-    private SpriteBatch fogBatch;
+    private final SpriteBatch fogBatch;
     private boolean minimapVisible = false;
 
 
@@ -162,6 +164,9 @@ public class GameView implements Screen {
 
         uiStage.addActor(openShopButton);
         uiStage.addActor(table);
+        for (Poacher poacher : gameModel.getPoachers()) {
+            gameStage.addActor(poacher);
+        }
 
         gameController = new GameController(shop,this.gameModel, this);
         this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
@@ -334,7 +339,7 @@ public class GameView implements Screen {
         int minimapX = Gdx.graphics.getWidth() - MINIMAP_SIZE;
         int minimapY = MINIMAP_BORDER;
 
-        Gdx.gl.glViewport(minimapX - MINIMAP_BORDER, minimapY - MINIMAP_BORDER,
+        Gdx.gl.glViewport(minimapX - MINIMAP_BORDER, 0,
             MINIMAP_SIZE + 2*MINIMAP_BORDER, MINIMAP_SIZE + 2*MINIMAP_BORDER);
 
         shapeRenderer.setProjectionMatrix(minimapCamera.combined);
@@ -519,6 +524,14 @@ public class GameView implements Screen {
                 tourist.getPosition().getY() * scale,
                 tourist.getPosition().getWidth() * scale,
                 tourist.getPosition().getHeight() * scale);
+        }
+
+        for (Poacher poacher : gameModel.getPoachers()) {
+            spriteBatch.draw(poacher.getTexture(),
+                poacher.getPosition().getX() * scale,
+                poacher.getPosition().getY() * scale,
+                poacher.getPosition().getWidth() * scale,
+                poacher.getPosition().getHeight() * scale);
         }
 
     }
@@ -721,7 +734,6 @@ public class GameView implements Screen {
                     boolean placed = gameController.TryToPlace(world.x -32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
-                        shop.clearSelection();
                     }
                     return true;
                 }
