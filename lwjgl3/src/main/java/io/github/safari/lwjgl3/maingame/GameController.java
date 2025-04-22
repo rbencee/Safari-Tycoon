@@ -1,12 +1,18 @@
 package io.github.safari.lwjgl3.maingame;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
+import io.github.safari.lwjgl3.positionable.visitors.Tourist;
+import io.github.safari.lwjgl3.util.exceptions.InSufficientFundsException;
+import io.github.safari.lwjgl3.util.exceptions.ObstructedException;
 import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
+
+import java.util.*;
 
 public class GameController {
     Shop shop;
@@ -18,45 +24,47 @@ public class GameController {
         this.shop = shop;
         this.gameModel = model;
         this.gameView = gameView;
-
-
     }
 
     public boolean TryToPlace(float x, float y, int width, int height, int pointer, int button, boolean isjeep) {
         ShopItem selectedItem = shop.getShopItems();
 
-        if (selectedItem != null) {
-            if(shop.isBuying()) {
-                if (gameModel.positionFound(x, y, width, height) || isjeep) {
-                    if (gameModel.CanBuy(selectedItem)) {
-                        if (!isjeep) {
-                            BuyItem(selectedItem, x, y, width, height);
-                            //shop.clearSelection();
-                            return true;
-                        } else {
-                            if (gameModel.Is_There_Road(x, y)) {
+        try {
+            if (selectedItem != null) {
+                if (shop.isBuying()) {
+                    if (gameModel.positionFound(x, y, width, height) || isjeep) {
+                        if (gameModel.CanBuy(selectedItem)) {
+                            if (!isjeep) {
                                 BuyItem(selectedItem, x, y, width, height);
-
+                                //shop.clearSelection();
+                                return true;
                             } else {
-                                System.out.println("No suitable Road Found");
+                                if (gameModel.Is_There_Road(x, y)) {
+                                    BuyItem(selectedItem, x, y, width, height);
+
+                                } else {
+                                    System.out.println("No suitable Road Found");
+                                }
                             }
+                        } else {
+                            throw new InSufficientFundsException();
                         }
                     } else {
-                        System.out.println("InSufficient FundsException!");
+                        throw new ObstructedException();
                     }
                 } else {
-                    System.out.println("Target place ObstrcutedException!");
+                    SellThis(x, y, selectedItem);
                 }
-            } else
-            {
-                SellThis(x,y,selectedItem);
+
+
+            } else {
+                System.out.println("Nincs Megveve semmi");
             }
-
-
-        } else {
-            System.out.println("Nincs Megveve semmi");
         }
-
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         return false;
 
     }
@@ -227,6 +235,121 @@ public class GameController {
         }
     }
 
+    public static List<Road> getAdjacentRoads(Road road ,GameModel gameModel) {
+        List<Road> adjacent = new ArrayList<>();
+        Position pos = road.getPosition();
+
+        for (Road other : gameModel.getRoads()) {
+            if (other == road) continue;
+
+            Position otherPos = other.getPosition();
+
+            float dx = Math.abs(pos.getX() - otherPos.getX());
+            float dy = Math.abs(pos.getY() - otherPos.getY());
+
+            if ((dx == 64 && dy == 0) || (dx == 0 && dy == 64)) {
+                adjacent.add(other);
+            }
+        }
+
+        return adjacent;
+    }
+
+
+    public static Road getNextRoadTowardsEntrance(Jeep jeep, boolean isentrancedestionation, GameModel gameModel) {
+        System.out.println("GOTO: " +  isentrancedestionation);
+        Position startPos = jeep.getPosition();
+        Road startRoad = getClosestRoad(startPos,gameModel);
+        Road entrance;
+        if(isentrancedestionation) {
+            entrance = gameModel.getEntranceRoad();
+        } else
+        {
+            entrance = gameModel.getExitRoad();
+        }
+
+
+        if (startRoad == null || entrance == null) return null;
+        System.out.println("Not triggered");
+
+
+        if (startRoad.getPosition().equals(entrance.getPosition())) {
+            if(isentrancedestionation)
+            {
+                CheckForTourist_Here(jeep.getPosition(), jeep, gameModel);
+            } else
+            {
+                gameModel.setTouristcount(gameModel.getTouristcount() - jeep.Drop_Off_Tourists());
+            }
+
+            jeep.setTostart(!jeep.isTostart());
+        }
+
+
+        Map<Road, Road> cameFrom = new HashMap<>();
+        Queue<Road> queue = new LinkedList<>();
+        Set<Road> visited = new HashSet<>();
+
+        queue.add(startRoad);
+        visited.add(startRoad);
+        cameFrom.put(startRoad, null);
+
+        while (!queue.isEmpty()) {
+            Road current = queue.poll();
+
+            if (current.equals(entrance)) {
+
+                Road step = current;
+                Road prev = cameFrom.get(step);
+
+                while (prev != null && !prev.equals(startRoad)) {
+                    step = prev;
+                    prev = cameFrom.get(step);
+                }
+
+                return step;
+            }
+
+            for (Road neighbor : getAdjacentRoads(current, gameModel)) {
+                if (!visited.contains(neighbor)) {
+                    queue.add(neighbor);
+                    visited.add(neighbor);
+                    cameFrom.put(neighbor, current);
+                }
+            }
+        }
+
+        return null; // Nincs út
+    }
+
+    private static Road getClosestRoad(Position pos, GameModel gameModel) {
+        Road closest = null;
+        float minDist = Float.MAX_VALUE;
+
+        for (Road road : gameModel.getRoads()) {
+            float dx = pos.getX() - road.getPosition().getX();
+            float dy = pos.getY() - road.getPosition().getY();
+            float dist = dx * dx + dy * dy;
+
+            if (dist < minDist) {
+                minDist = dist;
+                closest = road;
+            }
+        }
+
+        return closest;
+    }
+
+    private static void CheckForTourist_Here(Position position, Jeep jeep, GameModel gameModel)
+    {
+        Iterator<Tourist> iterator = gameModel.getTourists().iterator();
+        while (iterator.hasNext()) {
+            Tourist t = iterator.next();
+            if (jeep.trytoaddtourist(t)) {
+                iterator.remove();
+            }
+        }
+    }
 
 }
 

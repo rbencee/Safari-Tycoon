@@ -76,8 +76,8 @@ public class GameView implements Screen {
     private static final int MINIMAP_BORDER = 20;
     private ShapeRenderer shapeRenderer;
 
-    private static final float EDGE_MARGIN = 20f;       // Aktiválódási zóna széleknél
-    private static final float CAMERA_SPEED = 300f;     // Pixel per másodperc
+    private static final float EDGE_MARGIN = 40f;       // Aktiválódási zóna széleknél
+    private static final float CAMERA_SPEED = 500f;     // Pixel per másodperc
 
     private boolean isDragging = false;
 
