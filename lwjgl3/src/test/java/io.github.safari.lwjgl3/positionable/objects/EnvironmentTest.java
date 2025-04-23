@@ -1,9 +1,12 @@
 package io.github.safari.lwjgl3.positionable.objects;
 
+import com.badlogic.gdx.graphics.Texture;
 import io.github.safari.lwjgl3.positionable.Position;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class EnvironmentTest {
 
@@ -57,6 +60,8 @@ class EnvironmentTest {
     void testRoadWithType2() {
         Position pos = new Position(50, 60, 32, 32);
         Road road = new Road(pos, 2);
+        Texture mockTexture = mock(Texture.class);
+        when(mockTexture.isLoaded()).thenReturn(true);
         assertNotNull(road);
         assertEquals(2, road.getRoadtype());
     }
