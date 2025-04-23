@@ -21,7 +21,7 @@ public class GameController {
 
 
     public GameController(Shop shop, GameModel model, GameView gameView) {
-        this.shop = shop;
+        this.shop = shop;0
         this.gameModel = model;
         this.gameView = gameView;
     }
@@ -63,7 +63,7 @@ public class GameController {
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            e.getMessage();
         }
         return false;
 
