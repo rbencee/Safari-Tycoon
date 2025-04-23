@@ -1,15 +1,17 @@
 package io.github.safari.lwjgl3.maingame;
 
+import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
-import io.github.safari.lwjgl3.positionable.npc.human.*;
+import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
+import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
-import io.github.safari.lwjgl3.positionable.visitors.Tourist;
-import org.lwjgl.opengl.ARBStencilTexturing;
+
 import java.util.*;
 
 
@@ -63,8 +65,7 @@ public class GameModel implements EdibleCollection {
 
     private float timeacc = 0;
 
-    public GameModel(int difficulty)
-    {
+    public GameModel(int difficulty) {
         this.difficulty = difficulty;
         this.random = new Random();
         this.herds = new ArrayList<>();
@@ -89,7 +90,30 @@ public class GameModel implements EdibleCollection {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+        clearAllActions();
     }
+
+    private void clearAllActions() {
+        for (Herd herd : herds) {
+            for (AnimalImpl animal : herd.getAnimals()) {
+                animal.clearActions();
+            }
+        }
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getTimeMultiplicator() {
+        return switch (speed) {
+            case 1 -> 1;
+            case 2 -> 7;
+            case 3 -> 30;
+            default -> throw new UnsupportedOperationException();
+        };
+    }
+
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
@@ -121,13 +145,11 @@ public class GameModel implements EdibleCollection {
 
         public ArrayList<Tourist> getTourists() {return tourists;}
 
-    public void InitializeGame()
-    {
+    public void InitializeGame() {
         generateMap();
     }
 
-    private void generateMap()
-    {
+    private void generateMap() {
         int objectCount = 0;
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
@@ -194,13 +216,12 @@ public class GameModel implements EdibleCollection {
         boolean entranceb = false;
         boolean exitb = false;
 
-            while(!entranceb && !exitb) {
+        while (!entranceb && !exitb) {
 
-                float gridSize = 64f;
+            float gridSize = 64f;
 
-                float entranceY =(random.nextInt((int)(mapHeight / gridSize))) * gridSize;
-                float exitY = (random.nextInt((int)(mapHeight / gridSize))) * gridSize;
-
+            float entranceY = random.nextInt((int) (mapHeight / gridSize)) * gridSize - 32;
+            float exitY = random.nextInt((int) (mapHeight / gridSize)) * gridSize - 32;
 
 
                     if(positionFound(0,entranceY,64,64)) {
@@ -309,8 +330,7 @@ public class GameModel implements EdibleCollection {
         this.money += money;
     }
 
-    public void calculateIncome()
-    {
+    public void calculateIncome() {
         this.money += touristcount * 5 + (sumUniqueAnimals() * sumAnimals() * 3) - payrangers();
         this.income = touristcount * 5 + (sumUniqueAnimals() * sumAnimals() * 3) - payrangers();
 
@@ -346,29 +366,25 @@ public class GameModel implements EdibleCollection {
 
     }
 
-    private boolean isGameOver()
-    {
+    private boolean isGameOver() {
         return false;
     }
 
-    public void ChangeTicketPrice(int ticketprice)
-    {
+    public void ChangeTicketPrice(int ticketprice) {
         this.ticketprice = ticketprice;
     }
 
     private int sumAnimals()//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
     {
         int sum = 0;
-        for (Herd herd : herds)
-        {
+        for (Herd herd : herds) {
             sum += herd.animalCount(); //Lehet meg kell nezni hogy biztos el e.
         }
 
         return sum;
     }
 
-    private int sumUniqueAnimals()
-    {
+    private int sumUniqueAnimals() {
         Set<AnimalSpecies> uniqueAnimals = new HashSet<>();
         for (Herd herd : herds) {
             uniqueAnimals.add(herd.getAnimalSpecies());
@@ -377,20 +393,20 @@ public class GameModel implements EdibleCollection {
         return uniqueAnimals.size();
     }
 
-    public int sumHerbivores(){
+    public int sumHerbivores() {
         int sum = 0;
-        for (Herd herd : herds){
-            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.HERBIVORE)){
+        for (Herd herd : herds) {
+            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.HERBIVORE)) {
                 sum += herd.animalCount();
             }
         }
         return sum;
     }
 
-    public int sumPredators(){
+    public int sumPredators() {
         int sum = 0;
-        for (Herd herd : herds){
-            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.PREDATOR)){
+        for (Herd herd : herds) {
+            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.PREDATOR)) {
                 sum += herd.animalCount();
             }
         }
@@ -406,23 +422,19 @@ public class GameModel implements EdibleCollection {
         return money - selectedItem.getPrice() >= 0;
     }
 
-    public void addtoenvironment(Environment environment)
-    {
+    public void addtoenvironment(Environment environment) {
         this.environments.add(environment);
     }
 
-    public void addtojeeps(Jeep jeep)
-    {
+    public void addtojeeps(Jeep jeep) {
         this.jeeps.add(jeep);
     }
 
-    public void addtoroads(Road road)
-    {
+    public void addtoroads(Road road) {
         this.roads.add(road);
     }
 
-    public void Decrease_My_Money(int decrease_amount)
-    {
+    public void Decrease_My_Money(int decrease_amount) {
         this.money -= decrease_amount;
     }
 

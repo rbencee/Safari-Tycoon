@@ -26,8 +26,8 @@ public class RandomMovingBehaviour implements Behaviour {
         int n = rand.nextInt(GamemodelInstance.gameModel.getEnvironments().size());
         Environment e = GamemodelInstance.gameModel.getEnvironments().get(n);
         Vector2 randomDestination = new Vector2(
-            e.getPosition().getX(),
-            e.getPosition().getY()
+                e.getPosition().getX(),
+                e.getPosition().getY()
         );
         return BehaviourHelper.createMoveToActions(herd.getAnimalSpecies().getSpeed(), new Vector2(herd.getPosition().getX(), herd.getPosition().getY()), randomDestination);
     }
