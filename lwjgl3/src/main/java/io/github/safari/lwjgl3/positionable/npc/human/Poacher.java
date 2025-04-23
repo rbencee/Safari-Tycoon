@@ -7,15 +7,14 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
+import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
-import io.github.safari.lwjgl3.maingame.*;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
-import io.github.safari.lwjgl3.positionable.npc.animals.actions.CloneableMoveToAction;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper;
+import io.github.safari.lwjgl3.positionable.objects.Environment;
 import io.github.safari.lwjgl3.util.Positionable;
-import io.github.safari.lwjgl3.util.pathfinding.PathFinderHelper;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -50,7 +49,7 @@ public class Poacher extends Actor implements Human, Positionable {
         this.position.setX((int) getX());
         this.position.setY((int) getY());
 
-        checkTimer += delta;
+        checkTimer += delta * GamemodelInstance.gameModel.getTimeMultiplicator();
         moveTimer += delta;
 
         if (checkTimer >= CHECK_INTERVAL) {
@@ -58,26 +57,29 @@ public class Poacher extends Actor implements Human, Positionable {
             checkForAnimalsToShoot();
         }
 
-        if (moveTimer >= MOVE_INTERVAL || !hasActions()) {
-            moveTimer = 0;
+        if (!hasActions()) {
             moveToRandomLocation();
         }
     }
 
 
     private void moveToRandomLocation() {
-        float targetX = random.nextInt((int) GamemodelInstance.gameModel.getMapWidth());
-        float targetY = random.nextInt((int) GamemodelInstance.gameModel.getMapWidth());
+        Random rand = new Random();
+        int n = rand.nextInt(GamemodelInstance.gameModel.getEnvironments().size());
+        Environment e = GamemodelInstance.gameModel.getEnvironments().get(n);
+        Vector2 randomDestination = new Vector2(
+            e.getPosition().getX(),
+            e.getPosition().getY()
+        );
 
         Vector2 currentPos = new Vector2(getX(), getY());
-        Vector2 targetPos = new Vector2(targetX, targetY);
 
         clearActions();
 
-        Array<Action> moveActions = BehaviourHelper.createMoveToActions(speed, currentPos, targetPos);
+        Array<Action> moveActions = BehaviourHelper.createMoveToActions(speed, currentPos, randomDestination);
 
         for (Action action : moveActions) {
-            addAction(action);
+            addAction(Actions.after(action));
         }
     }
 

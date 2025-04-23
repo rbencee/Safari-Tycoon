@@ -39,7 +39,7 @@ public class BehaviourHelper {
         for (int i = 1; i < path.size(); i++) {
             Vector2 current = path.get(i);
             float dist = current.dst(last);
-            actions.add(new CloneableMoveToAction(Actions.moveTo(current.x, current.y, dist / (speed * speedMultiplicator))));
+            actions.add(Actions.moveTo(current.x, current.y, dist / (speed * speedMultiplicator)));
             last = current;
         }
 
