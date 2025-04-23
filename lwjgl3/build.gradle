@@ -36,6 +36,10 @@ dependencies {
   testImplementation 'org.mockito:mockito-core:5.12.0'
   testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+  implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  runtimeOnly "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
 
 
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
@@ -148,5 +152,6 @@ if(enableGraalNative == 'true') {
 }
 test {
   useJUnitPlatform()
+  systemProperty 'org.lwjgl.opengl.Display.disableOpenGL', 'true'
 }
 

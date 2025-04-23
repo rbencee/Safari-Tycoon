@@ -61,7 +61,6 @@ class EnvironmentTest {
         Position pos = new Position(50, 60, 32, 32);
         Road road = new Road(pos, 2);
         Texture mockTexture = mock(Texture.class);
-        when(mockTexture.isLoaded()).thenReturn(true);
         assertNotNull(road);
         assertEquals(2, road.getRoadtype());
     }
