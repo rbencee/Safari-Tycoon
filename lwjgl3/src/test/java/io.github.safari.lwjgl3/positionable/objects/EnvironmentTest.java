@@ -11,6 +11,7 @@ class EnvironmentTest {
     void testBushCreation() {
         Position pos = new Position(10, 20, 32, 32);
         Bush bush = new Bush(pos);
+        assertNotNull(bush);
         assertEquals(pos, bush.getPosition());
         assertTrue(bush instanceof HerbivoreEdible);
     }
@@ -19,6 +20,7 @@ class EnvironmentTest {
     void testGrassCreation() {
         Position pos = new Position(5, 15, 16, 16);
         Grass grass = new Grass(pos);
+        assertNotNull(grass);
         assertEquals(pos, grass.getPosition());
         assertTrue(grass instanceof HerbivoreEdible);
     }
@@ -27,6 +29,7 @@ class EnvironmentTest {
     void testLakeCreation() {
         Position pos = new Position(0, 0, 64, 64);
         Lake lake = new Lake(pos);
+        assertNotNull(lake);
         assertEquals(pos, lake.getPosition());
         assertTrue(lake instanceof Drinkable);
     }
@@ -44,6 +47,7 @@ class EnvironmentTest {
     void testDefaultRoad() {
         Position pos = new Position(100, 200, 32, 32);
         Road road = new Road(pos);
+        assertNotNull(road);
         assertEquals(pos, road.getPosition());
         assertEquals(1, road.getRoadtype());
         assertNotNull(road.getTexture());
@@ -53,6 +57,7 @@ class EnvironmentTest {
     void testRoadWithType2() {
         Position pos = new Position(50, 60, 32, 32);
         Road road = new Road(pos, 2);
+        assertNotNull(road);
         assertEquals(2, road.getRoadtype());
     }
 
@@ -60,6 +65,7 @@ class EnvironmentTest {
     void testRoadWithType3() {
         Position pos = new Position(70, 80, 32, 32);
         Road road = new Road(pos, 3);
+        assertNotNull(road);
         assertEquals(3, road.getRoadtype());
     }
 }

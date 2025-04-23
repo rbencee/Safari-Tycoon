@@ -4,7 +4,7 @@ stages:
 
 build_job:
   stage: build
-  image: gradle:8.0-jdk17  # A helyes Docker kép
+  image: gradle:8.0-jdk17
   script:
     - gradle build
   artifacts:
@@ -13,6 +13,6 @@ build_job:
 
 test_job:
   stage: test
-  image: gradle:8.0-jdk17  # A helyes Docker kép
+  image: gradle:8.0-jdk17
   script:
     - gradle test
