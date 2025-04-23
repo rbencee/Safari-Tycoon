@@ -17,8 +17,6 @@ public class GameController {
         this.shop = shop;
         this.gameModel = model;
         this.gameView = gameView;
-
-
     }
 
     public boolean TryToPlace(float x, float y, int width, int height, int pointer, int button, boolean isjeep) {
