@@ -1,6 +1,5 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -208,7 +207,7 @@ public class Herd extends Group implements Positionable {
             }
 
             for (int i = 0; i < adults / 2; i++) {
-                if (random.nextInt(100) <= 10) {
+                if (random.nextInt(100) <= 15) {
                     AnimalImpl animal = createNewAnimal();
                     addToHerd(animal);
                     for (Action action : animals.get(0).getActions()) {
