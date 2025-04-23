@@ -60,17 +60,17 @@ public class JeepTest {
             Jeep jeep = new Jeep(new Position(0, 0, 32 , 32), null);
 
             for (int i = 0; i < 3; i++) {
-                boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32)));
+                boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32), null));
                 assertTrue(result, "Turista nem lett hozzáadva, pedig volt hely.");
             }
 
-            boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32)));
+            boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32), null));
             assertTrue(result, "4. turista nem lett hozzáadva, pedig még belefér.");
         }
 
         @Test
         public void testAddTouristWhenAtLimit() {
-            Jeep jeep = new Jeep(new Position(0, 0, 32 ,32));
+            Jeep jeep = new Jeep(new Position(0, 0, 32 ,32), null);
 
             // 4 turista hozzaadasa
             for (int i = 0; i < 4; i++) {
@@ -84,7 +84,7 @@ public class JeepTest {
 
         @Test
         public void testAddExactlyFourTourists() {
-            Jeep jeep = new Jeep(new Position(0, 0, 32 , 32));
+            Jeep jeep = new Jeep(new Position(0, 0, 32 , 32), null);
 
             for (int i = 0; i < 4; i++) {
                 assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32), null)), "Nem sikerült hozzáadni a(z) " + (i + 1) + ". turistát.");

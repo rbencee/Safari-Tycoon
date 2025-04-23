@@ -60,6 +60,7 @@ public class GameModel implements EdibleCollection {
     private Random random;
     private boolean isDaytime = true;
     private float minDistance = 64;
+    private int concurrentdays_victorycon;
 
     private float timeacc = 0;
 
@@ -270,6 +271,8 @@ public class GameModel implements EdibleCollection {
             timeinterval = 30;
         }
 
+            if(checkwincon())
+
             if(!isGameOver()) {
                 int previousDays = dayspassed;
                 timeacc += delta;
@@ -297,6 +300,12 @@ public class GameModel implements EdibleCollection {
 
                     }
                 }
+
+    }
+
+    private boolean checkwincon()
+    {
+        return true;
 
     }
 
