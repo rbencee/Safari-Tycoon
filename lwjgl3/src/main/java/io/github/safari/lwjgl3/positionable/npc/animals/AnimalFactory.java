@@ -16,7 +16,7 @@ public class AnimalFactory {
         return new AnimalImpl(30f, 0, 10, 100, 100, 6, position, AnimalSpecies.LION, new PredatorBehaviour());
     }*/
     public static Animal createDinosaur(Position position) {
-        return new AnimalImpl(0, 100, 100, createTexture("textures/animals/dino.png"), position, AnimalSpecies.DINOSAUR);
+        return new AnimalImpl(0, 40, 100, createTexture("textures/animals/dino.png"), position, AnimalSpecies.DINOSAUR);
     }
 
     private static Texture createTexture(String path) {

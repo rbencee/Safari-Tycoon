@@ -25,8 +25,6 @@ public class Herd extends Group implements Positionable {
     private Random random = new Random();
     private boolean isMovingRandomly = false;
 
-    //todo ha collide-ol egy másik ugyanolyan típusú herddel, összeolvadnak
-
 
     public Herd(AnimalSpecies animalSpecies, ArrayList<Behaviour> behaviours) {
         this.animalSpecies = animalSpecies;
@@ -98,7 +96,6 @@ public class Herd extends Group implements Positionable {
                 animals.forEach(Actor::clearActions);
                 isMovingRandomly = false;
             }
-
         }
 
         List<AnimalImpl> toDelete = animals.stream()
@@ -142,7 +139,6 @@ public class Herd extends Group implements Positionable {
                 }
             }
         }
-
     }
 
     private float deltaCounter = 0;
@@ -204,10 +200,5 @@ public class Herd extends Group implements Positionable {
 
     private AnimalImpl createNewAnimal() {
         return new AnimalImpl(0, 100, 100, animals.get(0).getTexture(), this.getPosition(), this.getAnimalSpecies());
-    }
-
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
     }
 }

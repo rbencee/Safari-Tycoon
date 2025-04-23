@@ -4,7 +4,6 @@ import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
 import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
-import io.github.safari.lwjgl3.positionable.npc.security.Security;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
@@ -27,7 +26,6 @@ public class GameModel implements EdibleCollection {
     private ArrayList<Poacher> poachers;
     private ArrayList<Ranger> rangers;
     private ArrayList<Jeep> jeeps;
-    private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
     private ArrayList<Road> roads;
 

@@ -48,8 +48,10 @@ public class PredatorBehaviour implements Behaviour {
                     continue;
                 }
             }
-            if (Position.distance(herd.getPosition(), prey.getPosition()) <= herd.getVisionRange()) {
-                preyPositions.put(prey, prey.getPosition().clone());
+            if (!prey.getAnimals().isEmpty()) {
+                if (Position.distance(herd.getPosition(), prey.getPosition()) <= herd.getVisionRange()) {
+                    preyPositions.put(prey, prey.getPosition().clone());
+                }
             }
         }
     }

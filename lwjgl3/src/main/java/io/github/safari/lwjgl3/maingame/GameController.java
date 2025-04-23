@@ -79,7 +79,9 @@ public class GameController {
                 animal = AnimalFactory.createDinosaur(new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.DINOSAUR, Behaviour.createPredatorBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
+                gameModel.getHerds().add(herd);
                 System.out.println("Dinosaur buy successful!");
+                gameView.getGameStage().addActor(herd);
                 break;
             case "Lion":
                 break;

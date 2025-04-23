@@ -2,7 +2,6 @@ package io.github.safari.lwjgl3.positionable.npc.animals.actions;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 
 import java.util.Random;
 
