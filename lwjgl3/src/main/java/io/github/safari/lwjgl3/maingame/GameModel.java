@@ -21,6 +21,7 @@ public class GameModel implements EdibleCollection {
     private int difficulty; // 1 - 3
     private int dayspassed;
     private int consecutivesucmonthss = 0;
+    private boolean isGameWon = false;
 
     private int ticketprice;
     private int touristcount;
@@ -78,7 +79,7 @@ public class GameModel implements EdibleCollection {
         this.jeeps = new ArrayList<>();
         this.roads = new ArrayList<>();
         this.tourists = new ArrayList<>();
-        this.money = 50000000;
+        this.money = 0;
 
         InitializeGame();
         GamemodelInstance.gameModel = this;
@@ -86,6 +87,8 @@ public class GameModel implements EdibleCollection {
 
     //Setters and getters
 
+
+    public boolean isGameWon() {return isGameWon;}
 
     public void setSpeed(int speed) {
         this.speed = speed;
@@ -270,8 +273,6 @@ public class GameModel implements EdibleCollection {
             timeinterval = 30;
         }
 
-            if(checkwincon())
-
             if(!isGameOver()) {
                 int previousDays = dayspassed;
                 timeacc += delta;
@@ -289,7 +290,7 @@ public class GameModel implements EdibleCollection {
 
                 if (currentMonth > previousMonth) {
                     calculateIncome();
-                    checkwincon();
+                    if(checkwincon()) isGameWon = true;
                 }
             }
             for (Jeep jeep : jeeps) {
@@ -303,7 +304,7 @@ public class GameModel implements EdibleCollection {
 
     }
 
-    private boolean checkwincon()
+    public boolean checkwincon()
     {
         boolean allAboveThresholds =
             getTouristcount() >= 80 &&
@@ -377,7 +378,7 @@ public class GameModel implements EdibleCollection {
 
     }
 
-    private boolean isGameOver() {return money <= 0 || sumAnimals() <= 0;}
+    public boolean isGameOver() {return money <= 0 || sumAnimals() <= 0;}
 
     public void ChangeTicketPrice(int ticketprice)
     {

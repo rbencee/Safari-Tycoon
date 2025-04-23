@@ -43,6 +43,7 @@ public class GameView implements Screen {
     private GameController gameController;
     private ScorePanel scorePanel;
 
+
     private boolean isDraggingRoad = false;
     private Vector3 lastPlacedPos = new Vector3();
 
@@ -175,6 +176,10 @@ public class GameView implements Screen {
         handleEdgeScrolling(delta);
         cameraMovement();
         camera.update();
+
+        if(gameModel.isGameOver()) new EndGameDialog(false, gameModel, skin, uiStage);
+        else if(gameModel.isGameWon()) new EndGameDialog(true, gameModel, skin, uiStage);
+
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             minimapVisible = !minimapVisible;
