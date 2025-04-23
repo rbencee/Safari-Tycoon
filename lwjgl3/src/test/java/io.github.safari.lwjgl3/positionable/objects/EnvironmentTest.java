@@ -71,5 +71,6 @@ class EnvironmentTest {
         Road road = new Road(pos, 3);
         assertNotNull(road);
         assertEquals(3, road.getRoadtype());
+        ///
     }
 }
