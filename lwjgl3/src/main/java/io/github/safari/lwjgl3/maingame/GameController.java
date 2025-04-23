@@ -3,6 +3,8 @@ package io.github.safari.lwjgl3.maingame;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.*;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
+import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
@@ -11,7 +13,8 @@ public class GameController {
     Shop shop;
     GameModel gameModel;
     GameView gameView;
-
+    private static Ranger selectedRanger;
+    private static boolean waitingForTarget = false;
 
     public GameController(Shop shop, GameModel model, GameView gameView) {
         this.shop = shop;
@@ -20,6 +23,77 @@ public class GameController {
 
 
     }
+
+
+    public static void setWaitingForTarget(boolean waiting) {
+        waitingForTarget = waiting;
+    }
+
+    public static boolean isWaitingForTarget() {
+        return waitingForTarget;
+    }
+
+    public static void selectRanger(Ranger ranger) {
+        if (selectedRanger != null) {
+            selectedRanger.setSelected(false);
+        }
+
+        selectedRanger = ranger;
+
+        if (ranger != null) {
+            ranger.setSelected(true);
+            System.out.println("Ranger selected! Select a target (animal or poacher)");
+        }
+    }
+    public static boolean isRangerSelected() {
+        return selectedRanger != null;
+    }
+
+    public static void selectTargetAt(float x, float y, GameModel gameModel) {
+        if (selectedRanger == null) return;
+
+        float selectionRadius = 100f;
+        float minDistSq = Float.MAX_VALUE;
+        Animal closestAnimal = null;
+        Poacher closestPoacher = null;
+
+
+        for (Herd herd : gameModel.getHerds()) {
+            for (Animal animal : herd.getAnimals()) {
+                float dx = animal.getPosition().getX() - x;
+                float dy = animal.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= selectionRadius * selectionRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestAnimal = animal;
+                }
+            }
+        }
+
+        for (Poacher poacher : gameModel.getPoachers()) {
+            float dx = poacher.getPosition().getX() - x;
+            float dy = poacher.getPosition().getY() - y;
+            float distSq = dx * dx + dy * dy;
+
+            if (distSq <= selectionRadius * selectionRadius && distSq < minDistSq) {
+                minDistSq = distSq;
+                closestPoacher = poacher;
+            }
+        }
+
+        if (closestAnimal != null) {
+            selectedRanger.setTargetAnimal(closestAnimal);
+            System.out.println("Animal target selected.");
+        } else if (closestPoacher != null) {
+            selectedRanger.setTargetPoacher(closestPoacher);
+            System.out.println("Poacher target selected.");
+        } else {
+            System.out.println("No target found near click.");
+        }
+
+    }
+
 
     public boolean TryToPlace(float x, float y, int width, int height, int pointer, int button, boolean isjeep) {
         ShopItem selectedItem = shop.getShopItems();
@@ -121,6 +195,12 @@ public class GameController {
             case "Jeep":
                 Jeep jeep = new Jeep(new Position(x, y, width, height));
                 gameModel.addtojeeps(jeep);
+                break;
+            case "Ranger":
+                Ranger ranger = new Ranger(new Position(x, y, width, height));
+                gameModel.getRangers().add(ranger);
+                System.out.println("Ranger buy successful!");
+                gameView.getGameStage().addActor(ranger);
                 break;
             default:
                 System.out.println("Not Implemented yet!");
