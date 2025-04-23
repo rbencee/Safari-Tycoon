@@ -34,7 +34,7 @@ public class Shop {
 
         shopWindow = new Window("", skin);
         shopWindow.setSize(600, 600);
-        shopWindow.setPosition(0,(Gdx.graphics.getHeight() / 2f - 150)); //dx.graphics.getHeight() / 2f - 200
+        shopWindow.setPosition(0,(Gdx.graphics.getHeight() / 2f - 180)); //dx.graphics.getHeight() / 2f - 200
         shopWindow.setMovable(false);
         shopWindow.setResizable(false);
 
@@ -104,9 +104,23 @@ public class Shop {
 
 
         TextButton changePriceButton = createChangePriceButton();
-        shopWindow.add(changePriceButton).pad(10).row();
-        shopWindow.add(closeButton).pad(10).row();
+        TextButton noSelectButton = new TextButton("Clear", skin);
 
+        noSelectButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clearSelection();
+                resetItemButtonColors();
+            }
+        });
+
+        Table bottomButtonTable = new Table();
+        bottomButtonTable.add(changePriceButton).pad(10).width(250).height(80);
+        bottomButtonTable.add(noSelectButton).pad(10).width(250).height(80);
+
+        shopWindow.add(bottomButtonTable).row();
+
+        shopWindow.add(closeButton).pad(10).row();
 
         showPlantsPage();
 
@@ -220,7 +234,7 @@ public class Shop {
     }
 
     private TextButton createChangePriceButton() {
-        TextButton changePriceButton = new TextButton("Change Ticket Price", skin);
+        TextButton changePriceButton = new TextButton("Ticket", skin);
         changePriceButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
