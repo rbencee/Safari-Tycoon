@@ -46,6 +46,7 @@ class GameControllerTest {
 
         boolean result = controller.TryToPlace(0, 0, 64, 64, 0, 0, false);
         assertFalse(result);
+        assertTrue(false);
     }
 
 }

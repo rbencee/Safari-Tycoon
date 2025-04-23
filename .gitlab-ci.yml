@@ -1,6 +1,6 @@
 stages:
   - build
-
+  - test
 build_job:
   stage: build
   image: gradle:8.0-jdk17l
@@ -9,3 +9,10 @@ build_job:
   artifacts:
     paths:
       - build/libs/
+
+
+test_job:
+  stage: test
+  image: gradle:8.0-jdk17
+  script:
+    - gradle test

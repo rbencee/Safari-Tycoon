@@ -21,7 +21,7 @@ public class GameController {
 
 
     public GameController(Shop shop, GameModel model, GameView gameView) {
-        this.shop = shop;0
+        this.shop = shop;
         this.gameModel = model;
         this.gameView = gameView;
     }
