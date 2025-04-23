@@ -1,6 +1,7 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -10,7 +11,10 @@ import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.actions.CloneableAction;
+import io.github.safari.lwjgl3.positionable.npc.animals.actions.CloneableMoveToAction;
+import io.github.safari.lwjgl3.positionable.npc.animals.actions.Killaction;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
+import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.RandomMovingBehaviour;
 import io.github.safari.lwjgl3.util.Positionable;
 
@@ -87,16 +91,65 @@ public class Herd extends Group implements Positionable {
         return animals.get(0).getVisionRange();
     }
 
+    private float checkEatTimer = 0;
+
+    private float checkMovingRandomlyTimer = 0;
+
     @Override
     public void act(float delta) {
         super.act(delta);
 
-        if (isMovingRandomly) {
-            if (getMinThirst() < 30 || getMinHunger() < 30) {
-                animals.forEach(Actor::clearActions);
-                isMovingRandomly = false;
+        if (animals.isEmpty()) {
+            remove();
+            GamemodelInstance.gameModel.getHerds().remove(this);
+            if (animalSpecies.getAnimalType().equals(AnimalType.HERBIVORE)) {
+                GamemodelInstance.gameModel.getAllHerbivores().remove(this);
             }
         }
+
+        checkMovingRandomlyTimer += delta;
+        if (isMovingRandomly && checkMovingRandomlyTimer > 2) {
+            if (getMinThirst() < 30 || getMinHunger() < 30) {
+                for (Behaviour behaviour : behaviours) {
+                    if (!(behaviour instanceof RandomMovingBehaviour)) {
+                        animals.forEach(Actor::clearActions);
+                        isMovingRandomly = false;
+                    }
+                }
+            }
+        }
+
+        checkEatTimer += delta;
+        if (this.animalSpecies.getAnimalType().equals(AnimalType.PREDATOR) && this.getMinHunger() < 30 && checkEatTimer > 2) {
+            Herd herd = isHerbivoreNearby();
+            if (herd != null) {
+                boolean toRemove = true;
+                Array<Action> actions = getActions();
+                for (Action action : actions) {
+                    if (action instanceof AfterAction && ((AfterAction) action).getAction() instanceof Killaction) {
+                        toRemove = false;
+                    }
+                }
+                if (toRemove) {
+                    animals.forEach(Actor::clearActions);
+
+                    Array<Action> newActions = BehaviourHelper.createMoveToActions(
+                        animalSpecies.getSpeed(),
+                        new Vector2(getPosition().getX(), getPosition().getY()),
+                        new Vector2(herd.getPosition().getX(), herd.getPosition().getY()));
+
+                    for (Action action : newActions) {
+                        if (action instanceof CloneableMoveToAction moveToAction) {
+                            animals.forEach(actor -> actor.addAction(Actions.after(moveToAction.clone())));
+                        }
+                    }
+
+                    animals.forEach(actor -> actor.addAction(Actions.after(new Killaction(herd))));
+                }
+            }
+            checkEatTimer = 0;
+        }
+
 
         List<AnimalImpl> toDelete = animals.stream()
             .filter(AnimalImpl::isToRemove)
@@ -114,6 +167,7 @@ public class Herd extends Group implements Positionable {
         reproduce(delta);
 
         joinHerdsIfPossible();
+
 
         for (AnimalImpl animal : animals) {
             if (animal.hasActions()) {
@@ -171,6 +225,20 @@ public class Herd extends Group implements Positionable {
         }
 
 
+    }
+
+    private Herd isHerbivoreNearby() {
+        List<Herd> preys = GamemodelInstance.gameModel.getAllHerbivores();
+        for (Herd prey : preys) {
+
+            if (prey.getAnimals().isEmpty()) {
+                return null;
+            }
+            if (Position.distance(this.getPosition(), prey.getPosition()) <= this.getVisionRange()) {
+                return prey;
+            }
+        }
+        return null;
     }
 
     private void joinHerdsIfPossible() {

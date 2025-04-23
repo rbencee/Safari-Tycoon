@@ -9,8 +9,9 @@ public class CloneableMoveToAction extends MoveToAction implements CloneableActi
 
     public CloneableMoveToAction(MoveToAction action) {
         Random random = new Random();
+        this.setStartPosition(action.getStartX(), action.getStartY());
         this.setPosition(action.getX(), action.getY());
-        this.setDuration(action.getDuration() + random.nextFloat((float) -5 / GamemodelInstance.gameModel.getTimeMultiplicator(), (float) 5 / GamemodelInstance.gameModel.getTimeMultiplicator()));
+        this.setDuration(action.getDuration() + random.nextFloat(-0.1f, 0.1f));
         this.setInterpolation(action.getInterpolation());
     }
 

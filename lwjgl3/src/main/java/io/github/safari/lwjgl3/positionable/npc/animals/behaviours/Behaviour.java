@@ -24,8 +24,8 @@ public interface Behaviour {
 
     static ArrayList<Behaviour> createPredatorBehaviours() {
         ArrayList<Behaviour> behaviours = new ArrayList<>();
-        behaviours.add(new PredatorBehaviour());
-        behaviours.add(new DrinkingBehaviour());
+        //behaviours.add(new PredatorBehaviour());
+        //behaviours.add(new DrinkingBehaviour());
         behaviours.add(new RandomMovingBehaviour());
         return behaviours;
     }
