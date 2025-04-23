@@ -17,6 +17,13 @@ public class Tourist implements Positionable, Moveable {
         this.isShown = true;
     }
 
+    public Tourist(Position position, Texture texture)
+    {
+        this.position = position;
+        this.texture = texture;
+        this.isShown = true;
+    }
+
     public Texture getTexture() {
         return texture;
     }

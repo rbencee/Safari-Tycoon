@@ -13,7 +13,7 @@ public class JeepTest {
         @Test
         void testJeepConstructorInitializesCorrectly() {
             Position startPosition = new Position(5, 10, 32,32);
-            Jeep jeep = new Jeep(startPosition);
+            Jeep jeep = new Jeep(startPosition, null);
 
             assertEquals(startPosition, jeep.getPosition());
             assertTrue(jeep.isTostart());
@@ -34,7 +34,7 @@ public class JeepTest {
         void testMoveTowards(float startX, float startY, float targetX, float targetY, float speed) {
             Position start = new Position(startX, startY, 32 ,32);
             Position target = new Position(targetX, targetY, 32 , 32);
-            Jeep jeep = new Jeep(start);
+            Jeep jeep = new Jeep(start, null);
 
             jeep.moveTowards(target, speed);
 
@@ -57,7 +57,7 @@ public class JeepTest {
 
         @Test //Turista hozzaadasa a Jeephez
         public void testAddTouristWhenUnderLimit() {
-            Jeep jeep = new Jeep(new Position(0, 0, 32 , 32));
+            Jeep jeep = new Jeep(new Position(0, 0, 32 , 32), null);
 
             for (int i = 0; i < 3; i++) {
                 boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32)));
@@ -74,11 +74,11 @@ public class JeepTest {
 
             // 4 turista hozzaadasa
             for (int i = 0; i < 4; i++) {
-                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32))));
+                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32), null)));
             }
 
             // 5. turistat nem lehet hozzaadni
-            boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32)));
+            boolean result = jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32), null));
             assertFalse(result, "5. turista hozzá lett adva, de nem kellett volna.");
         }
 
@@ -87,7 +87,7 @@ public class JeepTest {
             Jeep jeep = new Jeep(new Position(0, 0, 32 , 32));
 
             for (int i = 0; i < 4; i++) {
-                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32))), "Nem sikerült hozzáadni a(z) " + (i + 1) + ". turistát.");
+                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32), null)), "Nem sikerült hozzáadni a(z) " + (i + 1) + ". turistát.");
             }
 
             assertEquals(4, jeep.getTourists().size(), "A turisták száma nem pontosan 4.");
@@ -96,9 +96,9 @@ public class JeepTest {
         @Test
         public void testAddOneTouristToList()
         {
-            Jeep jeep = new Jeep(new Position(0, 0, 32 , 32));
+            Jeep jeep = new Jeep(new Position(0, 0, 32 , 32), null);
 
-            assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32))), "Nem sikerült hozzáadni a turistát!");
+            assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32), null)), "Nem sikerült hozzáadni a turistát!");
 
             assertEquals(1, jeep.getTourists().size());
         }
@@ -111,10 +111,10 @@ public class JeepTest {
             "3,3"
         })
         public void testDropOffTourists(int toAddTourist, int expectedDropped) {
-            Jeep jeep = new Jeep(new Position(0, 0, 32, 32));
+            Jeep jeep = new Jeep(new Position(0, 0, 32, 32), null);
 
             for (int i = 0; i < toAddTourist; i++) {
-                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32))), "Nem sikerült hozzáadni a turistát!");
+                assertTrue(jeep.trytoaddtourist(new Tourist(new Position(0,0,32,32), null)), "Nem sikerült hozzáadni a turistát!");
             }
 
             int droppedCount = jeep.Drop_Off_Tourists();

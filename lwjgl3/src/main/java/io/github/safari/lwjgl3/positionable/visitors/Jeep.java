@@ -21,6 +21,13 @@ public class Jeep implements Positionable, Moveable {
         this.tourists = new ArrayList<>();
     }
 
+    public Jeep(Position position, Texture texture) {
+        this.position = position;
+        this.texture = texture;
+        this.tostart = true;
+        this.tourists = new ArrayList<>();
+    }
+
     public void moveTowards(Position targetPosition, float speed) {
         float dx = targetPosition.getX() - this.position.getX();
         float dy = targetPosition.getY() - this.position.getY();
