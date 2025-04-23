@@ -11,7 +11,8 @@ import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.actions.CloneableAction;
 import io.github.safari.lwjgl3.positionable.npc.animals.actions.CloneableMoveToAction;
-import io.github.safari.lwjgl3.positionable.npc.animals.actions.Killaction;
+import io.github.safari.lwjgl3.positionable.npc.animals.actions.KillAction;
+import io.github.safari.lwjgl3.positionable.npc.animals.actions.SleepAction;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.RandomMovingBehaviour;
@@ -125,7 +126,7 @@ public class Herd extends Group implements Positionable {
                 boolean toRemove = true;
                 Array<Action> actions = getActions();
                 for (Action action : actions) {
-                    if (action instanceof AfterAction && ((AfterAction) action).getAction() instanceof Killaction) {
+                    if (action instanceof AfterAction && ((AfterAction) action).getAction() instanceof KillAction) {
                         toRemove = false;
                     }
                 }
@@ -143,7 +144,10 @@ public class Herd extends Group implements Positionable {
                         }
                     }
 
-                    animals.forEach(actor -> actor.addAction(Actions.after(new Killaction(herd))));
+                    animals.forEach(actor -> {
+                        actor.addAction(Actions.after(new KillAction(herd)));
+                        actor.addAction(new SleepAction());
+                    });
                 }
             }
             checkEatTimer = 0;

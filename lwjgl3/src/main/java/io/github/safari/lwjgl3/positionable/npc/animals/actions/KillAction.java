@@ -6,11 +6,11 @@ import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 
-public class Killaction extends Action implements CloneableAction {
+public class KillAction extends Action implements CloneableAction {
 
     private final Herd herd;
 
-    public Killaction(Herd herd) {
+    public KillAction(Herd herd) {
         this.herd = herd;
     }
 
@@ -36,6 +36,6 @@ public class Killaction extends Action implements CloneableAction {
 
     @Override
     public Action clone() {
-        return new Killaction(herd);
+        return new KillAction(herd);
     }
 }

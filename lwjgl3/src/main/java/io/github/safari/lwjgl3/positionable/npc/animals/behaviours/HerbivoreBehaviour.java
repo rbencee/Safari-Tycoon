@@ -7,6 +7,7 @@ import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.actions.EatAction;
+import io.github.safari.lwjgl3.positionable.npc.animals.actions.SleepAction;
 import io.github.safari.lwjgl3.positionable.objects.HerbivoreEdible;
 
 import java.util.HashMap;
@@ -43,6 +44,7 @@ public class HerbivoreBehaviour implements Behaviour {
         Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
         Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination));
         actions.add(new EatAction());
+        actions.add(new SleepAction());
         return actions;
     }
 
