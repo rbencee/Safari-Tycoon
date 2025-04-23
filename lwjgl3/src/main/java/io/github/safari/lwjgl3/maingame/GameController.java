@@ -25,7 +25,7 @@ public class GameController {
         ShopItem selectedItem = shop.getShopItems();
 
         if (selectedItem != null) {
-            if(shop.isBuying()) {
+            if (shop.isBuying()) {
                 if (gameModel.positionFound(x, y, width, height) || isjeep) {
                     if (gameModel.CanBuy(selectedItem)) {
                         if (!isjeep) {
@@ -46,9 +46,8 @@ public class GameController {
                 } else {
                     System.out.println("Target place ObstrcutedException!");
                 }
-            } else
-            {
-                SellThis(x,y,selectedItem);
+            } else {
+                SellThis(x, y, selectedItem);
             }
 
 
@@ -69,16 +68,22 @@ public class GameController {
 
         switch (item.getName()) {
             case "Capybara":
-                animal = AnimalFactory.createCapybara(new Position(x, y, width, height));  // Új Capybara példány létrehozása a megadott koordinátákkal
+                animal = AnimalFactory.createCapybara(new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.CAPYBARA, Behaviour.createHerbivoreBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
                 gameModel.getHerds().add(herd);
                 gameModel.getAllHerbivores().add(herd);
                 System.out.println("Capybara buy successful!");
                 gameView.getGameStage().addActor(herd);
-
                 break;
             case "Mammoth":
+                animal = AnimalFactory.createMammoth(new Position(x, y, width, height));
+                herd = new Herd(AnimalSpecies.MAMMOTH, Behaviour.createHerbivoreBehaviours());
+                herd.addToHerd((AnimalImpl) animal);
+                gameModel.getHerds().add(herd);
+                gameModel.getAllHerbivores().add(herd);
+                System.out.println("Mammoth buy successful!");
+                gameView.getGameStage().addActor(herd);
                 break;
             case "Dinosaur":
                 animal = AnimalFactory.createDinosaur(new Position(x, y, width, height));
@@ -89,6 +94,12 @@ public class GameController {
                 gameView.getGameStage().addActor(herd);
                 break;
             case "Lion":
+                animal = AnimalFactory.createLion(new Position(x, y, width, height));
+                herd = new Herd(AnimalSpecies.LION, Behaviour.createPredatorBehaviours());
+                herd.addToHerd((AnimalImpl) animal);
+                gameModel.getHerds().add(herd);
+                System.out.println("Lion buy successful!");
+                gameView.getGameStage().addActor(herd);
                 break;
             case "Bush":
                 Bush bush = new Bush(new Position(x, y, width, height));
@@ -127,7 +138,6 @@ public class GameController {
                 break;
         }
     }
-
 
 
     private void SellThis(float x, float y, ShopItem item) {
