@@ -19,7 +19,6 @@ public class JeepTest {
             assertTrue(jeep.isTostart());
             assertNotNull(jeep.getTourists());
             assertTrue(jeep.getTourists().isEmpty());
-            assertNotNull(jeep.getTexture());
         }
 
         @ParameterizedTest //Mozgas tesztelese

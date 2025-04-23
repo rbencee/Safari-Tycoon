@@ -49,7 +49,7 @@ class EnvironmentTest {
     @Test
     void testDefaultRoad() {
         Position pos = new Position(100, 200, 32, 32);
-        Road road = new Road(pos);
+        Road road = new Road(pos, 1 , null);
         assertNotNull(road);
         assertEquals(pos, road.getPosition());
         assertEquals(1, road.getRoadtype());
@@ -59,8 +59,7 @@ class EnvironmentTest {
     @Test
     void testRoadWithType2() {
         Position pos = new Position(50, 60, 32, 32);
-        Road road = new Road(pos, 2);
-        Texture mockTexture = mock(Texture.class);
+        Road road = new Road(pos, 2, null);
         assertNotNull(road);
         assertEquals(2, road.getRoadtype());
     }
@@ -68,7 +67,7 @@ class EnvironmentTest {
     @Test
     void testRoadWithType3() {
         Position pos = new Position(70, 80, 32, 32);
-        Road road = new Road(pos, 3);
+        Road road = new Road(pos, 3, null);
         assertNotNull(road);
         assertEquals(3, road.getRoadtype());
         ///

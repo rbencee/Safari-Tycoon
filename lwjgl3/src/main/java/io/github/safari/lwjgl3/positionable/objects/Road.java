@@ -22,7 +22,7 @@ public class Road extends Environment implements Positionable {
         this.texture = createGrayTexture(roadtype);
     }
 
-    public Road(Position position, Texture texture) {
+    public Road(Position position, int roadtype, Texture texture) {
         super(position);
         this.texture = texture;
 
