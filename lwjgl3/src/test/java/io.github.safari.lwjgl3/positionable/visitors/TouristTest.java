@@ -10,7 +10,6 @@ import static org.mockito.Mockito.*;
 
 class TouristTest {
 
-    /*
     private Position testPosition;
     private Texture mockTexture;
 
@@ -40,5 +39,4 @@ class TouristTest {
         assertTrue(tourist.isShown(), "Tourist should be shown after setting shown to true");
     }
 
-     */
 }

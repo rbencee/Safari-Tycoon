@@ -20,6 +20,7 @@ public class GameModel implements EdibleCollection {
     private int speed; // 1 - 3
     private int difficulty; // 1 - 3
     private int dayspassed;
+    private int consecutivesucmonthss = 0;
 
     private int ticketprice;
     private int touristcount;
@@ -60,8 +61,6 @@ public class GameModel implements EdibleCollection {
     private Random random;
     private boolean isDaytime = true;
     private float minDistance = 64;
-    private int concurrentdays_victorycon;
-
     private float timeacc = 0;
 
     public GameModel(int difficulty)
@@ -285,28 +284,50 @@ public class GameModel implements EdibleCollection {
                 timeacc = 0;
                 isDaytime = !isDaytime;
 
-                    if ((dayspassed - previousDays) % 30 == 0) {
-                        calculateIncome();
-                    }
+                int previousMonth = previousDays / 30;
+                int currentMonth = dayspassed / 30;
+
+                if (currentMonth > previousMonth) {
+                    calculateIncome();
+                    checkwincon();
+                }
             }
             for (Jeep jeep : jeeps) {
                 Road roadtogo = GameController.getNextRoadTowardsEntrance(jeep, jeep.isTostart(), this);
                 if (roadtogo != null) {
                     jeep.moveTowards(roadtogo.getPosition(), timeinterval);
-                    //System.out.println("ROAD TO GO: " + roadtogo.getPosition());
-                } else {
-                    //System.out.println("ROAD TO GO NOT FOUND");
-                    }
+                 }
 
-                    }
                 }
+            }
 
     }
 
     private boolean checkwincon()
     {
-        return true;
+        boolean allAboveThresholds =
+            getTouristcount() >= 80 &&
+                sumHerbivores() >= 50 &&
+                sumPredators() >= 30 &&
+                getMoney() >= 5000;
 
+        if (allAboveThresholds) {
+            consecutivesucmonthss++;
+        } else {
+            consecutivesucmonthss = 0;
+        }
+
+        return consecutivesucmonthss >= getRequiredMonths();
+
+    }
+
+    //HELPER OF CHECKWINCON
+    private int getRequiredMonths() {
+        return switch (difficulty) {
+            case 2 -> 6;
+            case 3 -> 12;
+            default -> 3;
+        };
     }
 
     public boolean isDaytime() {
@@ -344,9 +365,10 @@ public class GameModel implements EdibleCollection {
             if(touristcount < sumUniqueAnimals()) {
                 this.touristcount = touristcount + 1;
                 this.tourists.add(new Tourist(newPos));
+                this.money += ticketprice;
             }
 
-            this.money += ticketprice;
+
         }
 
     private int payrangers()
@@ -355,10 +377,7 @@ public class GameModel implements EdibleCollection {
 
     }
 
-    private boolean isGameOver()
-    {
-        return false;
-    }
+    private boolean isGameOver() {return money <= 0 || sumAnimals() <= 0;}
 
     public void ChangeTicketPrice(int ticketprice)
     {

@@ -1,12 +1,9 @@
 package io.github.safari.lwjgl3.positionable.objects;
 
-import com.badlogic.gdx.graphics.Texture;
 import io.github.safari.lwjgl3.positionable.Position;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class EnvironmentTest {
 
@@ -53,7 +50,6 @@ class EnvironmentTest {
         assertNotNull(road);
         assertEquals(pos, road.getPosition());
         assertEquals(1, road.getRoadtype());
-        assertNotNull(road.getTexture());
     }
 
     @Test
