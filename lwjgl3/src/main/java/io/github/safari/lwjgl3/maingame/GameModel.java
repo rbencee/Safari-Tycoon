@@ -54,7 +54,7 @@ public class GameModel implements EdibleCollection {
         return allDrinkable;
     }
 
-    private int objectNumber = 20;
+    private int objectNumber = 2;
     private float mapWidth = 3200;
     private float mapHeight = 3200;
     private Random random;
@@ -320,9 +320,6 @@ public class GameModel implements EdibleCollection {
                         calculateIncome();
                     }
             }
-            for (Poacher poacher : poachers) {
-                poacher.update(delta);
-            }
 
             for (Jeep jeep : jeeps) {
                 Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
@@ -348,12 +345,17 @@ public class GameModel implements EdibleCollection {
 
             Position position = new Position(x, y,64,64);
             Poacher poacher = new Poacher(position);
+
             poachers.add(poacher);
         }
     }
 
     public ArrayList<Poacher> getPoachers() {
         return poachers;
+    }
+
+    public ArrayList<Ranger> getRangers() {
+        return rangers;
     }
 
     public boolean isDaytime() {

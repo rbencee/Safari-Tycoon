@@ -11,11 +11,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -27,6 +29,7 @@ import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.positionable.visitors.Tourist;
@@ -44,6 +47,7 @@ public class GameView implements Screen {
     private final Game game;
     private GameController gameController;
     private ScorePanel scorePanel;
+    private Label selectionInfoLabel;
 
     private boolean isDraggingRoad = false;
     private final Vector3 lastPlacedPos = new Vector3();
@@ -135,6 +139,7 @@ public class GameView implements Screen {
         multiplexer.addProcessor(uiStage);
         multiplexer.addProcessor(gameStage);
 
+
         Gdx.input.setInputProcessor(multiplexer);
 
         skin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
@@ -158,6 +163,10 @@ public class GameView implements Screen {
             }
         });
 
+        selectionInfoLabel = new Label("", skin);
+        selectionInfoLabel.setPosition(50, Gdx.graphics.getHeight() - 50);
+        uiStage.addActor(selectionInfoLabel);
+
         //zoomContolButtons();
         zoomControlScroll();
         speedbutton();
@@ -170,6 +179,7 @@ public class GameView implements Screen {
 
         gameController = new GameController(shop,this.gameModel, this);
         this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
+        setupSelection();
         setupPlace();
         minimapInput();
 
@@ -254,6 +264,15 @@ public class GameView implements Screen {
             shapeRenderer.circle(centerX, centerY, radius);
         }
 
+        for (Ranger ranger : gameModel.getRangers()){
+            float centerX = ranger.getPosition().getX() + (float) ranger.getPosition().getWidth() / 2;
+            float centerY = ranger.getPosition().getY() + (float) ranger.getPosition().getHeight() / 2;
+            float radius = 200f;
+
+            shapeRenderer.setColor(1, 1, 1, 1.0f);
+            shapeRenderer.circle(centerX, centerY, radius);
+        }
+
         shapeRenderer.end();
         fogBuffer.end();
 
@@ -308,6 +327,15 @@ public class GameView implements Screen {
         for (Road road : gameModel.getRoads()) {
             float centerX = (road.getPosition().getX() + (float) road.getPosition().getWidth() / 2) * mapScale;
             float centerY = (road.getPosition().getY() + (float) road.getPosition().getHeight() / 2) * mapScale;
+            float radius = 200f * mapScale;
+
+            shapeRenderer.setColor(1, 1, 1, 1.0f);
+            shapeRenderer.circle(centerX, centerY, radius);
+        }
+
+        for (Ranger ranger : gameModel.getRangers()){
+            float centerX = (ranger.getPosition().getX() + (float) ranger.getPosition().getWidth() / 2) * mapScale;
+            float centerY = (ranger.getPosition().getY() + (float) ranger.getPosition().getHeight() / 2) * mapScale;
             float radius = 200f * mapScale;
 
             shapeRenderer.setColor(1, 1, 1, 1.0f);
@@ -526,12 +554,21 @@ public class GameView implements Screen {
                 tourist.getPosition().getHeight() * scale);
         }
 
+
         for (Poacher poacher : gameModel.getPoachers()) {
             spriteBatch.draw(poacher.getTexture(),
                 poacher.getPosition().getX() * scale,
                 poacher.getPosition().getY() * scale,
                 poacher.getPosition().getWidth() * scale,
                 poacher.getPosition().getHeight() * scale);
+        }
+
+        for (Ranger ranger : gameModel.getRangers()) {
+            spriteBatch.draw(ranger.getTexture(),
+                ranger.getPosition().getX() * scale,
+                ranger.getPosition().getY() * scale,
+                ranger.getPosition().getWidth() * scale,
+                ranger.getPosition().getHeight() * scale);
         }
 
     }
@@ -570,6 +607,8 @@ public class GameView implements Screen {
         uiStage.addActor(zoomInButton);
     }
     */
+
+
 
     private void zoomControlScroll() {
         InputListener scrollListener = new InputListener() {
@@ -706,6 +745,47 @@ public class GameView implements Screen {
     public Stage getUiStage() {
         return uiStage;
     }
+
+    private void setupSelection() {
+        uiStage.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Vector3 world = camera.unproject(new Vector3(x, Gdx.graphics.getHeight() - y, 0));
+
+                System.out.println("Click at screen: " + x + "," + y + " world: " + world.x + "," + world.y);
+
+                if (GameController.isRangerSelected() && GameController.isWaitingForTarget()) {
+                    GameController.selectTargetAt(world.x, world.y, gameModel);
+                    GameController.setWaitingForTarget(false);
+                    return true;
+                }
+
+                for (Ranger ranger : gameModel.getRangers()) {
+                    Rectangle bounds = ranger.getBounds();
+                    if (bounds.contains(world.x, world.y)) {
+                        GameController.selectRanger(ranger);
+
+                        Label infoLabel = new Label("Ranger selected! Click on a target.", skin);
+                        infoLabel.setPosition(10, Gdx.graphics.getHeight() - 30);
+                        infoLabel.addAction(Actions.sequence(
+                            Actions.fadeIn(0.5f),
+                            Actions.delay(3.0f),
+                            Actions.fadeOut(0.5f),
+                            Actions.removeActor()
+                        ));
+                        uiStage.addActor(infoLabel);
+
+                        GameController.setWaitingForTarget(true);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        });
+    }
+
+
 
     private void setupPlace()
     {

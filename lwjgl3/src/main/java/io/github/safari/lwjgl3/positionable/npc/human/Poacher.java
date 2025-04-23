@@ -1,45 +1,84 @@
 package io.github.safari.lwjgl3.positionable.npc.human;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Null;
-import io.github.safari.lwjgl3.positionable.Moveable;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.maingame.*;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
+import io.github.safari.lwjgl3.positionable.npc.animals.actions.CloneableMoveToAction;
+import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper;
 import io.github.safari.lwjgl3.util.Positionable;
+import io.github.safari.lwjgl3.util.pathfinding.PathFinderHelper;
 
 import java.util.Iterator;
 import java.util.Random;
 
-import static io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper.createMoveToActions;
-
-public class Poacher extends Actor implements Moveable, Positionable {
-    private boolean isAlive;
+public class Poacher extends Actor implements Human, Positionable {
     private int shootRange;
     private Texture texture;
     private Position position;
     private int speed;
     private Random random;
-    private boolean isMoving;
-    private float movementTimer;
-    private static final float MOVEMENT_INTERVAL = 3.0f;
+    private float checkTimer;
+    private static final float CHECK_INTERVAL = 5.0f;
+    private float moveTimer;
+    private static final float MOVE_INTERVAL = 5.0f;
 
     public Poacher(Position position) {
-        this.isAlive = true;
         this.position = position;
         this.texture = new Texture("textures/humans/tourist.png");
         this.shootRange = 400;
         this.speed = 5;
         this.random = new Random();
-        this.isMoving = false;
-        this.movementTimer = 0;
+        this.checkTimer = 0;
+        this.moveTimer = 0;
+
+        setPosition(position.getX(), position.getY());
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+
+        this.position.setX((int) getX());
+        this.position.setY((int) getY());
+
+        checkTimer += delta;
+        moveTimer += delta;
+
+        if (checkTimer >= CHECK_INTERVAL) {
+            checkTimer = 0;
+            checkForAnimalsToShoot();
+        }
+
+        if (moveTimer >= MOVE_INTERVAL || !hasActions()) {
+            moveTimer = 0;
+            moveToRandomLocation();
+        }
+    }
+
+
+    private void moveToRandomLocation() {
+        float targetX = random.nextInt((int) GamemodelInstance.gameModel.getMapWidth());
+        float targetY = random.nextInt((int) GamemodelInstance.gameModel.getMapWidth());
+
+        Vector2 currentPos = new Vector2(getX(), getY());
+        Vector2 targetPos = new Vector2(targetX, targetY);
+
+        clearActions();
+
+        Array<Action> moveActions = BehaviourHelper.createMoveToActions(speed, currentPos, targetPos);
+
+        for (Action action : moveActions) {
+            addAction(action);
+        }
     }
 
     public void KillAnimal(Animal target) {
@@ -69,26 +108,6 @@ public class Poacher extends Actor implements Moveable, Positionable {
     public void KillRanger(Ranger target) {
     }
 
-    public void update(float deltaTime) {
-        movementTimer += deltaTime;
-
-        boolean actionsInProgress = false;
-        if (this.getActions() != null && this.getActions().size > 0) {
-            actionsInProgress = true;
-        }
-
-        if (!actionsInProgress) {
-            isMoving = false;
-        }
-
-        checkForAnimalsToShoot();
-
-        move();
-
-
-
-    }
-
     private void checkForAnimalsToShoot() {
         Vector2 currentPos = new Vector2(position.getX(), position.getY());
 
@@ -106,57 +125,13 @@ public class Poacher extends Actor implements Moveable, Positionable {
     }
 
     @Override
-    public void move() {
-        if (!isAlive) return;
-
-        this.clearActions();
-
-        Vector2 currentPos = new Vector2(position.getX(), position.getY());
-
-        float mapWidth = GamemodelInstance.gameModel.getMapWidth();
-        float mapHeight = GamemodelInstance.gameModel.getMapHeight();
-
-        float moveDistance = MathUtils.random(50, 200);
-        float randomAngle = MathUtils.random(0, MathUtils.PI2);
-
-        Vector2 randomTarget = new Vector2(
-            currentPos.x + moveDistance * MathUtils.cos(randomAngle),
-            currentPos.y + moveDistance * MathUtils.sin(randomAngle)
-        );
-
-        randomTarget.x = MathUtils.clamp(randomTarget.x, 0, mapWidth);
-        randomTarget.y = MathUtils.clamp(randomTarget.y, 0, mapHeight);
-
-        Array<Action> actions = createMoveToActions(speed, currentPos, randomTarget);
-        if (actions.size > 0) {
-            for (Action action : actions) {
-                this.addAction(action);
-            }
-            isMoving = true;
-        }
-    }
-
-    @Override
-    public int getSpeed() {
-        return speed;
-    }
-
-    @Override
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
     }
 
     @Override
     public Position getPosition() {
         return position;
-    }
-
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setAlive(boolean alive) {
-        isAlive = alive;
     }
 
     public Texture getTexture() {
