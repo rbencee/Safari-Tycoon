@@ -16,6 +16,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelp
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 import io.github.safari.lwjgl3.util.Positionable;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -33,8 +34,8 @@ public class Poacher extends Actor implements Human, Positionable {
     public Poacher(Position position) {
         this.position = position;
         this.texture = new Texture("textures/humans/tourist.png");
-        this.shootRange = 400;
-        this.speed = 5;
+        this.shootRange = 300;
+        this.speed = 40;
         this.random = new Random();
         this.checkTimer = 0;
         this.moveTimer = 0;
@@ -55,6 +56,7 @@ public class Poacher extends Actor implements Human, Positionable {
         if (checkTimer >= CHECK_INTERVAL) {
             checkTimer = 0;
             checkForAnimalsToShoot();
+            checkForRangersToShoot();
         }
 
         if (!hasActions()) {
@@ -83,6 +85,21 @@ public class Poacher extends Actor implements Human, Positionable {
         }
     }
 
+    private void checkForRangersToShoot() {
+        ArrayList<Ranger> rangers = GamemodelInstance.gameModel.getRangers();
+        Vector2 poacherPos = new Vector2(position.getX(), position.getY());
+
+        for (Ranger ranger : rangers) {
+            Vector2 rangerPos = new Vector2(ranger.getPosition().getX(), ranger.getPosition().getY());
+            float distance = poacherPos.dst(rangerPos);
+
+            if (distance <= shootRange) {
+                KillRanger(ranger);
+                break;
+            }
+        }
+    }
+
     public void KillAnimal(Animal target) {
         if (target != null) {
             Vector2 poacherPos = new Vector2(position.getX(), position.getY());
@@ -108,6 +125,27 @@ public class Poacher extends Actor implements Human, Positionable {
     }
 
     public void KillRanger(Ranger target) {
+        if (target != null) {
+            Vector2 poacherPos = new Vector2(position.getX(), position.getY());
+            Vector2 rangerPos = new Vector2(target.getPosition().getX(), target.getPosition().getY());
+
+            float distance = poacherPos.dst(rangerPos);
+
+            if (distance <= shootRange) {
+                if (Math.random() < 0.5) {
+                    ArrayList<Ranger> rangers = GamemodelInstance.gameModel.getRangers();
+                    ArrayList<Ranger> tempList = new ArrayList<>(rangers);
+                    boolean removed = tempList.remove(target);
+                    if (removed) {
+                        rangers.clear();
+                        rangers.addAll(tempList);
+                        System.out.println("Poacher killed a Ranger!");
+                    }
+                } else {
+                    System.out.println("Poacher shot at Ranger but missed!");
+                }
+            }
+        }
     }
 
     private void checkForAnimalsToShoot() {

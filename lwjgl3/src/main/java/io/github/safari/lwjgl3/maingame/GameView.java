@@ -187,6 +187,10 @@ public class GameView implements Screen {
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glDisable(GL20.GL_SCISSOR_TEST);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
         handleEdgeScrolling(delta);
         cameraMovement();
         camera.update();
@@ -276,7 +280,9 @@ public class GameView implements Screen {
         shapeRenderer.end();
         fogBuffer.end();
 
+
         fogBatch.begin();
+        spriteBatch.setProjectionMatrix(camera.combined);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         OrthographicCamera screenCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

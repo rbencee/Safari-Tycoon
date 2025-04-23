@@ -313,6 +313,8 @@ public class GameModel implements EdibleCollection {
                 timeacc = 0;
                 isDaytime = !isDaytime;
 
+                spawnRandomPoachers();
+
                 if ((dayspassed - previousDays) % 30 == 0) {
                     calculateIncome();
                 }
@@ -332,11 +334,29 @@ public class GameModel implements EdibleCollection {
 
     }
 
+    public void spawnRandomPoachers() {
+        Random random = new Random();
+        if (random.nextFloat() <= 0.5f) {
+            int poacherCount = random.nextInt(3) + 1;
+            for (int i = 0; i < poacherCount; i++) {
+                float x = random.nextFloat() * getMapWidth();
+                float y = random.nextFloat() * getMapHeight();
+
+                Position position = new Position(x, y, 64, 64);
+                Poacher poacher = new Poacher(position);
+
+                poachers.add(poacher);
+            }
+
+            System.out.println(poacherCount + " new poacher(s) have appeared in the park!");
+        }
+    }
+
     public void initializePoachers() {
         poachers = new ArrayList<>();
 
         Random random = new Random();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             float x = random.nextFloat() * getMapWidth();
             float y = random.nextFloat() * getMapHeight();
 

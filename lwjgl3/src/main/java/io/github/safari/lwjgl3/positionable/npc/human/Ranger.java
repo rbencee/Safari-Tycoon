@@ -25,7 +25,7 @@ public class Ranger extends Actor implements Human, Positionable {
     private Texture texture;
     private Position position;
     private int speed = 40;
-    private int shootRange = 125;
+    private int shootRange = 300;
     private static final float MOVE_INTERVAL = 5.0f;
     private float moveTimer;
     private boolean isSelected = false;
@@ -68,11 +68,11 @@ public class Ranger extends Actor implements Human, Positionable {
             }
             checkAndKillTarget();
         } else {
-            // Véletlenszerű mozgás
             moveTimer += delta;
             if (moveTimer >= MOVE_INTERVAL || !hasActions()) {
                 moveTimer = 0;
                 moveToRandomLocation();
+                checkAndKillPoacher();
             }
         }
     }
@@ -134,6 +134,34 @@ public class Ranger extends Actor implements Human, Positionable {
             }
         }
     }
+
+
+    private void checkAndKillPoacher() {
+        ArrayList<Poacher> poachers = GamemodelInstance.gameModel.getPoachers();
+        Vector2 rangerPos = new Vector2(position.getX(), position.getY());
+
+        for (Poacher poacher : poachers) {
+            Vector2 poacherPos = new Vector2(poacher.getPosition().getX(), poacher.getPosition().getY());
+            float distance = rangerPos.dst(poacherPos);
+
+            if (distance <= shootRange) {
+                if (Math.random() < 0.5) {
+                    ArrayList<Poacher> tempList = new ArrayList<>(poachers);
+                    boolean removed = tempList.remove(poacher);
+                    if (removed) {
+                        poachers.clear();
+                        poachers.addAll(tempList);
+                        System.out.println("Ranger killed a Poacher!");
+                    }
+                } else {
+                    System.out.println("Ranger shot at Poacher but missed!");
+                }
+                break;
+            }
+        }
+    }
+
+
 
     public void setTargetAnimal(Animal animal) {
         this.currentTarget = (Positionable) animal;
