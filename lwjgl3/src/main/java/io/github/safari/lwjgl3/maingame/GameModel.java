@@ -224,8 +224,8 @@ public class GameModel implements EdibleCollection {
 
             float gridSize = 64f;
 
-            float entranceY = random.nextInt((int) (mapHeight / gridSize)) * gridSize - 32;
-            float exitY = random.nextInt((int) (mapHeight / gridSize)) * gridSize - 32;
+            float entranceY = random.nextInt((int) (mapHeight / gridSize)) * gridSize;
+            float exitY = random.nextInt((int) (mapHeight / gridSize)) * gridSize;
 
 
             if (positionFound(0, entranceY, 64, 64)) {
@@ -392,7 +392,7 @@ public class GameModel implements EdibleCollection {
         return rangers.size() * 50;
 
     }
-    public boolean isGameOver() {return money <= 0 || sumAnimals() <= 0;}
+    public boolean isGameOver() {return money <= 0 || sumAnimals() < 0;}
 
     public void ChangeTicketPrice(int ticketprice) {
         this.ticketprice = ticketprice;
