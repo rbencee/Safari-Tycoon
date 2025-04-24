@@ -1,11 +1,14 @@
 package io.github.safari.lwjgl3.maingame;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import io.github.safari.lwjgl3.maingame.*;
 import io.github.safari.lwjgl3.util.ShopType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class ShopTest {
 
@@ -13,8 +16,9 @@ class ShopTest {
 
     @BeforeEach
     void setup() {
-        GameModel dummy = new GameModel(1);
-        shop = new Shop(null, null, dummy);
+        Stage mockStage = mock(Stage.class);
+        Skin mockSkin = mock(Skin.class);
+        shop = new Shop(mockSkin, mockStage, new GameModel(1));
     }
 
     @Test

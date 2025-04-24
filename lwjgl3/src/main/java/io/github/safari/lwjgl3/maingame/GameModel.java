@@ -79,7 +79,7 @@ public class GameModel implements EdibleCollection {
         this.jeeps = new ArrayList<>();
         this.roads = new ArrayList<>();
         this.tourists = new ArrayList<>();
-        this.money = 0;
+        this.money = 5000;
 
         InitializeGame();
         GamemodelInstance.gameModel = this;
