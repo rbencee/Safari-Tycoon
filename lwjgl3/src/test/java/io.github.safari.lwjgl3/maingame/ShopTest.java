@@ -13,17 +13,18 @@ class ShopTest {
 
     @BeforeEach
     void setup() {
-        shop = new Shop(null, null, new GameModel(1));
+        GameModel dummy = new GameModel(1);
+        shop = new Shop(null, null, dummy);
     }
 
     @Test
     void testInitialSelectionIsNull() {
-        assertNull(shop.getShopItems(), "A kezdeti kiválasztott elemnek null-nak kell lennie.");
+        assertNull(shop.getShopItems(), "First Selected Item should be null");
     }
 
     @Test
     void testBuyingFlagDefaultTrue() {
-        assertTrue(shop.isBuying(), "A vásárlás alapértelmezetten be kell legyen kapcsolva.");
+        assertTrue(shop.isBuying(), "First we should be buying");
     }
 
     @Test
