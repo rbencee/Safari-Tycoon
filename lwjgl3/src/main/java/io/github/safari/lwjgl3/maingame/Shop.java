@@ -34,7 +34,12 @@ public class Shop {
 
         shopWindow = new Window("", skin);
         shopWindow.setSize(600, 600);
-        shopWindow.setPosition(0,(Gdx.graphics.getHeight() / 2f - 180)); //dx.graphics.getHeight() / 2f - 200
+        if(Gdx.graphics != null) {
+            shopWindow.setPosition(0, (Gdx.graphics.getHeight() / 2f - 180));
+        } else
+        {
+            shopWindow.setPosition(0, 120);
+        }
         shopWindow.setMovable(false);
         shopWindow.setResizable(false);
 
