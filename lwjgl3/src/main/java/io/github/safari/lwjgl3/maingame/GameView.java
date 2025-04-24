@@ -142,7 +142,7 @@ public class GameView implements Screen {
         table.setFillParent(true);
 
 
-        shop = new Shop(skin, uiStage, this.gameModel);
+        shop = new Shop(skin, uiStage, this.gameModel, Gdx.graphics.getHeight());
 
         TextButton openShopButton = new TextButton("Shop", skin);
         openShopButton.setPosition(0, 0);

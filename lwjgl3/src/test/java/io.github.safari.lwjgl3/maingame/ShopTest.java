@@ -25,7 +25,7 @@ class ShopTest {
     void setup() {
         Stage mockStage = mock(Stage.class);
         Skin mockSkin = mock(Skin.class);
-        shop = new Shop(mockSkin, mockStage, new GameModel(1));
+        shop = new Shop(mockSkin, mockStage, new GameModel(1), 600);
     }
 
     @Test

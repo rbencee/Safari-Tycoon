@@ -24,7 +24,7 @@ public class Shop {
 
 
 
-    public Shop(Skin skin, Stage stage, GameModel MainGame) {
+    public Shop(Skin skin, Stage stage, GameModel MainGame, float screen_height) {
         this.skin = skin;
         this.pageShown = ShopType.PLANTS;
         this.MainGame = MainGame;
@@ -34,12 +34,8 @@ public class Shop {
 
         shopWindow = new Window("", skin);
         shopWindow.setSize(600, 600);
-        if(Gdx.graphics != null) {
-            shopWindow.setPosition(0, (Gdx.graphics.getHeight() / 2f - 180));
-        } else
-        {
-            shopWindow.setPosition(0, 120);
-        }
+        shopWindow.setPosition(0, (screen_height / 2f - 180));
+
         shopWindow.setMovable(false);
         shopWindow.setResizable(false);
 
