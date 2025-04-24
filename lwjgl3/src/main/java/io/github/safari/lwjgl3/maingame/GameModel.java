@@ -65,8 +65,7 @@ public class GameModel implements EdibleCollection {
 
     private float timeacc = 0;
 
-    public GameModel(int difficulty)
-    {
+    public GameModel(int difficulty) {
         this.difficulty = difficulty;
         this.random = new Random();
         this.herds = new ArrayList<>();
@@ -89,7 +88,9 @@ public class GameModel implements EdibleCollection {
     //Setters and getters
 
 
-    public boolean isGameWon() {return isGameWon;}
+    public boolean isGameWon() {
+        return isGameWon;
+    }
 
     public void setSpeed(int speed) {
         this.speed = speed;
@@ -134,30 +135,43 @@ public class GameModel implements EdibleCollection {
         return dayspassed;
     }
 
-    public int getTouristcount() {return touristcount;}
+    public int getTouristcount() {
+        return touristcount;
+    }
 
-    public void setTouristcount(int touristcount) {this.touristcount = touristcount;}
+    public void setTouristcount(int touristcount) {
+        this.touristcount = touristcount;
+    }
 
-    public ArrayList<Environment> getEnvironments() {return environments;}
+    public ArrayList<Environment> getEnvironments() {
+        return environments;
+    }
 
-    public ArrayList<Herd> getHerds() {return herds;}
+    public ArrayList<Herd> getHerds() {
+        return herds;
+    }
 
-    public ArrayList<Jeep> getJeeps() {return jeeps;}
+    public ArrayList<Jeep> getJeeps() {
+        return jeeps;
+    }
 
-    public ArrayList<Road> getRoads(){ return roads;}
+    public ArrayList<Road> getRoads() {
+        return roads;
+    }
 
-        public ArrayList<Tourist> getTourists() {return tourists;}
+    public ArrayList<Tourist> getTourists() {
+        return tourists;
+    }
 
     public void InitializeGame() {
         generateMap();
     }
 
-    private void generateMap()
-    {
+    private void generateMap() {
         int objectCount = 0;
         while (objectCount < objectNumber) {
-            float x = random.nextInt((int)(mapWidth / 32)) * 32;
-            float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            float x = random.nextInt((int) (mapWidth / 32)) * 32;
+            float y = random.nextInt((int) (mapHeight / 32)) * 32;
             int width = 96;
             int height = 110;
 
@@ -171,8 +185,8 @@ public class GameModel implements EdibleCollection {
 
         objectCount = 0;
         while (objectCount < objectNumber) {
-            float x = random.nextInt((int)(mapWidth / 32)) * 32;
-            float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            float x = random.nextInt((int) (mapWidth / 32)) * 32;
+            float y = random.nextInt((int) (mapHeight / 32)) * 32;
             int width = 64;
             int height = 64;
 
@@ -186,8 +200,8 @@ public class GameModel implements EdibleCollection {
 
         objectCount = 0;
         while (objectCount < objectNumber) {
-            float x = random.nextInt((int)(mapWidth / 32)) * 32;
-            float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            float x = random.nextInt((int) (mapWidth / 32)) * 32;
+            float y = random.nextInt((int) (mapHeight / 32)) * 32;
             int width = 96;
             int height = 96;
 
@@ -201,8 +215,8 @@ public class GameModel implements EdibleCollection {
 
         objectCount = 0;
         while (objectCount < objectNumber) {
-            float x = random.nextInt((int)(mapWidth / 32)) * 32;
-            float y = random.nextInt((int)(mapHeight / 32)) * 32;
+            float x = random.nextInt((int) (mapWidth / 32)) * 32;
+            float y = random.nextInt((int) (mapHeight / 32)) * 32;
             int width = 64;
             int height = 64;
 
@@ -311,22 +325,21 @@ public class GameModel implements EdibleCollection {
 
                 if (currentMonth > previousMonth) {
                     calculateIncome();
-                    if(checkwincon()) isGameWon = true;
+                    if (checkwincon()) isGameWon = true;
                 }
             }
             for (Jeep jeep : jeeps) {
                 Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart(), this);
                 if (roadtogo != null) {
                     jeep.moveTowards(roadtogo.getPosition(), timeinterval);
-                 }
-
                 }
+
             }
+        }
 
     }
 
-    public boolean checkwincon()
-    {
+    public boolean checkwincon() {
         boolean allAboveThresholds =
             getTouristcount() >= 80 &&
                 sumHerbivores() >= 50 &&
@@ -392,7 +405,10 @@ public class GameModel implements EdibleCollection {
         return rangers.size() * 50;
 
     }
-    public boolean isGameOver() {return money <= 0 || sumAnimals() <= 0;}
+
+    public boolean isGameOver() {
+        return money <= 0 || sumAnimals() < 0;
+    }
 
     public void ChangeTicketPrice(int ticketprice) {
         this.ticketprice = ticketprice;
@@ -472,7 +488,6 @@ public class GameModel implements EdibleCollection {
         return false;
 
     }
-
 
 
     public Road getEntranceRoad() {
