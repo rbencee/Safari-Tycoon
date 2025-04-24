@@ -319,4 +319,6 @@ public class Shop {
     }
 
 
+    public void setShopItem(ShopItem item) {
+    }
 }

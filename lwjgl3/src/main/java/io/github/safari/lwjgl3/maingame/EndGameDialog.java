@@ -27,16 +27,17 @@ public class EndGameDialog extends Dialog {
         text(resultText + "\n\n" + stats);
 
         TextButton quitButton = new TextButton("Quit", skin);
-        quitButton.getLabel().setFontScale(1.2f); // opcionális: nagyobb betű
+        quitButton.getLabel().setFontScale(1.2f);
         quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                quitButton.getLabel().setColor(Color.YELLOW); // kijelölés-szerű vizuális effekt
+                quitButton.getLabel().setColor(Color.YELLOW);
                 Gdx.app.exit();
             }
         });
 
         getButtonTable().add(quitButton).pad(10).width(200).height(80);
+        button(quitButton, true);
 
         show(stage);
         toFront();
