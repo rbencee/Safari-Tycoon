@@ -1,3 +1,5 @@
+package io.github.safari.lwjgl3.positionable;
+
 import io.github.safari.lwjgl3.positionable.Position;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
