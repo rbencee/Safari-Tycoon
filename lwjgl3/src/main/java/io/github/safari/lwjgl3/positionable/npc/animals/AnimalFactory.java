@@ -6,15 +6,14 @@ import io.github.safari.lwjgl3.positionable.Position;
 public class AnimalFactory {
 
     public static Animal createCapybara(Position position) {
-        return new AnimalImpl(0, 40, 80, createTexture("textures/animals/capybara.png"), position, AnimalSpecies.CAPYBARA);
+        return new AnimalImpl(0, 100, 100, createTexture("textures/animals/capybara.png"), position, AnimalSpecies.CAPYBARA);
     }
-
-    /*public static Animal createMammoth(Position position){
-        return new AnimalImpl(30f, 0, 30, 100, 100, 5, position, AnimalSpecies.MAMMOTH, new HerbivoreBehaviour());
+    public static Animal createMammoth(Position position){
+        return new AnimalImpl(0, 100, 100, createTexture("textures/animals/mammoth.png"), position, AnimalSpecies.MAMMOTH);
     }
     public static Animal createLion(Position position){
-        return new AnimalImpl(30f, 0, 10, 100, 100, 6, position, AnimalSpecies.LION, new PredatorBehaviour());
-    }*/
+        return new AnimalImpl(0, 100, 100, createTexture("textures/animals/lion.png"), position, AnimalSpecies.LION);
+    }
     public static Animal createDinosaur(Position position) {
         return new AnimalImpl(0, 100, 100, createTexture("textures/animals/dino.png"), position, AnimalSpecies.DINOSAUR);
     }

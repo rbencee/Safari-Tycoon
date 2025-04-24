@@ -2,25 +2,16 @@ package io.github.safari.lwjgl3.positionable.npc.animals.actions;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
-import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 
-public class DrinkAction extends CloneableAction {
-    private final Herd herd;
-
-    public DrinkAction(Herd herd) {
-        this.herd = herd;
-    }
-
+public class DrinkAction extends Action implements CloneableAction {
     @Override
     public boolean act(float delta) {
-        for (AnimalImpl a : herd.getAnimals()){
-            a.drink();
-        }
+        ((AnimalImpl) getActor()).drink();
         return true;
     }
 
     @Override
-    public CloneableAction clone(CloneableAction action) {
-        return null;
+    public Action clone() {
+        return new DrinkAction();
     }
 }

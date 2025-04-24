@@ -1,22 +1,24 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
 public enum AnimalSpecies {
-    CAPYBARA(AnimalType.HERBIVORE, 5, 20, 300f),
-    MAMMOTH(AnimalType.HERBIVORE, 20, 30, 100f),
-    LION(AnimalType.PREDATOR, 20, 50, 100f),
-    DINOSAUR(AnimalType.PREDATOR, 100, 40, 100f);
+    CAPYBARA(AnimalType.HERBIVORE, 300, 10, 300f, 5),
+    MAMMOTH(AnimalType.HERBIVORE, 200000, 15, 10000f, 20),
+    LION(AnimalType.PREDATOR, 200000, 30, 100f, 20),
+    DINOSAUR(AnimalType.PREDATOR, 1000000, 20, 300f, 20);
 
     private final AnimalType animalType;
     private final double maxAge;
     private final float speed;
     private final float visionRange;
+    private final int reproductionTime;
 
 
-    AnimalSpecies(AnimalType animalType, double maxAge, float speed, float visionRange) {
+    AnimalSpecies(AnimalType animalType, double maxAge, float speed, float visionRange, int reproductionTime) {
         this.animalType = animalType;
         this.maxAge = maxAge;
         this.speed = speed;
         this.visionRange = visionRange;
+        this.reproductionTime = reproductionTime;
     }
 
     public AnimalType getAnimalType() {
@@ -33,5 +35,9 @@ public enum AnimalSpecies {
 
     public float getVisionRange() {
         return visionRange;
+    }
+
+    public float getReproductionTime() {
+        return (float) reproductionTime;
     }
 }

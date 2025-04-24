@@ -1,15 +1,14 @@
 package io.github.safari.lwjgl3.maingame;
 
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
-import io.github.safari.lwjgl3.positionable.npc.human.*;
-import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.security.Security;
-import io.github.safari.lwjgl3.positionable.objects.Environment;
+import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
+import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
-import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
 import io.github.safari.lwjgl3.positionable.visitors.Tourist;
-import org.lwjgl.opengl.ARBStencilTexturing;
+import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
+
 import java.util.*;
 
 
@@ -62,6 +61,7 @@ public class GameModel implements EdibleCollection {
     private Random random;
     private boolean isDaytime = true;
     private float minDistance = 64;
+
     private float timeacc = 0;
 
     public GameModel(int difficulty)
@@ -79,7 +79,7 @@ public class GameModel implements EdibleCollection {
         this.jeeps = new ArrayList<>();
         this.roads = new ArrayList<>();
         this.tourists = new ArrayList<>();
-        this.money = 5000;
+        this.money = 50000000;
 
         InitializeGame();
         GamemodelInstance.gameModel = this;
@@ -92,7 +92,30 @@ public class GameModel implements EdibleCollection {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+        clearAllActions();
     }
+
+    private void clearAllActions() {
+        for (Herd herd : herds) {
+            for (AnimalImpl animal : herd.getAnimals()) {
+                animal.clearActions();
+            }
+        }
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getTimeMultiplicator() {
+        return switch (speed) {
+            case 1 -> 1;
+            case 2 -> 7;
+            case 3 -> 30;
+            default -> throw new UnsupportedOperationException();
+        };
+    }
+
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
@@ -124,8 +147,7 @@ public class GameModel implements EdibleCollection {
 
         public ArrayList<Tourist> getTourists() {return tourists;}
 
-    public void InitializeGame()
-    {
+    public void InitializeGame() {
         generateMap();
     }
 
@@ -197,31 +219,30 @@ public class GameModel implements EdibleCollection {
         boolean entranceb = false;
         boolean exitb = false;
 
-            while(!entranceb && !exitb) {
+        while (!entranceb && !exitb) {
 
-                float gridSize = 64f;
+            float gridSize = 64f;
 
-                float entranceY =(random.nextInt((int)(mapHeight / gridSize))) * gridSize;
-                float exitY = (random.nextInt((int)(mapHeight / gridSize))) * gridSize;
+            float entranceY = random.nextInt((int) (mapHeight / gridSize)) * gridSize - 32;
+            float exitY = random.nextInt((int) (mapHeight / gridSize)) * gridSize - 32;
 
 
+            if (positionFound(0, entranceY, 64, 64)) {
+                Position entrapos = new Position(0, entranceY, 64, 64);
+                Road entrance = new Road(entrapos, 2);
+                this.entrancepos = entrapos;
 
-                    if(positionFound(0,entranceY,64,64)) {
-                        Position entrapos = new Position(0,entranceY,64,64);
-                        Road entrance = new Road(entrapos, 2);
-                        this.entrancepos = entrapos;
+                roads.add(entrance);
+                //System.out.println("entrance:" + entrance.getRoadtype() + "   " + entrance.getPosition().getX() + "   " + entrance.getPosition().getY());
+                entranceb = true;
+            }
 
-                        roads.add(entrance);
-                        //System.out.println("entrance:" + entrance.getRoadtype() + "   " + entrance.getPosition().getX() + "   " + entrance.getPosition().getY());
-                        entranceb = true;
-                    }
-
-                    if(positionFound(mapWidth - 64,exitY,64,64)) {
-                        Road exit = new Road(new Position(mapWidth - 64 , exitY, 64, 64), 3);
-                        roads.add(exit);
-                        exitb = true;
-                    }
-                }
+            if (positionFound(mapWidth - 64, exitY, 64, 64)) {
+                Road exit = new Road(new Position(mapWidth - 64, exitY, 64, 64), 3);
+                roads.add(exit);
+                exitb = true;
+            }
+        }
 
         ArrayList<Position> obstacles = new ArrayList<>();
         for (Environment e : environments) {
@@ -273,14 +294,13 @@ public class GameModel implements EdibleCollection {
             timeinterval = 30;
         }
 
-            if(!isGameOver()) {
-                int previousDays = dayspassed;
-                timeacc += delta;
-                SummonTourist();
+        if (!isGameOver()) {
+            int previousDays = dayspassed;
+            timeacc += delta;
+            SummonTourist();
 
 
-            if(timeacc >= 10.0f)
-            {
+            if (timeacc >= 10.0f) {
                 dayspassed += timeinterval;
                 timeacc = 0;
                 isDaytime = !isDaytime;
@@ -294,7 +314,7 @@ public class GameModel implements EdibleCollection {
                 }
             }
             for (Jeep jeep : jeeps) {
-                Road roadtogo = GameController.getNextRoadTowardsEntrance(jeep, jeep.isTostart(), this);
+                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
                 if (roadtogo != null) {
                     jeep.moveTowards(roadtogo.getPosition(), timeinterval);
                  }
@@ -335,32 +355,29 @@ public class GameModel implements EdibleCollection {
         return isDaytime;
     }
 
-    public void increasemoney(int money)
-    {
+    public void increasemoney(int money) {
         this.money += money;
     }
 
-    public void calculateIncome()
-    {
+    public void calculateIncome() {
         this.money += touristcount * 5 + (sumUniqueAnimals() * sumAnimals() * 3) - payrangers();
         this.income = touristcount * 5 + (sumUniqueAnimals() * sumAnimals() * 3) - payrangers();
 
     }
 
-        private void SummonTourist()
-        {
-            if (entrancepos == null) return;
+    private void SummonTourist() {
+        if (entrancepos == null) return;
 
-            Random random = new Random();
+        Random random = new Random();
 
-            int offsetX = random.nextInt(65) - 32;
-            int offsetY = random.nextInt(65) - 32;
+        int offsetX = random.nextInt(65) - 32;
+        int offsetY = random.nextInt(65) - 32;
 
-            Position newPos = new Position(
-                entrancepos.getX() + offsetX,
-                entrancepos.getY() + offsetY,
-                64, 64
-            );
+        Position newPos = new Position(
+            entrancepos.getX() + offsetX,
+            entrancepos.getY() + offsetY,
+            64, 64
+        );
 
 
             if(touristcount < sumUniqueAnimals()) {
@@ -369,35 +386,27 @@ public class GameModel implements EdibleCollection {
                 this.money += ticketprice;
             }
 
-
-        }
-
-    private int payrangers()
-    {
+    private int payrangers() {
         return rangers.size() * 50;
 
     }
-
     public boolean isGameOver() {return money <= 0 || sumAnimals() <= 0;}
 
-    public void ChangeTicketPrice(int ticketprice)
-    {
+    public void ChangeTicketPrice(int ticketprice) {
         this.ticketprice = ticketprice;
     }
 
     private int sumAnimals()//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
     {
         int sum = 0;
-        for (Herd herd : herds)
-        {
+        for (Herd herd : herds) {
             sum += herd.animalCount(); //Lehet meg kell nezni hogy biztos el e.
         }
 
         return sum;
     }
 
-    private int sumUniqueAnimals()
-    {
+    private int sumUniqueAnimals() {
         Set<AnimalSpecies> uniqueAnimals = new HashSet<>();
         for (Herd herd : herds) {
             uniqueAnimals.add(herd.getAnimalSpecies());
@@ -406,20 +415,20 @@ public class GameModel implements EdibleCollection {
         return uniqueAnimals.size();
     }
 
-    public int sumHerbivores(){
+    public int sumHerbivores() {
         int sum = 0;
-        for (Herd herd : herds){
-            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.HERBIVORE)){
+        for (Herd herd : herds) {
+            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.HERBIVORE)) {
                 sum += herd.animalCount();
             }
         }
         return sum;
     }
 
-    public int sumPredators(){
+    public int sumPredators() {
         int sum = 0;
-        for (Herd herd : herds){
-            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.PREDATOR)){
+        for (Herd herd : herds) {
+            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.PREDATOR)) {
                 sum += herd.animalCount();
             }
         }
@@ -427,46 +436,34 @@ public class GameModel implements EdibleCollection {
     }
 
 
-
-
-
-    public boolean CanBuy(ShopItem selectedItem)
-    {
+    public boolean CanBuy(ShopItem selectedItem) {
         return money - selectedItem.getPrice() >= 0;
     }
 
-    public void addtoenvironment(Environment environment)
-    {
+    public void addtoenvironment(Environment environment) {
         this.environments.add(environment);
     }
 
-    public void addtojeeps(Jeep jeep)
-    {
+    public void addtojeeps(Jeep jeep) {
         this.jeeps.add(jeep);
     }
 
-    public void addtoroads(Road road)
-    {
+    public void addtoroads(Road road) {
         this.roads.add(road);
     }
 
-    public void Decrease_My_Money(int decrease_amount)
-    {
+    public void Decrease_My_Money(int decrease_amount) {
         this.money -= decrease_amount;
     }
 
 
+    public boolean Is_There_Road(float x, float y) {
+        for (Road road : roads) {
 
-    public boolean Is_There_Road(float x, float y)
-    {
-        for(Road road : roads)
-        {
-
-                if(Math.abs(road.getPosition().getX() - x) < 32 )
-                    if(Math.abs(road.getPosition().getY() - y) < 32)
-                    {
-                        return true;
-                    }
+            if (Math.abs(road.getPosition().getX() - x) < 32)
+                if (Math.abs(road.getPosition().getY() - y) < 32) {
+                    return true;
+                }
 
         }
 
@@ -476,24 +473,24 @@ public class GameModel implements EdibleCollection {
 
 
 
-        public Road getEntranceRoad() {
-            for (Road road : roads) {
-                if (road.getRoadtype() == 2) {
-                    return road;
-                }
+    public Road getEntranceRoad() {
+        for (Road road : roads) {
+            if (road.getRoadtype() == 2) {
+                return road;
             }
-            return null;
         }
+        return null;
+    }
 
-        public Road getExitRoad() {
-            for (Road road : roads) {
-                if (road.getRoadtype() == 3) {
-                    return road;
-                }
+    public Road getExitRoad() {
+        for (Road road : roads) {
+            if (road.getRoadtype() == 3) {
+                return road;
             }
-            System.out.println("RETURNING NULL!");
-            return null;
         }
+        System.out.println("RETURNING NULL!");
+        return null;
+    }
 
 
 

@@ -3,6 +3,7 @@ package io.github.safari.lwjgl3.positionable.npc.animals;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.util.Positionable;
 
@@ -13,6 +14,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     final Texture texture;
     Position position;
     final AnimalSpecies animalSpecies;
+    boolean toRemove = false;
 
     public AnimalImpl(
         double age,
@@ -61,6 +63,10 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         return animalSpecies.getSpeed();
     }
 
+    public boolean isToRemove() {
+        return toRemove;
+    }
+
     @Override
     public Position getPosition() {
         return new Position(this.getX(), this.getY(), this.position.getWidth(), this.position.getHeight());
@@ -95,9 +101,16 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     public void act(float delta) {
         super.act(delta);
 
+        this.age += delta * GamemodelInstance.gameModel.getTimeMultiplicator();
+        this.hunger -= delta * GamemodelInstance.gameModel.getTimeMultiplicator() * (1 + age / getMaxAge());
+        this.thirst -= delta * GamemodelInstance.gameModel.getTimeMultiplicator() * (1 + age / getMaxAge());
 
-        this.hunger -= delta;
-        this.thirst -= delta;
+        if (age > getMaxAge() || thirst < 0 || hunger < 0) {
+            toRemove = true;
+            this.remove();
+        }
+
+
     }
 
     @Override

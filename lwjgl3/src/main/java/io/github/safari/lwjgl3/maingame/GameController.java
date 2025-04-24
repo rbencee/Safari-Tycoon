@@ -24,6 +24,8 @@ public class GameController {
         this.shop = shop;
         this.gameModel = model;
         this.gameView = gameView;
+
+
     }
 
     public boolean TryToPlace(float x, float y, int width, int height, int pointer, int button, boolean isjeep) {
@@ -78,44 +80,62 @@ public class GameController {
 
         switch (item.getName()) {
             case "Capybara":
-                animal = AnimalFactory.createCapybara(new Position(x, y, width, height));  // Új Capybara példány létrehozása a megadott koordinátákkal
+                animal = AnimalFactory.createCapybara(new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.CAPYBARA, Behaviour.createHerbivoreBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
                 gameModel.getHerds().add(herd);
                 gameModel.getAllHerbivores().add(herd);
                 System.out.println("Capybara buy successful!");
                 gameView.getGameStage().addActor(herd);
-
                 break;
             case "Mammoth":
+                animal = AnimalFactory.createMammoth(new Position(x, y, width, height));
+                herd = new Herd(AnimalSpecies.MAMMOTH, Behaviour.createHerbivoreBehaviours());
+                herd.addToHerd((AnimalImpl) animal);
+                gameModel.getHerds().add(herd);
+                gameModel.getAllHerbivores().add(herd);
+                System.out.println("Mammoth buy successful!");
+                gameView.getGameStage().addActor(herd);
                 break;
             case "Dinosaur":
                 animal = AnimalFactory.createDinosaur(new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.DINOSAUR, Behaviour.createPredatorBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
+                gameModel.getHerds().add(herd);
                 System.out.println("Dinosaur buy successful!");
+                gameView.getGameStage().addActor(herd);
                 break;
             case "Lion":
+                animal = AnimalFactory.createLion(new Position(x, y, width, height));
+                herd = new Herd(AnimalSpecies.LION, Behaviour.createPredatorBehaviours());
+                herd.addToHerd((AnimalImpl) animal);
+                gameModel.getHerds().add(herd);
+                System.out.println("Lion buy successful!");
+                gameView.getGameStage().addActor(herd);
                 break;
             case "Bush":
                 Bush bush = new Bush(new Position(x, y, width, height));
                 gameModel.addtoenvironment(bush);
                 PathGraph.addObstacle(bush.getPosition());
+                gameModel.getAllHerbivoreEdible().add(bush);
                 break;
             case "Tree":
                 Tree tree = new Tree(new Position(x, y, width, height));
                 gameModel.addtoenvironment(tree);
                 PathGraph.addObstacle(tree.getPosition());
+                gameModel.getAllHerbivoreEdible().add(tree);
                 break;
             case "Lake":
                 Lake lake = new Lake(new Position(x, y, width, height));
                 gameModel.addtoenvironment(lake);
                 PathGraph.addObstacle(lake.getPosition());
+                gameModel.getAllDrinkable().add(lake);
                 break;
             case "Grass":
                 Grass grass = new Grass(new Position(x, y, width, height));
                 gameModel.addtoenvironment(grass);
                 PathGraph.addObstacle(grass.getPosition());
+                gameModel.getAllHerbivoreEdible().add(grass);
                 break;
             case "Road":
                 Road road = new Road(new Position(x, y, width, height));
@@ -130,7 +150,6 @@ public class GameController {
                 break;
         }
     }
-
 
 
     private void SellThis(float x, float y, ShopItem item) {
