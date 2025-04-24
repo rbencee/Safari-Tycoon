@@ -110,45 +110,43 @@ public class Herd extends Group implements Positionable {
         checkMovingRandomlyTimer += delta;
         if (isMovingRandomly && checkMovingRandomlyTimer > 2) {
             if (getMinThirst() < 30 || getMinHunger() < 30) {
-                for (Behaviour behaviour : behaviours) {
-                    if (!(behaviour instanceof RandomMovingBehaviour)) {
-                        animals.forEach(Actor::clearActions);
-                        isMovingRandomly = false;
-                    }
-                }
+                animals.forEach(Actor::clearActions);
+                isMovingRandomly = false;
             }
         }
 
         checkEatTimer += delta;
         if (this.animalSpecies.getAnimalType().equals(AnimalType.PREDATOR) && this.getMinHunger() < 30 && checkEatTimer > 2) {
             Herd herd = isHerbivoreNearby();
-            if (herd != null) {
-                boolean toRemove = true;
-                Array<Action> actions = getActions();
-                for (Action action : actions) {
-                    if (action instanceof AfterAction && ((AfterAction) action).getAction() instanceof KillAction) {
-                        toRemove = false;
+            boolean doesNotHaveKillAction = true;
+            Array<Action> actions = animals.get(0).getActions();
+            for (Action action : actions) {
+                if (action instanceof AfterAction && ((AfterAction) action).getAction() instanceof KillAction) {
+                    doesNotHaveKillAction = false;
+                }
+            }
+
+            if (herd != null && doesNotHaveKillAction) {
+                animals.forEach(Actor::clearActions);
+
+                Array<Action> newActions = BehaviourHelper.createMoveToActions(
+                    animalSpecies.getSpeed(),
+                    new Vector2(getPosition().getX(), getPosition().getY()),
+                    new Vector2(herd.getPosition().getX(), herd.getPosition().getY()));
+
+                for (Action action : newActions) {
+                    if (action instanceof CloneableMoveToAction moveToAction) {
+                        animals.forEach(actor -> actor.addAction(Actions.after(moveToAction.clone())));
                     }
                 }
-                if (toRemove) {
-                    animals.forEach(Actor::clearActions);
 
-                    Array<Action> newActions = BehaviourHelper.createMoveToActions(
-                        animalSpecies.getSpeed(),
-                        new Vector2(getPosition().getX(), getPosition().getY()),
-                        new Vector2(herd.getPosition().getX(), herd.getPosition().getY()));
-
-                    for (Action action : newActions) {
-                        if (action instanceof CloneableMoveToAction moveToAction) {
-                            animals.forEach(actor -> actor.addAction(Actions.after(moveToAction.clone())));
-                        }
-                    }
-
-                    animals.forEach(actor -> {
-                        actor.addAction(Actions.after(new KillAction(herd)));
-                        actor.addAction(new SleepAction());
-                    });
-                }
+                animals.forEach(actor -> {
+                    actor.addAction(Actions.after(new KillAction(herd)));
+                    actor.addAction(new SleepAction());
+                });
+            } else if (herd == null && doesNotHaveKillAction) {
+                clearActions();
+                actAsBehaviours();
             }
             checkEatTimer = 0;
         }
@@ -166,7 +164,6 @@ public class Herd extends Group implements Positionable {
             return;
         }
 
-
         reproduce(delta);
 
         joinHerdsIfPossible();
@@ -178,6 +175,10 @@ public class Herd extends Group implements Positionable {
             }
         }
 
+        actAsBehaviours();
+    }
+
+    private void actAsBehaviours() {
         for (Behaviour behaviour : behaviours) {
             behaviour.doRepeatedly(this);
 
@@ -194,6 +195,7 @@ public class Herd extends Group implements Positionable {
                         child.addAction(Actions.after(((CloneableAction) action).clone()));
                     }
                 }
+                return;
             }
         }
     }
@@ -211,7 +213,7 @@ public class Herd extends Group implements Positionable {
             }
 
             for (int i = 0; i < adults / 2; i++) {
-                if (random.nextInt(100) <= 15) {
+                if (random.nextInt(100) <= 30) {
                     AnimalImpl animal = createNewAnimal();
                     addToHerd(animal);
                     for (Action action : animals.get(0).getActions()) {
@@ -222,7 +224,6 @@ public class Herd extends Group implements Positionable {
                             animal.addAction(Actions.after(cloneableAction.clone()));
                         }
                     }
-
                 }
             }
         }
