@@ -11,6 +11,8 @@ import io.github.safari.lwjgl3.util.pathfinding.PathGraph;
 
 import java.util.*;
 
+import static io.github.safari.lwjgl3.maingame.GameController.getNextRoadTowardsEntrance;
+
 
 public class GameModel implements EdibleCollection {
     private int money;
@@ -30,7 +32,6 @@ public class GameModel implements EdibleCollection {
     private ArrayList<Poacher> poachers;
     private ArrayList<Ranger> rangers;
     private ArrayList<Jeep> jeeps;
-    private ArrayList<Security> securities;
     private ArrayList<Environment> environments;
     private ArrayList<Road> roads;
     private ArrayList<Tourist> tourists;
@@ -314,7 +315,7 @@ public class GameModel implements EdibleCollection {
                 }
             }
             for (Jeep jeep : jeeps) {
-                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
+                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart(), this);
                 if (roadtogo != null) {
                     jeep.moveTowards(roadtogo.getPosition(), timeinterval);
                  }
@@ -380,11 +381,12 @@ public class GameModel implements EdibleCollection {
         );
 
 
-            if(touristcount < sumUniqueAnimals()) {
-                this.touristcount = touristcount + 1;
-                this.tourists.add(new Tourist(newPos));
-                this.money += ticketprice;
-            }
+        if (touristcount < sumUniqueAnimals()) {
+            this.touristcount = touristcount + 1;
+            this.tourists.add(new Tourist(newPos));
+            this.money += ticketprice;
+        }
+    }
 
     private int payrangers() {
         return rangers.size() * 50;
