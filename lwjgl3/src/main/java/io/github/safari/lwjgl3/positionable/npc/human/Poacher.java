@@ -33,7 +33,7 @@ public class Poacher extends Actor implements Human, Positionable {
 
     public Poacher(Position position) {
         this.position = position;
-        this.texture = new Texture("textures/humans/tourist.png");
+        this.texture = new Texture("textures/humans/poacher.png");
         this.shootRange = 300;
         this.speed = 40;
         this.random = new Random();
