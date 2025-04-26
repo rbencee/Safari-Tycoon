@@ -56,7 +56,7 @@ public class GameModel implements EdibleCollection {
         return allDrinkable;
     }
 
-    private int objectNumber = 20;
+    private int objectNumber = 2;
     private float mapWidth = 3200;
     private float mapHeight = 3200;
     private Random random;
@@ -65,12 +65,12 @@ public class GameModel implements EdibleCollection {
 
     private float timeacc = 0;
 
-    public GameModel(int difficulty)
-    {
+    public GameModel(int difficulty) {
         this.difficulty = difficulty;
         this.random = new Random();
         this.herds = new ArrayList<>();
         this.rangers = new ArrayList<>();
+        this.poachers = new ArrayList<>();
         this.dayspassed = 0;
         this.income = 0;
         this.touristcount = 0;
@@ -134,11 +134,22 @@ public class GameModel implements EdibleCollection {
         return dayspassed;
     }
 
-    public int getTouristcount() {return touristcount;}
+    public int getTouristcount() {
+        return touristcount;
+    }
 
     public void setTouristcount(int touristcount) {this.touristcount = touristcount;}
+    public float getMapWidth(){
+        return mapWidth;
+    }
 
-    public ArrayList<Environment> getEnvironments() {return environments;}
+    public float getMapHeight(){
+        return mapWidth;
+    }
+
+    public ArrayList<Environment> getEnvironments() {
+        return environments;
+    }
 
     public ArrayList<Herd> getHerds() {return herds;}
 
@@ -150,10 +161,10 @@ public class GameModel implements EdibleCollection {
 
     public void InitializeGame() {
         generateMap();
+        initializePoachers();
     }
 
-    private void generateMap()
-    {
+    private void generateMap() {
         int objectCount = 0;
         while (objectCount < objectNumber) {
             float x = random.nextInt((int)(mapWidth / 32)) * 32;
@@ -308,14 +319,16 @@ public class GameModel implements EdibleCollection {
 
                 int previousMonth = previousDays / 30;
                 int currentMonth = dayspassed / 30;
+                spawnRandomPoachers();
 
                 if (currentMonth > previousMonth) {
                     calculateIncome();
                     if(checkwincon()) isGameWon = true;
                 }
             }
+
             for (Jeep jeep : jeeps) {
-                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart(), this);
+                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
                 if (roadtogo != null) {
                     jeep.moveTowards(roadtogo.getPosition(), timeinterval);
                  }
@@ -350,6 +363,47 @@ public class GameModel implements EdibleCollection {
             case 3 -> 12;
             default -> 3;
         };
+    }
+
+    public void spawnRandomPoachers() {
+        Random random = new Random();
+        if (random.nextFloat() <= 0.5f) {
+            int poacherCount = random.nextInt(3) + 1;
+            for (int i = 0; i < poacherCount; i++) {
+                float x = random.nextFloat() * getMapWidth();
+                float y = random.nextFloat() * getMapHeight();
+
+                Position position = new Position(x, y, 64, 64);
+                Poacher poacher = new Poacher(position);
+
+                poachers.add(poacher);
+            }
+
+            System.out.println(poacherCount + " new poacher(s) have appeared in the park!");
+        }
+    }
+
+    public void initializePoachers() {
+        poachers = new ArrayList<>();
+
+        Random random = new Random();
+        for (int i = 0; i < 5; i++) {
+            float x = random.nextFloat() * getMapWidth();
+            float y = random.nextFloat() * getMapHeight();
+
+            Position position = new Position(x, y,64,64);
+            Poacher poacher = new Poacher(position);
+
+            poachers.add(poacher);
+        }
+    }
+
+    public ArrayList<Poacher> getPoachers() {
+        return poachers;
+    }
+
+    public ArrayList<Ranger> getRangers() {
+        return rangers;
     }
 
     public boolean isDaytime() {

@@ -28,4 +28,21 @@ public class BehaviourHelper {
         }
         return actions;
     }
+
+    public static Array<Action> createMoveToActions(float speed, List<Vector2> path) {
+        int speedMultiplicator = GamemodelInstance.gameModel.getTimeMultiplicator();
+        Array<Action> actions = new Array<>();
+
+        if (path == null || path.size() < 2) return actions;
+
+        Vector2 last = path.get(0);
+        for (int i = 1; i < path.size(); i++) {
+            Vector2 current = path.get(i);
+            float dist = current.dst(last);
+            actions.add(Actions.moveTo(current.x, current.y, dist / (speed * speedMultiplicator)));
+            last = current;
+        }
+
+        return actions;
+    }
 }
