@@ -65,7 +65,8 @@ public class GameModel implements EdibleCollection {
 
     private float timeacc = 0;
 
-    public GameModel(int difficulty) {
+    public GameModel(int difficulty)
+    {
         this.difficulty = difficulty;
         this.random = new Random();
         this.herds = new ArrayList<>();
@@ -134,9 +135,7 @@ public class GameModel implements EdibleCollection {
         return dayspassed;
     }
 
-    public int getTouristcount() {
-        return touristcount;
-    }
+    public int getTouristcount() {return touristcount;}
 
     public void setTouristcount(int touristcount) {this.touristcount = touristcount;}
     public float getMapWidth(){
@@ -338,8 +337,7 @@ public class GameModel implements EdibleCollection {
 
     }
 
-    public boolean checkwincon()
-    {
+    public boolean checkwincon() {
         boolean allAboveThresholds =
             getTouristcount() >= 80 &&
                 sumHerbivores() >= 50 &&
