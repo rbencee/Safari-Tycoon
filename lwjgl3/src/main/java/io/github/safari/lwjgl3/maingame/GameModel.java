@@ -80,7 +80,7 @@ public class GameModel implements EdibleCollection {
         this.jeeps = new ArrayList<>();
         this.roads = new ArrayList<>();
         this.tourists = new ArrayList<>();
-        this.money = 50000000;
+        this.money = 500000;
 
         InitializeGame();
         GamemodelInstance.gameModel = this;
@@ -328,7 +328,7 @@ public class GameModel implements EdibleCollection {
             }
 
             for (Jeep jeep : jeeps) {
-                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart());
+                Road roadtogo = getNextRoadTowardsEntrance(jeep, jeep.isTostart(), this);
                 if (roadtogo != null) {
                     jeep.moveTowards(roadtogo.getPosition(), timeinterval);
                  }
@@ -446,7 +446,7 @@ public class GameModel implements EdibleCollection {
         return rangers.size() * 50;
 
     }
-    public boolean isGameOver() {return money <= 0 || sumAnimals() < 0;}
+    public boolean isGameOver() {return money <= 0 || sumAnimals() <= 0 && dayspassed > 15;}
 
     public void ChangeTicketPrice(int ticketprice) {
         this.ticketprice = ticketprice;
