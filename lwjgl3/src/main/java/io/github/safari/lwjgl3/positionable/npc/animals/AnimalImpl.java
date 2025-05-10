@@ -1,17 +1,22 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalType;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesData;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesFactory;
 import io.github.safari.lwjgl3.util.Positionable;
 
 public class AnimalImpl extends Actor implements Animal, Positionable {
+    private final SpeciesData speciesData;
     double age;
     double hunger;
     double thirst;
-    final Texture texture;
     Position position;
     final AnimalSpecies animalSpecies;
     boolean toRemove = false;
@@ -20,22 +25,25 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         double age,
         double hunger,
         double thirst,
-        Texture texture,
         Position position,
         AnimalSpecies animalSpecies) {
 
+        this.speciesData = SpeciesFactory.getSpeciesData(animalSpecies);
         this.age = age;
         this.hunger = hunger;
         this.thirst = thirst;
-        this.texture = texture;
         this.position = position;
         this.setPosition(position.getX(), position.getY()); //inherited from Actor
         this.animalSpecies = animalSpecies;
     }
 
+    public void render(SpriteBatch batch, float scale) {
+        batch.draw(speciesData.textureRegion(), getX() * scale, getY() * scale, getPosition().getWidth() * scale, getPosition().getHeight() * scale); // simple draw
+    }
+
     @Override
     public float getVisionRange() {
-        return animalSpecies.getVisionRange();
+        return speciesData.visionRange();
     }
 
     @Override
@@ -45,7 +53,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public double getMaxAge() {
-        return animalSpecies.getMaxAge();
+        return speciesData.maxAge();
     }
 
     @Override
@@ -60,7 +68,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public double getSpeed() {
-        return animalSpecies.getSpeed();
+        return speciesData.speed();
     }
 
     public boolean isToRemove() {
@@ -74,7 +82,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
 
     @Override
     public AnimalType getAnimalType() {
-        return animalSpecies.getAnimalType();
+        return speciesData.animalType();
     }
 
     @Override
@@ -83,8 +91,8 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     }
 
     @Override
-    public Texture getTexture() {
-        return texture;
+    public TextureRegion getTextureRegion() {
+        return speciesData.textureRegion();
     }
 
     @Override

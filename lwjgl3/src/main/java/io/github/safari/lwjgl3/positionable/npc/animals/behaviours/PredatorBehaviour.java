@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
+import io.github.safari.lwjgl3.positionable.npc.animals.actions.KillAction;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,24 +36,25 @@ public class PredatorBehaviour implements Behaviour {
 
     @Override
     public boolean canCreateAction(Herd herd) {
+        if (herd.getMinHunger() < 30)
+            System.out.println("predatorbehaviour: knows prey, can create action: " + !preyPositions.isEmpty());
         return herd.getMinHunger() <= 30 && !preyPositions.isEmpty();
     }
 
     @Override
     public void doRepeatedly(Herd herd) {
-        List<Herd> preys = GamemodelInstance.gameModel.getAllHerbivores();
-        for (Herd prey : preys) {
-            if (preyPositions.containsKey(prey)) {
-                if (preyPositions.get(prey).equals(prey.getPosition())) {
-                    continue;
-                }
+        List<Herd> herbivores = GamemodelInstance.gameModel.getAllHerbivores();
+        for (Herd herbivore : herbivores) {
+            if (preyPositions.containsKey(herbivore)) {
+                continue;
             }
-            if (!prey.getAnimals().isEmpty()) {
-                if (Position.distance(herd.getPosition(), prey.getPosition()) <= herd.getVisionRange()) {
-                    preyPositions.put(prey, prey.getPosition().clone());
+            if (!herbivore.getAnimals().isEmpty()) {
+                if (Position.distance(herd.getPosition(), herbivore.getPosition()) <= herd.getVisionRange()) {
+                    preyPositions.put(herbivore, herbivore.getPosition().clone());
                 }
             }
         }
+        System.out.println("Predatorbehaviour: size of prey: " + preyPositions.size());
     }
 
     @Override
@@ -60,7 +62,7 @@ public class PredatorBehaviour implements Behaviour {
         Vector2 start = new Vector2(herd.getPosition().getX(), herd.getPosition().getY());
         Herd nearestFood = getNearestFood(herd);
         Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
-        Array<Action> actions = createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination);
+        Array<Action> actions = createMoveToActions(herd.getSpeed(), start, destination);
         preyPositions.remove(nearestFood);
         return actions;
     }

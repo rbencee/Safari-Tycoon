@@ -186,6 +186,8 @@ public class GameView implements Screen {
 
     }
 
+    float setuptimer = 0;
+
     @Override
     public void render(float delta) {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -195,6 +197,13 @@ public class GameView implements Screen {
         handleEdgeScrolling(delta);
         cameraMovement();
         camera.update();
+
+        setuptimer += delta;
+
+        if (setuptimer > 5 && delta > 0.1) {
+            System.out.println("all animals before crash: " + gameModel.sumAnimals());
+            throw new RuntimeException("Frame refresh too slow, game closed in order to save memory. (Turn this off in GameView render())");
+        }
 
         if(gameModel.isGameOver()) new EndGameDialog(false, gameModel, skin, uiStage);
         else if(gameModel.isGameWon()) new EndGameDialog(true, gameModel, skin, uiStage);
@@ -214,6 +223,7 @@ public class GameView implements Screen {
         spriteBatch.begin();
         drawSprites(spriteBatch, 1, delta);
         spriteBatch.end();
+
 
         gameStage.act(delta);
         gameStage.draw();
@@ -539,6 +549,11 @@ public class GameView implements Screen {
         }
 
 
+        for (Herd herd : gameModel.getHerds()) {
+            herd.render(spriteBatch, scale);
+        }
+
+
         for (Road road : gameModel.getRoads()) {
             spriteBatch.draw(road.getTexture(), road.getPosition().getX() * scale, road.getPosition().getY() * scale, road.getPosition().getWidth() * scale, road.getPosition().getHeight() * scale);
 
@@ -746,6 +761,7 @@ public class GameView implements Screen {
         lakeTexture.dispose();
         grassTexture.dispose();
         bushTexture.dispose();
+        SpeciesFactory.disposeAll();
     }
 
 
@@ -825,6 +841,7 @@ public class GameView implements Screen {
                     boolean placed = gameController.TryToPlace(world.x -32 , world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
+                        shop.clearSelection();
                     }
                     return true;
                 }

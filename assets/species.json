@@ -1,0 +1,38 @@
+[
+  {
+    "animalSpecies": "CAPYBARA",
+    "animalType": "HERBIVORE",
+    "speed": 10,
+    "maxAge": 100,
+    "visionRange": 300,
+    "reproductionTime": 4,
+    "texture": "capybara.png"
+  },
+  {
+    "animalSpecies": "MAMMOTH",
+    "animalType": "HERBIVORE",
+    "speed": 10,
+    "maxAge": 400,
+    "visionRange": 300,
+    "reproductionTime": 10,
+    "texture": "mammoth.png"
+  },
+  {
+    "animalSpecies": "LION",
+    "animalType": "PREDATOR",
+    "speed": 30,
+    "maxAge": 250,
+    "visionRange": 300,
+    "reproductionTime": 7,
+    "texture": "lion.png"
+  },
+  {
+    "animalSpecies": "LION",
+    "animalType": "PREDATOR",
+    "speed": 30,
+    "maxAge": 500,
+    "visionRange": 400,
+    "reproductionTime": 12,
+    "texture": "dinosaur.png"
+  }
+]

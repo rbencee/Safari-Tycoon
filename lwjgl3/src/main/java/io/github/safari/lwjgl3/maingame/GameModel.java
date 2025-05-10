@@ -1,7 +1,11 @@
 package io.github.safari.lwjgl3.maingame;
 
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
+import io.github.safari.lwjgl3.positionable.npc.animals.EdibleCollection;
+import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalType;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
 import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
@@ -450,11 +454,10 @@ public class GameModel implements EdibleCollection {
         this.ticketprice = ticketprice;
     }
 
-    private int sumAnimals()//Kell herdbe egy cucc, ammi visszaadja hogy hany allat van benne
-    {
+    public int sumAnimals() {
         int sum = 0;
         for (Herd herd : herds) {
-            sum += herd.animalCount(); //Lehet meg kell nezni hogy biztos el e.
+            sum += herd.animalCount();
         }
 
         return sum;
@@ -472,7 +475,7 @@ public class GameModel implements EdibleCollection {
     public int sumHerbivores() {
         int sum = 0;
         for (Herd herd : herds) {
-            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.HERBIVORE)) {
+            if (herd.getAnimalType().equals(AnimalType.HERBIVORE)) {
                 sum += herd.animalCount();
             }
         }
@@ -482,7 +485,7 @@ public class GameModel implements EdibleCollection {
     public int sumPredators() {
         int sum = 0;
         for (Herd herd : herds) {
-            if (herd.getAnimalSpecies().getAnimalType().equals(AnimalType.PREDATOR)) {
+            if (herd.getAnimalType().equals(AnimalType.PREDATOR)) {
                 sum += herd.animalCount();
             }
         }

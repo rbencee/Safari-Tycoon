@@ -21,6 +21,7 @@ public class HerbivoreBehaviour implements Behaviour {
         return herd.getMinHunger() <= 30 && !knownFood.isEmpty();
     }
 
+
     @Override
     public void doRepeatedly(Herd herd) {
         List<HerbivoreEdible> foodPositions = GamemodelInstance.gameModel.getAllHerbivoreEdible();
@@ -42,7 +43,7 @@ public class HerbivoreBehaviour implements Behaviour {
         Vector2 start = new Vector2(herd.getPosition().getX(), herd.getPosition().getY());
         HerbivoreEdible nearestFood = getNearestFood(herd);
         Vector2 destination = new Vector2(nearestFood.getPosition().getX(), nearestFood.getPosition().getY());
-        Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd.getAnimalSpecies().getSpeed(), start, destination));
+        Array<Action> actions = new Array<>(BehaviourHelper.createMoveToActions(herd.getSpeed(), start, destination));
         actions.add(new EatAction());
         actions.add(new SleepAction());
         return actions;

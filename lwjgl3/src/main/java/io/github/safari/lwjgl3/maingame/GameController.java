@@ -3,10 +3,11 @@ package io.github.safari.lwjgl3.maingame;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
+import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
-import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
-import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.positionable.visitors.Tourist;
@@ -154,7 +155,7 @@ public class GameController {
 
         switch (item.getName()) {
             case "Capybara":
-                animal = AnimalFactory.createCapybara(new Position(x, y, width, height));
+                animal = AnimalFactory.createNew(AnimalSpecies.CAPYBARA, new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.CAPYBARA, Behaviour.createHerbivoreBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
                 gameModel.getHerds().add(herd);
@@ -163,7 +164,7 @@ public class GameController {
                 gameView.getGameStage().addActor(herd);
                 break;
             case "Mammoth":
-                animal = AnimalFactory.createMammoth(new Position(x, y, width, height));
+                animal = AnimalFactory.createNew(AnimalSpecies.MAMMOTH, new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.MAMMOTH, Behaviour.createHerbivoreBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
                 gameModel.getHerds().add(herd);
@@ -172,7 +173,7 @@ public class GameController {
                 gameView.getGameStage().addActor(herd);
                 break;
             case "Dinosaur":
-                animal = AnimalFactory.createDinosaur(new Position(x, y, width, height));
+                animal = AnimalFactory.createNew(AnimalSpecies.DINOSAUR, new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.DINOSAUR, Behaviour.createPredatorBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
                 gameModel.getHerds().add(herd);
@@ -180,7 +181,7 @@ public class GameController {
                 gameView.getGameStage().addActor(herd);
                 break;
             case "Lion":
-                animal = AnimalFactory.createLion(new Position(x, y, width, height));
+                animal = AnimalFactory.createNew(AnimalSpecies.LION, new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.LION, Behaviour.createPredatorBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
                 gameModel.getHerds().add(herd);

@@ -1,9 +1,11 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.Array;
 import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalType;
 
 public interface Animal {
     float getVisionRange();
@@ -40,7 +42,7 @@ public interface Animal {
 
     boolean hasActions();
 
-    Texture getTexture();
+    TextureRegion getTextureRegion();
 
     void eat();
 

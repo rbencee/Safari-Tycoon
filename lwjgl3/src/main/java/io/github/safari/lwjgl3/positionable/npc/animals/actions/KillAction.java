@@ -8,23 +8,23 @@ import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 
 public class KillAction extends Action implements CloneableAction {
 
-    private final Herd herd;
+    private final Herd herdToHunt;
 
     public KillAction(Herd herd) {
-        this.herd = herd;
+        this.herdToHunt = herd;
     }
 
     @Override
     public boolean act(float delta) {
-        if (!herd.getAnimals().isEmpty()) {
-            AnimalImpl animal = herd.getAnimals().get(0);
+        if (!herdToHunt.getAnimals().isEmpty()) {
+            AnimalImpl animal = herdToHunt.getAnimals().get(0);
             animal.remove();
 
-            herd.getAnimals().remove(animal);
-            if (herd.getAnimals().isEmpty()) {
-                herd.remove();
-                GamemodelInstance.gameModel.getHerds().remove(herd);
-                GamemodelInstance.gameModel.getAllHerbivores().remove(herd);
+            herdToHunt.getAnimals().remove(animal);
+            if (herdToHunt.getAnimals().isEmpty()) {
+                herdToHunt.remove();
+                GamemodelInstance.gameModel.getHerds().remove(herdToHunt);
+                GamemodelInstance.gameModel.getAllHerbivores().remove(herdToHunt);
             }
 
         }
@@ -36,6 +36,6 @@ public class KillAction extends Action implements CloneableAction {
 
     @Override
     public Action clone() {
-        return new KillAction(herd);
+        return new KillAction(herdToHunt);
     }
 }

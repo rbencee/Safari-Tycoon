@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.positionable.npc.animals;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -16,6 +17,10 @@ import io.github.safari.lwjgl3.positionable.npc.animals.actions.SleepAction;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.RandomMovingBehaviour;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalType;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesData;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesFactory;
 import io.github.safari.lwjgl3.util.Positionable;
 
 import java.util.ArrayList;
@@ -23,6 +28,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Herd extends Group implements Positionable {
+    private final SpeciesData speciesData;
     private final AnimalSpecies animalSpecies;
     private final ArrayList<AnimalImpl> animals = new ArrayList<>();
     private final ArrayList<Behaviour> behaviours;
@@ -33,8 +39,7 @@ public class Herd extends Group implements Positionable {
     public Herd(AnimalSpecies animalSpecies, ArrayList<Behaviour> behaviours) {
         this.animalSpecies = animalSpecies;
         this.behaviours = behaviours;
-
-
+        this.speciesData = SpeciesFactory.getSpeciesData(animalSpecies);
     }
 
     public void addToHerd(AnimalImpl animal) {
@@ -51,15 +56,19 @@ public class Herd extends Group implements Positionable {
     }
 
     public AnimalType getAnimalType() {
-        return animalSpecies.getAnimalType();
+        return speciesData.animalType();
     }
 
     public AnimalSpecies getAnimalSpecies() {
-        return animalSpecies;
+        return speciesData.animalSpecies();
     }
 
     public int animalCount() {
         return animals.size();
+    }
+
+    public float getSpeed() {
+        return speciesData.speed();
     }
 
     @Override
@@ -100,11 +109,12 @@ public class Herd extends Group implements Positionable {
         super.act(delta);
 
         if (animals.isEmpty()) {
-            remove();
             GamemodelInstance.gameModel.getHerds().remove(this);
-            if (animalSpecies.getAnimalType().equals(AnimalType.HERBIVORE)) {
+            if (this.getAnimalType().equals(AnimalType.HERBIVORE)) {
                 GamemodelInstance.gameModel.getAllHerbivores().remove(this);
             }
+            this.remove();
+            return;
         }
 
         checkMovingRandomlyTimer += delta;
@@ -113,11 +123,12 @@ public class Herd extends Group implements Positionable {
                 animals.forEach(Actor::clearActions);
                 isMovingRandomly = false;
             }
+            checkMovingRandomlyTimer = 0;
         }
 
         checkEatTimer += delta;
-        if (this.animalSpecies.getAnimalType().equals(AnimalType.PREDATOR) && this.getMinHunger() < 30 && checkEatTimer > 2) {
-            Herd herd = isHerbivoreNearby();
+        if (this.getAnimalType().equals(AnimalType.PREDATOR) && this.getMinHunger() < 30 && checkEatTimer > 2) {
+            Herd nearbyHerbivore = isHerbivoreNearby();
             boolean doesNotHaveKillAction = true;
             Array<Action> actions = animals.get(0).getActions();
             for (Action action : actions) {
@@ -126,13 +137,14 @@ public class Herd extends Group implements Positionable {
                 }
             }
 
-            if (herd != null && doesNotHaveKillAction) {
+            if (nearbyHerbivore != null && doesNotHaveKillAction) {
+                System.out.println("hungry, herbivorenearby, does not have kill action");
                 animals.forEach(Actor::clearActions);
 
                 Array<Action> newActions = BehaviourHelper.createMoveToActions(
-                    animalSpecies.getSpeed(),
+                    this.getSpeed(),
                     new Vector2(getPosition().getX(), getPosition().getY()),
-                    new Vector2(herd.getPosition().getX(), herd.getPosition().getY()));
+                    new Vector2(nearbyHerbivore.getPosition().getX(), nearbyHerbivore.getPosition().getY()));
 
                 for (Action action : newActions) {
                     if (action instanceof CloneableMoveToAction moveToAction) {
@@ -141,12 +153,14 @@ public class Herd extends Group implements Positionable {
                 }
 
                 animals.forEach(actor -> {
-                    actor.addAction(Actions.after(new KillAction(herd)));
+                    actor.addAction(Actions.after(new KillAction(nearbyHerbivore)));
                     actor.addAction(new SleepAction());
+                    System.out.println("killaction added");
                 });
-            } else if (herd == null && doesNotHaveKillAction) {
-                clearActions();
-                actAsBehaviours();
+            } else if (nearbyHerbivore == null && !isMovingRandomly) {
+                System.out.println("hungry, no herbivore nearby, does not have kill action");
+            } else {
+                System.out.println("hungry, has kill action ");
             }
             checkEatTimer = 0;
         }
@@ -160,6 +174,9 @@ public class Herd extends Group implements Positionable {
 
         if (animals.isEmpty()) {
             GamemodelInstance.gameModel.getHerds().remove(this);
+            if (getAnimalType().equals(AnimalType.HERBIVORE)) {
+                GamemodelInstance.gameModel.getAllHerbivores().remove(this);
+            }
             this.remove();
             return;
         }
@@ -205,7 +222,7 @@ public class Herd extends Group implements Positionable {
     private void reproduce(float delta) {
         deltaCounter += delta;
 
-        if (deltaCounter * GamemodelInstance.gameModel.getTimeMultiplicator() > animalSpecies.getReproductionTime()) {
+        if (deltaCounter * GamemodelInstance.gameModel.getTimeMultiplicator() > speciesData.reproductionTime()) {
             deltaCounter = 0;
             long adults = animals.stream().filter(animal -> animal.getAge() / animal.getMaxAge() > 0.2).count();
             if (adults <= 1) {
@@ -271,6 +288,12 @@ public class Herd extends Group implements Positionable {
     }
 
     private AnimalImpl createNewAnimal() {
-        return new AnimalImpl(0, 100, 100, animals.get(0).getTexture(), this.getPosition(), this.getAnimalSpecies());
+        return (AnimalImpl) AnimalFactory.createNew(this.animalSpecies, this.getPosition());
+    }
+
+    public void render(SpriteBatch batch, float scale) {
+        for (AnimalImpl animal : animals) {
+            animal.render(batch, scale);
+        }
     }
 }

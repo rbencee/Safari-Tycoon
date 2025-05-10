@@ -1,0 +1,54 @@
+package io.github.safari.lwjgl3.positionable.npc.animals.shared;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class SpeciesFactory {
+    private static final Map<AnimalSpecies, SpeciesData> speciesCache = new HashMap<>();
+    private static boolean loaded = false;
+
+    public static void loadData() {
+        if (loaded) return;
+        Array<SpeciesConfig> speciesList = null;
+
+        try {
+            Json json = new Json();
+            speciesList = json.fromJson(Array.class, SpeciesConfig.class, Gdx.files.internal("species.json"));
+            Gdx.app.log("SpeciesFactory", "Loaded " + speciesList.size + " species from JSON");
+        } catch (Exception e) {
+            Gdx.app.error("SpeciesFactory", "Failed to load species.json", e);
+        }
+
+        for (SpeciesConfig config : speciesList) {
+            AnimalSpecies animalSpecies = AnimalSpecies.valueOf(String.valueOf(config.animalSpecies));
+            AnimalType animalType = AnimalType.valueOf(String.valueOf(config.animalType));
+
+            Texture texture = new Texture("textures/animals/" + config.texture);
+            TextureRegion region = new TextureRegion(texture);
+
+            SpeciesData data = new SpeciesData(animalType, animalSpecies, config.maxAge, config.speed, config.visionRange, config.reproductionTime, region);
+
+            speciesCache.put(animalSpecies, data);
+        }
+        loaded = true;
+    }
+
+    public static SpeciesData getSpeciesData(AnimalSpecies species) {
+        loadData();
+        return speciesCache.get(species);
+    }
+
+    public static void disposeAll() {
+        for (SpeciesData data : speciesCache.values()) {
+            data.textureRegion().getTexture().dispose();
+        }
+        speciesCache.clear();
+        loaded = false;
+    }
+}
