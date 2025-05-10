@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.positionable.npc.human;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
@@ -111,12 +112,7 @@ public class Poacher extends Actor implements Human, Positionable {
                 for (Herd h : GamemodelInstance.gameModel.getHerds()) {
                     if (h.getAnimals().contains(target)) {
                         h.getAnimals().remove(target);
-                        System.out.println("Poacher killed an animal!");
-
-                        if (h.getAnimals().isEmpty()) {
-                            GamemodelInstance.gameModel.getHerds().remove(h);
-                            System.out.println("Herd was removed (empty).");
-                        }
+                        Gdx.app.log("Poacher", "Animal killed: " + target.getAnimalSpecies());
                         break;
                     }
                 }
@@ -139,7 +135,6 @@ public class Poacher extends Actor implements Human, Positionable {
                     if (removed) {
                         rangers.clear();
                         rangers.addAll(tempList);
-                        System.out.println("Poacher killed a Ranger!");
                     }
                 } else {
                     System.out.println("Poacher shot at Ranger but missed!");

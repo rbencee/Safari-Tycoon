@@ -1,13 +1,14 @@
 package io.github.safari.lwjgl3.maingame;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
+import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.positionable.visitors.Tourist;
@@ -53,6 +54,7 @@ public class GameController {
             System.out.println("Ranger selected! Select a target (animal or poacher)");
         }
     }
+
     public static boolean isRangerSelected() {
         return selectedRanger != null;
     }
@@ -137,9 +139,7 @@ public class GameController {
             } else {
                 System.out.println("Nincs Megveve semmi");
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.getMessage();
         }
         return false;
@@ -335,7 +335,7 @@ public class GameController {
         }
     }
 
-    public static List<Road> getAdjacentRoads(Road road ,GameModel gameModel) {
+    public static List<Road> getAdjacentRoads(Road road, GameModel gameModel) {
         List<Road> adjacent = new ArrayList<>();
         Position pos = road.getPosition();
 
@@ -357,14 +357,13 @@ public class GameController {
 
 
     public static Road getNextRoadTowardsEntrance(Jeep jeep, boolean isentrancedestionation, GameModel gameModel) {
-        System.out.println("GOTO: " +  isentrancedestionation);
+        System.out.println("GOTO: " + isentrancedestionation);
         Position startPos = jeep.getPosition();
-        Road startRoad = getClosestRoad(startPos,gameModel);
+        Road startRoad = getClosestRoad(startPos, gameModel);
         Road entrance;
-        if(isentrancedestionation) {
+        if (isentrancedestionation) {
             entrance = gameModel.getEntranceRoad();
-        } else
-        {
+        } else {
             entrance = gameModel.getExitRoad();
         }
 
@@ -374,11 +373,9 @@ public class GameController {
 
 
         if (startRoad.getPosition().equals(entrance.getPosition())) {
-            if(isentrancedestionation)
-            {
+            if (isentrancedestionation) {
                 CheckForTourist_Here(jeep.getPosition(), jeep, gameModel);
-            } else
-            {
+            } else {
                 gameModel.setTouristcount(gameModel.getTouristcount() - jeep.Drop_Off_Tourists());
             }
 
@@ -440,8 +437,7 @@ public class GameController {
         return closest;
     }
 
-    private static void CheckForTourist_Here(Position position, Jeep jeep, GameModel gameModel)
-    {
+    private static void CheckForTourist_Here(Position position, Jeep jeep, GameModel gameModel) {
         Iterator<Tourist> iterator = gameModel.getTourists().iterator();
         while (iterator.hasNext()) {
             Tourist t = iterator.next();
@@ -450,7 +446,6 @@ public class GameController {
             }
         }
     }
-
 
 
 }

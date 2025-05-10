@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Herd extends Group implements Positionable {
+    private final static int MAX_ANIMALS = 100;
     private final SpeciesData speciesData;
     private final AnimalSpecies animalSpecies;
     private final ArrayList<AnimalImpl> animals = new ArrayList<>();
@@ -220,6 +221,7 @@ public class Herd extends Group implements Positionable {
     private float deltaCounter = 0;
 
     private void reproduce(float delta) {
+        if (this.animals.size() >= MAX_ANIMALS) return;
         deltaCounter += delta;
 
         if (deltaCounter * GamemodelInstance.gameModel.getTimeMultiplicator() > speciesData.reproductionTime()) {
@@ -251,7 +253,6 @@ public class Herd extends Group implements Positionable {
     private Herd isHerbivoreNearby() {
         List<Herd> preys = GamemodelInstance.gameModel.getAllHerbivores();
         for (Herd prey : preys) {
-
             if (prey.getAnimals().isEmpty()) {
                 return null;
             }

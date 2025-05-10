@@ -25,9 +25,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesFactory;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
 import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
@@ -178,7 +177,7 @@ public class GameView implements Screen {
             gameStage.addActor(poacher);
         }
 
-        gameController = new GameController(shop,this.gameModel, this);
+        gameController = new GameController(shop, this.gameModel, this);
         this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
         setupSelection();
         setupPlace();
@@ -198,15 +197,15 @@ public class GameView implements Screen {
         cameraMovement();
         camera.update();
 
-        setuptimer += delta;
+        /*setuptimer += delta;
 
         if (setuptimer > 5 && delta > 0.1) {
             System.out.println("all animals before crash: " + gameModel.sumAnimals());
             throw new RuntimeException("Frame refresh too slow, game closed in order to save memory. (Turn this off in GameView render())");
-        }
+        }*/
 
-        if(gameModel.isGameOver()) new EndGameDialog(false, gameModel, skin, uiStage);
-        else if(gameModel.isGameWon()) new EndGameDialog(true, gameModel, skin, uiStage);
+        if (gameModel.isGameOver()) new EndGameDialog(false, gameModel, skin, uiStage);
+        else if (gameModel.isGameWon()) new EndGameDialog(true, gameModel, skin, uiStage);
 
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
@@ -266,8 +265,8 @@ public class GameView implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (Environment env : gameModel.getEnvironments()) {
-            float centerX = env.getPosition().getX() + (float) env.getPosition().getWidth() /2;
-            float centerY = env.getPosition().getY() + (float) env.getPosition().getHeight() /2;
+            float centerX = env.getPosition().getX() + (float) env.getPosition().getWidth() / 2;
+            float centerY = env.getPosition().getY() + (float) env.getPosition().getHeight() / 2;
             float radius = 200f;
 
             shapeRenderer.setColor(1, 1, 1, 1.0f);
@@ -283,7 +282,7 @@ public class GameView implements Screen {
             shapeRenderer.circle(centerX, centerY, radius);
         }
 
-        for (Ranger ranger : gameModel.getRangers()){
+        for (Ranger ranger : gameModel.getRangers()) {
             float centerX = ranger.getPosition().getX() + (float) ranger.getPosition().getWidth() / 2;
             float centerY = ranger.getPosition().getY() + (float) ranger.getPosition().getHeight() / 2;
             float radius = 200f;
@@ -301,7 +300,7 @@ public class GameView implements Screen {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         OrthographicCamera screenCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        screenCamera.position.set((float) Gdx.graphics.getWidth() /2, (float) Gdx.graphics.getHeight() /2, 0);
+        screenCamera.position.set((float) Gdx.graphics.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2, 0);
         screenCamera.update();
         fogBatch.setProjectionMatrix(screenCamera.combined);
 
@@ -324,7 +323,7 @@ public class GameView implements Screen {
             fogBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, MINIMAP_SIZE, MINIMAP_SIZE, false);
         }
 
-        float mapScale = MINIMAP_SIZE / (float)Math.max(mapWidth, mapHeight);
+        float mapScale = MINIMAP_SIZE / (float) Math.max(mapWidth, mapHeight);
 
         fogBuffer.begin();
         Gdx.gl.glClearColor(0, 0, 0, 1f);
@@ -337,8 +336,8 @@ public class GameView implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (Environment env : gameModel.getEnvironments()) {
-            float centerX = (env.getPosition().getX() + (float) env.getPosition().getWidth() /2) * mapScale;
-            float centerY = (env.getPosition().getY() + (float) env.getPosition().getHeight() /2) * mapScale;
+            float centerX = (env.getPosition().getX() + (float) env.getPosition().getWidth() / 2) * mapScale;
+            float centerY = (env.getPosition().getY() + (float) env.getPosition().getHeight() / 2) * mapScale;
             float radius = 200f * mapScale;
 
             shapeRenderer.setColor(1, 1, 1, 1.0f);
@@ -354,7 +353,7 @@ public class GameView implements Screen {
             shapeRenderer.circle(centerX, centerY, radius);
         }
 
-        for (Ranger ranger : gameModel.getRangers()){
+        for (Ranger ranger : gameModel.getRangers()) {
             float centerX = (ranger.getPosition().getX() + (float) ranger.getPosition().getWidth() / 2) * mapScale;
             float centerY = (ranger.getPosition().getY() + (float) ranger.getPosition().getHeight() / 2) * mapScale;
             float radius = 200f * mapScale;
@@ -389,14 +388,14 @@ public class GameView implements Screen {
         int minimapY = MINIMAP_BORDER;
 
         Gdx.gl.glViewport(minimapX - MINIMAP_BORDER, 0,
-            MINIMAP_SIZE + 2*MINIMAP_BORDER, MINIMAP_SIZE + 2*MINIMAP_BORDER);
+            MINIMAP_SIZE + 2 * MINIMAP_BORDER, MINIMAP_SIZE + 2 * MINIMAP_BORDER);
 
         shapeRenderer.setProjectionMatrix(minimapCamera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.GRAY);
         shapeRenderer.rect(-MINIMAP_BORDER, -MINIMAP_BORDER,
-            mapWidth * MINIMAP_SCALE + 2*MINIMAP_BORDER,
-            mapHeight * MINIMAP_SCALE + 2*MINIMAP_BORDER);
+            mapWidth * MINIMAP_SCALE + 2 * MINIMAP_BORDER,
+            mapHeight * MINIMAP_SCALE + 2 * MINIMAP_BORDER);
         shapeRenderer.end();
 
         Gdx.gl.glViewport(minimapX, minimapY, MINIMAP_SIZE, MINIMAP_SIZE);
@@ -405,7 +404,7 @@ public class GameView implements Screen {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float scale = MINIMAP_SIZE / (float)Math.max(mapWidth, mapHeight);
+        float scale = MINIMAP_SIZE / (float) Math.max(mapWidth, mapHeight);
 
         minimapBatch.setProjectionMatrix(minimapCamera.combined);
         minimapBatch.begin();
@@ -414,7 +413,7 @@ public class GameView implements Screen {
         minimapBatch.end();
 
         minimapBatch.begin();
-            drawSprites(minimapBatch,scale,delta);
+        drawSprites(minimapBatch, scale, delta);
         minimapBatch.end();
 
 
@@ -534,7 +533,6 @@ public class GameView implements Screen {
     }
 
 
-
     private void drawSprites(SpriteBatch spriteBatch, float scale, float delta) {
         for (Environment env : gameModel.getEnvironments()) {
             if (env instanceof Tree) {
@@ -557,11 +555,6 @@ public class GameView implements Screen {
         for (Road road : gameModel.getRoads()) {
             spriteBatch.draw(road.getTexture(), road.getPosition().getX() * scale, road.getPosition().getY() * scale, road.getPosition().getWidth() * scale, road.getPosition().getHeight() * scale);
 
-        }
-        for (Herd herd : gameModel.getHerds()) {
-            for (Animal animal : herd.getAnimals()) {
-                spriteBatch.draw(animal.getTexture(), animal.getPosition().getX() * scale, animal.getPosition().getY() * scale, animal.getPosition().getWidth() * scale, animal.getPosition().getHeight() * scale);
-            }
         }
 
         for (Jeep jeep : gameModel.getJeeps()) {
@@ -633,7 +626,6 @@ public class GameView implements Screen {
         uiStage.addActor(zoomInButton);
     }
     */
-
 
 
     private void zoomControlScroll() {
@@ -813,9 +805,7 @@ public class GameView implements Screen {
     }
 
 
-
-    private void setupPlace()
-    {
+    private void setupPlace() {
         uiStage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -838,7 +828,7 @@ public class GameView implements Screen {
                     if (item.getName().equals("Jeep")) isjeep = true;
 
 
-                    boolean placed = gameController.TryToPlace(world.x -32 , world.y - 32, 64, 64, 0, 0, isjeep);
+                    boolean placed = gameController.TryToPlace(world.x - 32, world.y - 32, 64, 64, 0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
                         shop.clearSelection();
@@ -853,12 +843,12 @@ public class GameView implements Screen {
                     Vector3 world = camera.unproject(new Vector3(x, Gdx.graphics.getHeight() - y, 0));
 
                     float gridSize = 64f;
-                    float roundedX = (float)Math.floor(world.x / gridSize) * gridSize ;
-                    float roundedY = (float)Math.floor(world.y / gridSize) * gridSize;
+                    float roundedX = (float) Math.floor(world.x / gridSize) * gridSize;
+                    float roundedY = (float) Math.floor(world.y / gridSize) * gridSize;
 
 
                     if (Math.abs(lastPlacedPos.x - roundedX) >= gridSize || Math.abs(lastPlacedPos.y - roundedY) >= gridSize) {
-                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0,false);
+                        boolean placed = gameController.TryToPlace(roundedX, roundedY, 64, 64, 0, 0, false);
                         if (placed) {
                             System.out.println("Road placed at : " + roundedX + ", " + roundedY);
                             lastPlacedPos.set(roundedX, roundedY, 0);

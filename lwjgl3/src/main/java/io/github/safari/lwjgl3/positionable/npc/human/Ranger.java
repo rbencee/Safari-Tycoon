@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.positionable.npc.human;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
@@ -162,7 +163,6 @@ public class Ranger extends Actor implements Human, Positionable {
     }
 
 
-
     public void setTargetAnimal(Animal animal) {
         this.currentTarget = (Positionable) animal;
         this.pathUpdateTimer = 0;
@@ -180,11 +180,6 @@ public class Ranger extends Actor implements Human, Positionable {
             if (h.getAnimals().contains(animal)) {
                 h.getAnimals().remove(animal);
                 System.out.println("Ranger removed a problem animal.");
-
-                if (h.getAnimals().isEmpty()) {
-                    GamemodelInstance.gameModel.getHerds().remove(h);
-                    System.out.println("Herd removed (empty).");
-                }
                 break;
             }
         }
@@ -197,6 +192,7 @@ public class Ranger extends Actor implements Human, Positionable {
 
             poachers.clear();
             poachers.addAll(tempList);
+            Gdx.app.log("Ranger", "Poacher eliminated");
             System.out.println("Ranger eliminated a poacher.");
         }
     }

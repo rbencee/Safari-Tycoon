@@ -27,7 +27,7 @@
     "texture": "lion.png"
   },
   {
-    "animalSpecies": "LION",
+    "animalSpecies": "DINOSAUR",
     "animalType": "PREDATOR",
     "speed": 30,
     "maxAge": 500,
