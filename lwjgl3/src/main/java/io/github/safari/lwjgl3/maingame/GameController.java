@@ -7,6 +7,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalType;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
 import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
@@ -158,35 +159,25 @@ public class GameController {
                 animal = AnimalFactory.createNew(AnimalSpecies.CAPYBARA, new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.CAPYBARA, Behaviour.createHerbivoreBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
-                gameModel.getHerds().add(herd);
-                gameModel.getAllHerbivores().add(herd);
-                System.out.println("Capybara buy successful!");
-                gameView.getGameStage().addActor(herd);
+                addHerdToModelAndView(herd);
                 break;
             case "Mammoth":
                 animal = AnimalFactory.createNew(AnimalSpecies.MAMMOTH, new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.MAMMOTH, Behaviour.createHerbivoreBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
-                gameModel.getHerds().add(herd);
-                gameModel.getAllHerbivores().add(herd);
-                System.out.println("Mammoth buy successful!");
-                gameView.getGameStage().addActor(herd);
+                addHerdToModelAndView(herd);
                 break;
             case "Dinosaur":
                 animal = AnimalFactory.createNew(AnimalSpecies.DINOSAUR, new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.DINOSAUR, Behaviour.createPredatorBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
-                gameModel.getHerds().add(herd);
-                System.out.println("Dinosaur buy successful!");
-                gameView.getGameStage().addActor(herd);
+                addHerdToModelAndView(herd);
                 break;
             case "Lion":
                 animal = AnimalFactory.createNew(AnimalSpecies.LION, new Position(x, y, width, height));
                 herd = new Herd(AnimalSpecies.LION, Behaviour.createPredatorBehaviours());
                 herd.addToHerd((AnimalImpl) animal);
-                gameModel.getHerds().add(herd);
-                System.out.println("Lion buy successful!");
-                gameView.getGameStage().addActor(herd);
+                addHerdToModelAndView(herd);
                 break;
             case "Bush":
                 Bush bush = new Bush(new Position(x, y, width, height));
@@ -230,6 +221,17 @@ public class GameController {
                 System.out.println("Not Implemented yet!");
                 break;
         }
+    }
+
+    private void addHerdToModelAndView(Herd herd){
+        gameModel.getHerds().add(herd);
+        gameView.getGameStage().addActor(herd);
+
+        if (herd.getAnimalType().equals(AnimalType.HERBIVORE)){
+            gameModel.getAllHerbivores().add(herd);
+        }
+
+        gameView.addHealthBar(herd);
     }
 
 

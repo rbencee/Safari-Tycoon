@@ -15,7 +15,7 @@ public class SpeciesFactory {
 
     public static void loadData() {
         if (loaded) return;
-        Array<SpeciesConfig> speciesList = null;
+        Array<SpeciesConfig> speciesList = new Array<>();
 
         try {
             Json json = new Json();

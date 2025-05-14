@@ -32,7 +32,10 @@ import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.positionable.visitors.Tourist;
+import io.github.safari.lwjgl3.util.HerdFoodAndDrinkBar;
 import org.lwjgl.opengl.GL20;
+
+import java.util.ArrayList;
 
 
 public class GameView implements Screen {
@@ -91,6 +94,8 @@ public class GameView implements Screen {
     private Texture fogTexture;
     private final SpriteBatch fogBatch;
     private boolean minimapVisible = false;
+
+    private ArrayList<HerdFoodAndDrinkBar> healthbars = new ArrayList<>();
 
 
     public GameView(Game game, int difficulty) {
@@ -223,6 +228,9 @@ public class GameView implements Screen {
         drawSprites(spriteBatch, 1, delta);
         spriteBatch.end();
 
+        for (HerdFoodAndDrinkBar bar : healthbars){
+            bar.render();
+        }
 
         gameStage.act(delta);
         gameStage.draw();
@@ -546,7 +554,6 @@ public class GameView implements Screen {
             }
         }
 
-
         for (Herd herd : gameModel.getHerds()) {
             herd.render(spriteBatch, scale);
         }
@@ -828,7 +835,12 @@ public class GameView implements Screen {
                     if (item.getName().equals("Jeep")) isjeep = true;
 
 
-                    boolean placed = gameController.TryToPlace(world.x - 32, world.y - 32, 64, 64, 0, 0, isjeep);
+                    boolean placed = gameController.TryToPlace(
+                        world.x - ConstantCollector.BASE_ELEMENT_WIDTH/2,
+                        world.y - ConstantCollector.BASE_ELEMENT_HEIGHT/2,
+                        (int) ConstantCollector.BASE_ELEMENT_WIDTH,
+                        (int) ConstantCollector.BASE_ELEMENT_HEIGHT,
+                        0, 0, isjeep);
                     if (placed) {
                         System.out.println("Item placed at : " + world.x + ", " + world.y);
                     }
@@ -863,5 +875,9 @@ public class GameView implements Screen {
         });
 
 
+    }
+
+    public void addHealthBar(Herd herd){
+        healthbars.add(new HerdFoodAndDrinkBar(herd, camera));
     }
 }

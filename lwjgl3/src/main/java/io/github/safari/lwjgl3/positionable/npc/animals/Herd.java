@@ -267,6 +267,7 @@ public class Herd extends Group implements Positionable {
         ArrayList<Herd> herdsToRemove = new ArrayList<>();
         for (Herd herd : GamemodelInstance.gameModel.getHerds()) {
             if (herd.equals(this) || herdsToRemove.contains(herd)) continue;
+            if (herd.getAnimals().isEmpty()) continue;
 
             if (herd.getAnimalSpecies().equals(animalSpecies)) {
                 if (Position.distance(getPosition(), herd.getPosition()) <= animals.get(0).getVisionRange()) {
