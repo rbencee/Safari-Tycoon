@@ -182,9 +182,6 @@ public class GameView implements Screen {
 
         uiStage.addActor(openShopButton);
         uiStage.addActor(table);
-        for (Poacher poacher : gameModel.getPoachers()) {
-            gameStage.addActor(poacher);
-        }
 
         gameController = new GameController(shop, this.gameModel, this);
         this.scorePanel = new ScorePanel(skin, uiStage, gameModel);
@@ -205,6 +202,10 @@ public class GameView implements Screen {
         handleEdgeScrolling(delta);
         cameraMovement();
         camera.update();
+
+        for (Poacher poacher : gameModel.getPoachers()) {
+            gameStage.addActor(poacher);
+        }
 
         /*setuptimer += delta;
 

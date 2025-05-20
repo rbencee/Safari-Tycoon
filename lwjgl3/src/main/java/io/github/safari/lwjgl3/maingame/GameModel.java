@@ -369,7 +369,7 @@ public class GameModel implements EdibleCollection {
 
     public void spawnRandomPoachers() {
         Random random = new Random();
-        if (random.nextFloat() <= 0.5f) {
+        if (random.nextFloat() <= 0.3f) {
             int poacherCount = random.nextInt(3) + 1;
             for (int i = 0; i < poacherCount; i++) {
                 float x = random.nextFloat() * getMapWidth();
@@ -379,6 +379,7 @@ public class GameModel implements EdibleCollection {
                 Poacher poacher = new Poacher(position);
 
                 poachers.add(poacher);
+
             }
 
             System.out.println(poacherCount + " new poacher(s) have appeared in the park!");

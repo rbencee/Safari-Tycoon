@@ -118,12 +118,13 @@ public class GameController {
                             if (!isjeep) {
                                 if (selectedItem.getName() == "Chip"){
                                     Animal tochip = GetCloseAnimalIfTHereis(x, y);
-                                    if(tochip != null)
+                                    if(tochip != null && !tochip.getChip())
                                     {
                                         BuyItem(selectedItem, x, y, width, height, tochip);
                                     } else
                                     {
-                                        System.out.println("No ANIMAL TO CHIP FOUND");
+                                        System.out.println("No ANIMAL TO CHIP FOUND or ANIMAL ALREADY HAS CHIP");
+                                        return true;
                                     }
                                 }
 
