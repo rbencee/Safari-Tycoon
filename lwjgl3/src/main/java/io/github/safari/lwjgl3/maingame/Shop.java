@@ -186,7 +186,7 @@ public class Shop {
         updateContent(new ShopItem[]{
             new ShopItem("Road", 200),
             new ShopItem("Ranger", 500),
-            new ShopItem("Camera", 300),
+            new ShopItem("Chip", 200),
             new ShopItem("Jeep", 400)
         });
     }

@@ -20,6 +20,7 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     Position position;
     final AnimalSpecies animalSpecies;
     boolean toRemove = false;
+    boolean hasChip = false;
 
     public AnimalImpl(
         double age,
@@ -50,6 +51,12 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
     public double getAge() {
         return age;
     }
+
+    @Override
+    public boolean getChip(){return hasChip;}
+
+    @Override
+    public void setChip(){hasChip = true;}
 
     @Override
     public double getMaxAge() {

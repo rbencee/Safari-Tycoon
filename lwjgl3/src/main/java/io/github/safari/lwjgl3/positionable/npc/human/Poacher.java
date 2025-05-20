@@ -15,6 +15,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.BehaviourHelper;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
+import io.github.safari.lwjgl3.positionable.visitors.Tourist;
 import io.github.safari.lwjgl3.util.Positionable;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.Random;
 
 public class Poacher extends Actor implements Human, Positionable {
     private int shootRange;
+    private int visibilityRange;
     private Texture texture;
     private Position position;
     private int speed;
@@ -31,11 +33,14 @@ public class Poacher extends Actor implements Human, Positionable {
     private static final float CHECK_INTERVAL = 5.0f;
     private float moveTimer;
     private static final float MOVE_INTERVAL = 5.0f;
+    private boolean isVisible = false;
+
 
     public Poacher(Position position) {
         this.position = position;
         this.texture = new Texture("textures/humans/poacher.png");
         this.shootRange = 300;
+        this.visibilityRange = 500;
         this.speed = 40;
         this.random = new Random();
         this.checkTimer = 0;
@@ -63,8 +68,34 @@ public class Poacher extends Actor implements Human, Positionable {
         if (!hasActions()) {
             moveToRandomLocation();
         }
+
+        updateVisibility();
     }
 
+    public boolean getVisibility(){
+        return isVisible;
+    }
+
+    public void updateVisibility(){
+        isVisible = false;
+        Vector2 poacherPos = new Vector2(position.getX(), position.getY());
+
+        for (Ranger ranger : GamemodelInstance.gameModel.getRangers()) {
+            Vector2 rangerPos = new Vector2(ranger.getPosition().getX(), ranger.getPosition().getY());
+            if (poacherPos.dst(rangerPos) <= visibilityRange) {
+                isVisible = true;
+                return;
+            }
+        }
+
+        for (Tourist tourist : GamemodelInstance.gameModel.getTourists()) {
+            Vector2 touristPos = new Vector2(tourist.getPosition().getX(), tourist.getPosition().getY());
+            if (poacherPos.dst(touristPos) <= visibilityRange) {
+                isVisible = true;
+                return;
+            }
+        }
+    }
 
     private void moveToRandomLocation() {
         Random rand = new Random();

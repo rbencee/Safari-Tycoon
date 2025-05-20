@@ -114,13 +114,26 @@ public class GameController {
                 if (shop.isBuying()) {
                     if (gameModel.positionFound(x, y, width, height) || isjeep) {
                         if (gameModel.CanBuy(selectedItem)) {
+
                             if (!isjeep) {
-                                BuyItem(selectedItem, x, y, width, height);
+                                if (selectedItem.getName() == "Chip"){
+                                    Animal tochip = GetCloseAnimalIfTHereis(x, y);
+                                    if(tochip != null)
+                                    {
+                                        BuyItem(selectedItem, x, y, width, height, tochip);
+                                    } else
+                                    {
+                                        System.out.println("No ANIMAL TO CHIP FOUND");
+                                    }
+                                }
+
+                                BuyItem(selectedItem, x, y, width, height, null);
                                 //shop.clearSelection();
                                 return true;
-                            } else {
+                            }
+                            else {
                                 if (gameModel.Is_There_Road(x, y)) {
-                                    BuyItem(selectedItem, x, y, width, height);
+                                    BuyItem(selectedItem, x, y, width, height, null);
 
                                 } else {
                                     System.out.println("No suitable Road Found");
@@ -147,7 +160,7 @@ public class GameController {
 
     }
 
-    private void BuyItem(ShopItem item, float x, float y, int width, int height) {
+    private void BuyItem(ShopItem item, float x, float y, int width, int height, Animal animala) {
         System.out.println(item.getName());
 
         gameModel.Decrease_My_Money(item.getPrice());
@@ -217,10 +230,40 @@ public class GameController {
                 System.out.println("Ranger buy successful!");
                 gameView.getGameStage().addActor(ranger);
                 break;
+            case "Chip":
+                if(animala != null)
+                {
+                    animala.setChip();
+                    System.out.println("CHIP SUCCESSFULLY BOUGHT!");
+                }else {
+                    System.out.println("Animal is NULL");
+                }
+                break;
             default:
                 System.out.println("Not Implemented yet!");
                 break;
         }
+    }
+    private Animal GetCloseAnimalIfTHereis(float x, float y) {
+        float selectionRadius = 100f;
+        float minDistSq = Float.MAX_VALUE;
+        Animal closestAnimal = null;
+
+        for (Herd herd : gameModel.getHerds()) {
+            for (Animal animal : herd.getAnimals()) {
+                float dx = animal.getPosition().getX() - x;
+                float dy = animal.getPosition().getY() - y;
+                float distSq = dx * dx + dy * dy;
+
+                if (distSq <= selectionRadius * selectionRadius && distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestAnimal = animal;
+                }
+            }
+        }
+
+        System.out.println("Animal found in getclosestanimalthereis");
+        return closestAnimal;
     }
 
     private void addHerdToModelAndView(Herd herd){

@@ -47,4 +47,8 @@ public interface Animal {
     void eat();
 
     void drink();
+
+    boolean getChip();
+
+    void setChip();
 }

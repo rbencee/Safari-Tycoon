@@ -25,6 +25,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.safari.lwjgl3.positionable.npc.animals.Animal;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesFactory;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
@@ -172,6 +174,8 @@ public class GameView implements Screen {
         selectionInfoLabel.setPosition(50, Gdx.graphics.getHeight() - 50);
         uiStage.addActor(selectionInfoLabel);
 
+
+
         //zoomContolButtons();
         zoomControlScroll();
         speedbutton();
@@ -299,6 +303,19 @@ public class GameView implements Screen {
             shapeRenderer.circle(centerX, centerY, radius);
         }
 
+        for (Herd herd : gameModel.getHerds()) {
+            for (Animal animal : herd.getAnimals()) {
+                if (animal.getChip() == true) {
+                    float centerX = animal.getPosition().getX() + (float) animal.getPosition().getWidth() / 2;
+                    float centerY = animal.getPosition().getY() + (float) animal.getPosition().getHeight() / 2;
+                    float radius = 200f;
+
+                    shapeRenderer.setColor(1, 1, 1, 1.0f);
+                    shapeRenderer.circle(centerX, centerY, radius);
+                }
+            }
+        }
+
         shapeRenderer.end();
         fogBuffer.end();
 
@@ -364,7 +381,7 @@ public class GameView implements Screen {
         for (Ranger ranger : gameModel.getRangers()) {
             float centerX = (ranger.getPosition().getX() + (float) ranger.getPosition().getWidth() / 2) * mapScale;
             float centerY = (ranger.getPosition().getY() + (float) ranger.getPosition().getHeight() / 2) * mapScale;
-            float radius = 200f * mapScale;
+            float radius = 250f * mapScale;
 
             shapeRenderer.setColor(1, 1, 1, 1.0f);
             shapeRenderer.circle(centerX, centerY, radius);
@@ -582,12 +599,20 @@ public class GameView implements Screen {
 
 
         for (Poacher poacher : gameModel.getPoachers()) {
+            if (poacher.getVisibility()) {
+                spriteBatch.setColor(1f, 1f, 1f, 1f);
+            } else {
+                spriteBatch.setColor(1f, 1f, 1f, 0.3f);
+            }
+
             spriteBatch.draw(poacher.getTexture(),
                 poacher.getPosition().getX() * scale,
                 poacher.getPosition().getY() * scale,
                 poacher.getPosition().getWidth() * scale,
                 poacher.getPosition().getHeight() * scale);
         }
+
+        spriteBatch.setColor(1f, 1f, 1f, 1f);
 
         for (Ranger ranger : gameModel.getRangers()) {
             spriteBatch.draw(ranger.getTexture(),
