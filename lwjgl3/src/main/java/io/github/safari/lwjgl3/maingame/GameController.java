@@ -31,7 +31,6 @@ public class GameController {
         this.gameModel = model;
         this.gameView = gameView;
 
-
     }
 
 
@@ -492,8 +491,6 @@ public class GameController {
             }
         }
     }
-
-
 }
 
 

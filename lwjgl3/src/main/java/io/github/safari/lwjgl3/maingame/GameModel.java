@@ -60,7 +60,7 @@ public class GameModel implements EdibleCollection {
         return allDrinkable;
     }
 
-    private int objectNumber = 2;
+    private int objectNumber = 80;
     private float mapWidth = 3200;
     private float mapHeight = 3200;
     private Random random;

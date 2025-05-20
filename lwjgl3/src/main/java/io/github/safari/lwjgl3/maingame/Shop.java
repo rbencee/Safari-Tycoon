@@ -130,6 +130,14 @@ public class Shop {
         shopWindow.setVisible(false);
     }
 
+    public ArrayList<TextButton> getAllItemButtons() {
+        return allItemButtons;
+    }
+
+    public ShopType getPageShown() {
+        return pageShown;
+    }
+
     public ShopItem getShopItems() {
         return  this.SelectedItem;
     }

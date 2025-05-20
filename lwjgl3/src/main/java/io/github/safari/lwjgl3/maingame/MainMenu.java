@@ -139,7 +139,7 @@ public class MainMenu implements Screen {
         }
     }
 
-    private int getDifficulty(TextButton button){
+    public int getDifficulty(TextButton button){
         if (button.getText().toString().equals("Easy")) return 1;
         if (button.getText().toString().equals("Medium")) return 2;
         return 3;
@@ -188,5 +188,17 @@ public class MainMenu implements Screen {
     @Override
     public void hide() {
 
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public Texture getBackgroundTexture() {
+        return backgroundTexture;
+    }
+
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
     }
 }

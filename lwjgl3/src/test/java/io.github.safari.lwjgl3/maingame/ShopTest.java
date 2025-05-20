@@ -1,50 +1,79 @@
 package io.github.safari.lwjgl3.maingame;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.glutils.GLVersion;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import io.github.safari.lwjgl3.maingame.*;
-import io.github.safari.lwjgl3.util.ShopType;
-import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 
-import static org.junit.jupiter.api.Assertions.*;
+public class ShopTest {
 
-    import static org.mockito.Mockito.mock;
-
-    class ShopTest {
-/*
-        private Shop shop;
-
+    private Shop shop;
+    private Skin skin;
+    private Stage stage;
+    private GameModel gameModel;
+    /*
 
     @BeforeEach
-    void setup() {
-        Stage mockStage = mock(Stage.class);
-        Skin mockSkin = mock(Skin.class);
-        shop = new Shop(mockSkin, mockStage, new GameModel(1), 600);
+    public void setUp() {
+        // Initialize headless application
+        HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
+        new HeadlessApplication(new EmptyApplicationListener(), config);
+
+        // Mock GL20 since it's not available in headless mode
+        Gdx.gl = Gdx.gl20 = new GL20() {
+            @Override public void glClear(int mask) {}
+            @Override public void glClearColor(float red, float green, float blue, float alpha) {}
+            // Implement other required methods...
+        };
+
+        skin = new Skin();
+        stage = new Stage(); // Now this will work because Gdx.graphics is initialized
+        gameModel = new GameModel(1);
+        shop = new Shop(skin, stage, gameModel, 1080f);
     }
 
     @Test
-    void testInitialSelectionIsNull() {
-        assertNull(shop.getShopItems(), "First Selected Item should be null");
+    public void testVisibilityMethods() {
+        assertFalse(shop.isVisible());
+        shop.show();
+        assertTrue(shop.isVisible());
+        shop.hide();
+        assertFalse(shop.isVisible());
     }
 
     @Test
-    void testBuyingFlagDefaultTrue() {
-        assertTrue(shop.isBuying(), "First we should be buying");
-    }
-
-    @Test
-    void testClearSelection() {
-        shop.clearSelection();
+    public void testGetShopItemsWhenNothingSelected() {
         assertNull(shop.getShopItems());
     }
 
- */
+    @Test
+    public void testIsBuying() {
+        assertTrue(shop.isBuying());
+    }
+
+    @Test
+    public void testClearSelection() {
+        assertNull(shop.getShopItems());
+    }
+
+    @Test
+    public void testSetShopItem() {
+        ShopItem testItem = new ShopItem("TestItem", 100);
+        shop.setShopItem(testItem);
+    }
+
+    // Empty application listener for headless mode
+    private static class EmptyApplicationListener implements com.badlogic.gdx.ApplicationListener {
+        @Override public void create() {}
+        @Override public void resize(int width, int height) {}
+        @Override public void render() {}
+        @Override public void pause() {}
+        @Override public void resume() {}
+        @Override public void dispose() {}
+    }
+
+     */
 }

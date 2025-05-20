@@ -37,7 +37,7 @@ public class Lwjgl3Launcher {
             music = Gdx.audio.newMusic(Gdx.files.internal("music/my_song.mp3"));
 
             music.setLooping(true);
-            music.setVolume(0f);
+            music.setVolume(0.8f);
             music.play();
 
 

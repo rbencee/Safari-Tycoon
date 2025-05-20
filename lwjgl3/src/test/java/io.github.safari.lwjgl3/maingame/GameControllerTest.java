@@ -1,76 +1,98 @@
 package io.github.safari.lwjgl3.maingame;
 
-import io.github.safari.lwjgl3.maingame.*;
-import io.github.safari.lwjgl3.positionable.objects.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import io.github.safari.lwjgl3.maingame.GameController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+public class GameControllerTest {
+    /*
 
-import static org.junit.jupiter.api.Assertions.*;
-
-
-class GameControllerTest {
-/*
     private GameController controller;
-    private GameModel model;
-    private Shop shop;
-    private GameView view;
 
     @BeforeEach
-    void setup() {
-        model = new GameModel(1); // A megfelelő konstruktor, amit használsz
-        shop = new Shop();
-        view = new GameView(model); // vagy mock/stub, ha elérhető
-        controller = new GameController(shop, model, view);
+    public void setUp() {
+        controller = new GameController();
     }
 
     @Test
-    void testTryToPlace_ValidEnvironment() {
-        ShopItem item = new ShopItem("Tree", 100);
-        shop.setShopItem(item);
-        shop.setBuying(true);
-        model.increasemoney(200); // biztosítsd, hogy van pénz
-
-        boolean success = controller.TryToPlace(64, 64, 64, 64, 0, 0, false);
-
-        assertTrue(success);
-        List<Environment> envs = model.getEnvironments();
-        assertEquals(1, envs.size());
-        assertTrue(envs.get(0) instanceof Tree);
+    public void testInitialMoneyIsCorrect() {
+        assertEquals(10000, controller.getGameModel().getMoney());
     }
 
     @Test
-    void testTryToPlace_InsufficientFunds() {
-        ShopItem item = new ShopItem("Tree", 1000); // drágább mint a pénz
-        shop.setShopItem(item);
-        shop.setBuying(true);
-        model.increasemoney(100); // túl kevés pénz
+    public void testAddAndRemoveRoad() {
+        Road road = new Road(1, 1);
+        controller.addRoad(road);
+        assertTrue(controller.getGameModel().getRoads().contains(road));
 
-        boolean success = controller.TryToPlace(64, 64, 64, 64, 0, 0, false);
-
-        assertFalse(success);
-        assertEquals(0, model.getEnvironments().size());
+        controller.removeRoad(road);
+        assertFalse(controller.getGameModel().getRoads().contains(road));
     }
 
     @Test
-    void testSellEnvironment() {
-        Tree tree = new Tree(new Position(64, 64, 64, 64));
-        model.addtoenvironment(tree);
+    public void testAddAndRemoveAnimal() {
+        Animal animal = new Animal(2, 2, AnimalType.HERBIVORE);
+        controller.addAnimal(animal);
+        assertTrue(controller.getGameModel().getAnimals().contains(animal));
 
-        ShopItem item = new ShopItem("Tree", 100);
-        shop.setShopItem(item);
-        shop.setBuying(false);
-
-        controller.TryToPlace(64, 64, 64, 64, 0, 0, false);
-
-        assertTrue(model.getEnvironments().isEmpty());
-        assertEquals(70, model.getMoney()); // 100 * 0.7
+        controller.removeAnimal(animal);
+        assertFalse(controller.getGameModel().getAnimals().contains(animal));
     }
 
+    @Test
+    public void testAddAndRemoveEnvironment() {
+        Environment environment = new Environment(3, 3, EnvironmentType.TREE);
+        controller.addEnvironment(environment);
+        assertTrue(controller.getGameModel().getEnvironments().contains(environment));
 
+        controller.removeEnvironment(environment);
+        assertFalse(controller.getGameModel().getEnvironments().contains(environment));
+    }
 
-}
-(/
- */
+    @Test
+    public void testAddAndRemoveJeep() {
+        Jeep jeep = new Jeep(4, 4);
+        controller.addJeep(jeep);
+        assertTrue(controller.getGameModel().getJeeps().contains(jeep));
+
+        controller.removeJeep(jeep);
+        assertFalse(controller.getGameModel().getJeeps().contains(jeep));
+    }
+
+    @Test
+    public void testSetAndGetSelected() {
+        Object obj = new Object();
+        controller.setSelected(obj);
+        assertEquals(obj, controller.getSelected());
+    }
+
+    @Test
+    public void testSetAndGetToPlace() {
+        Object obj = new Object();
+        controller.setToPlace(obj);
+        assertEquals(obj, controller.getToPlace());
+    }
+
+    @Test
+    public void testSetAndGetMode() {
+        GameController.Mode mode = GameController.Mode.BUY;
+        controller.setMode(mode);
+        assertEquals(mode, controller.getMode());
+    }
+
+    @Test
+    public void testSetAndGetSelectedTile() {
+        Vector2 tile = new Vector2(5, 5);
+        controller.setSelectedTile(tile);
+        assertEquals(tile, controller.getSelectedTile());
+    }
+
+    @Test
+    public void testGameModelIsNotNull() {
+        assertNotNull(controller.getGameModel());
+    }
+
+     */
 }
