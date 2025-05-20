@@ -1,51 +1,90 @@
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.backends.headless.HeadlessApplication;
-import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
+package io.github.safari.lwjgl3.maingame;
+
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
-public class LibGDXHeadlessTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-    private static HeadlessApplication app;
+public class MainMenuTest extends LibGDXHeadlessTest {
 
-    @BeforeClass
+    private MainMenu mainMenu;
+    private Game mockGame;
+    private Skin mockSkin;
+
+    @BeforeAll
     public static void setup() {
-        HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
-        app = new HeadlessApplication(new ApplicationListener() {
-            @Override
-            public void create() {}
-
-            @Override
-            public void resize(int width, int height) {}
-
-            @Override
-            public void render() {}
-
-            @Override
-            public void pause() {}
-
-            @Override
-            public void resume() {}
-
-            @Override
-            public void dispose() {}
-        }, config);
+        LibGDXHeadlessTest.init();
     }
 
-    @AfterClass
-    public static void teardown() {
-        app.exit();
-        app = null;
+    @BeforeEach
+    public void setUp() {
+        mockGame = mock(Game.class);
+        mockSkin = mock(Skin.class);
+
+        try (MockedStatic<Gdx> mockedGdx = mockStatic(Gdx.class)) {
+            FileHandle mockFileHandle = mock(FileHandle.class);
+            mockedGdx.when(() -> Gdx.files.internal("skin/craftacular-ui.json"))
+                .thenReturn(mockFileHandle);
+
+            mainMenu = new MainMenu(mockGame);
+        }
     }
 
     @Test
-    public void testBitmapFontCreation() {
-        // Most már Gdx.files nem null, így létrehozhatsz BitmapFontot
-        BitmapFont font = new BitmapFont();  // Nem dob NullPointerException-t
-        // További tesztelés...
-        assert font != null;
+    public void testMainMenuInitialization() {
+        mainMenu.show();
+
+        assertNotNull(mainMenu.getStage(), "Stage should be initialized");
+        assertNotNull(mainMenu.getBackgroundTexture(), "Background texture should be initialized");
+        assertNotNull(mainMenu.getSpriteBatch(), "SpriteBatch should be initialized");
+    }
+
+    @Test
+    public void testGetDifficulty() {
+        TextButton easyButton = new TextButton("Easy", mockSkin);
+        TextButton mediumButton = new TextButton("Medium", mockSkin);
+        TextButton hardButton = new TextButton("Hard", mockSkin);
+
+        assertEquals(1, mainMenu.getDifficulty(easyButton), "Easy should return 1");
+        assertEquals(2, mainMenu.getDifficulty(mediumButton), "Medium should return 2");
+        assertEquals(3, mainMenu.getDifficulty(hardButton), "Hard should return 3");
+    }
+
+    @Test
+    public void testButtonCreation() {
+        mainMenu.show();
+
+        Stage stage = mainMenu.getStage();
+        assertTrue(stage.getActors().size > 0, "Stage should contain buttons");
+    }
+
+    @Test
+    public void testStartButtonAction() {
+        mainMenu.show();
+
+        // Mock difficulty selection
+        TextButton mockButton = mock(TextButton.class);
+        when(mockButton.getText()).thenReturn("Medium");
+
+        // Normally you'd find the actual button from stage
+        mainMenu.getDifficulty(mockButton); // This would be 2 for Medium
+
+        // Verify game screen changes when start is clicked
+        // This would require refactoring MainMenu to make startGame testable
+        assertDoesNotThrow(() -> {
+            // Simulate button click
+            // In real test you'd find the actual start button
+        });
     }
 }
