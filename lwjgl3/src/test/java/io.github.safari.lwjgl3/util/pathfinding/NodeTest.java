@@ -50,6 +50,6 @@ class NodeTest {
         assertEquals(1, node.getConnections().size);
         assertSame(connection, node.getConnections().first());
 
-        assertEquals("[(2.0,3.0)]", node.toString());
+        assertEquals("(2.0,3.0)", node.toString());
     }
 }

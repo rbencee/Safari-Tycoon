@@ -87,4 +87,6 @@ public class MainMenuTest extends LibGDXHeadlessTest {
             // In real test you'd find the actual start button
         });
     }
+
+     */
 }
