@@ -38,7 +38,9 @@ public class Poacher extends Actor implements Human, Positionable {
 
     public Poacher(Position position) {
         this.position = position;
-        this.texture = new Texture("textures/humans/poacher.png");
+        if(Gdx.app != null) {
+            this.texture = new Texture("textures/humans/poacher.png");
+        }
         this.shootRange = 300;
         this.visibilityRange = 500;
         this.speed = 40;
@@ -143,7 +145,9 @@ public class Poacher extends Actor implements Human, Positionable {
                 for (Herd h : GamemodelInstance.gameModel.getHerds()) {
                     if (h.getAnimals().contains(target)) {
                         h.getAnimals().remove(target);
-                        Gdx.app.log("Poacher", "Animal killed: " + target.getAnimalSpecies());
+                        if(Gdx.app != null) {
+                            Gdx.app.log("Poacher", "Animal killed: " + target.getAnimalSpecies());
+                        }
                         break;
                     }
                 }

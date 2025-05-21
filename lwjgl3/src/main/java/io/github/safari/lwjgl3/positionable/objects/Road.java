@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.positionable.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -31,21 +32,22 @@ public class Road extends Environment implements Positionable {
 
     private Texture createGrayTexture(int roadtype) {
 
+        if(Gdx.app != null) {
+            Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+            if (roadtype == 2) {
+                pixmap.setColor(Color.GREEN);
+            } else if (roadtype == 3) {
+                pixmap.setColor(Color.RED);
+            } else {
+                pixmap.setColor(Color.GRAY);
+            }
+            this.roadtype = roadtype;
 
-        Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
-        if (roadtype == 2) {
-            pixmap.setColor(Color.GREEN);
-        } else if (roadtype == 3) {
-            pixmap.setColor(Color.RED);
-        } else {
-            pixmap.setColor(Color.GRAY);
-        }
-        this.roadtype = roadtype;
-
-        pixmap.fill();
-        Texture tex = new Texture(pixmap);
-        pixmap.dispose();
-        return tex;
+            pixmap.fill();
+            Texture tex = new Texture(pixmap);
+            pixmap.dispose();
+            return tex;
+        } return null;
 
     }
 

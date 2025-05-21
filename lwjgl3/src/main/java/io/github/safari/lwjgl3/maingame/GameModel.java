@@ -549,14 +549,4 @@ public class GameModel implements EdibleCollection {
         System.out.println("RETURNING NULL!");
         return null;
     }
-
-
-
-
-    /*
-    private CheckInRange()
-    {
-
-    }
-    */
 }

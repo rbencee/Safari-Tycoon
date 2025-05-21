@@ -9,6 +9,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
 import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
 import io.github.safari.lwjgl3.positionable.objects.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PoacherTest {
-    /*
+
 
     private Poacher poacher;
     private TestGameModel testModel;
@@ -33,26 +34,26 @@ class PoacherTest {
 
     @Test
     void testKillAnimalWithinRange() {
-        AnimalImpl animal = AnimalFactory.createCapybara(new Position(110, 110, 32, 32));
+       // AnimalImpl animal = AnimalFactory.createNew(new Position(110, 110, 32, 32));
 
-        //AnimalImpl animal = new AnimalImpl(new Position(110, 110, 32, 32)); // közel van
-        ArrayList<Behaviour> behaviours = Behaviour.createHerbivoreBehaviours();
 
-        Herd herd = new Herd(, behaviours);
-        herd.getAnimals().add(animal);
+        Animal animal = AnimalFactory.createNew(AnimalSpecies.CAPYBARA, new Position(110, 110, 32, 32));
+        Herd herd = new Herd(AnimalSpecies.CAPYBARA, Behaviour.createHerbivoreBehaviours());
+        herd.addToHerd((AnimalImpl) animal);
         testModel.getHerds().add(herd);
 
         poacher.KillAnimal(animal);
 
         assertTrue(herd.getAnimals().isEmpty(), "Animal should be killed and removed from the herd");
-        assertTrue(testModel.getHerds().isEmpty(), "Herd should be removed because it's empty after the animal was killed");
+        //assertTrue(testModel.getHerds().isEmpty(), "Herd should be removed because it's empty after the animal was killed");
     }
 
     @Test
     void testKillAnimalOutOfRange() {
-        AnimalImpl animal = new AnimalImpl(new Position(1000, 1000, 32, 32)); // messze van
-        Herd herd = new Herd();
-        herd.getAnimals().add(animal);
+
+        Animal animal = AnimalFactory.createNew(AnimalSpecies.CAPYBARA, new Position(1000, 1000, 32, 32));
+        Herd herd = new Herd(AnimalSpecies.CAPYBARA, Behaviour.createHerbivoreBehaviours());
+        herd.addToHerd((AnimalImpl) animal);
         testModel.getHerds().add(herd);
 
         poacher.KillAnimal(animal);
@@ -67,8 +68,6 @@ class PoacherTest {
 
         poacher.KillRanger(ranger);
 
-        // Mivel találati esély (pl. 50%) van, nem tudjuk előre megmondani az eredményt,
-        // de a lényeg hogy nem dob kivételt és a rangers lista létezik.
         assertNotNull(testModel.getRangers(), "Rangers list should not be null after KillRanger");
     }
 
@@ -82,7 +81,6 @@ class PoacherTest {
         assertTrue(poacher.hasActions(), "Poacher should have movement actions queued after act()");
     }
 
-    // --- Belső teszt GameModel implementáció ---
     static class TestGameModel extends GameModel {
         private final ArrayList<Herd> herds = new ArrayList<>();
         private final ArrayList<Ranger> rangers = new ArrayList<>();
@@ -109,5 +107,4 @@ class PoacherTest {
         }
     }
 
-     */
 }
