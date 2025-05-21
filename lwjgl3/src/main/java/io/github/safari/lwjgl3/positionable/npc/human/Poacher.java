@@ -38,7 +38,7 @@ public class Poacher extends Actor implements Human, Positionable {
 
     public Poacher(Position position) {
         this.position = position;
-        if(Gdx.app != null) {
+        if(Gdx.app != null && Gdx.gl != null) {
             this.texture = new Texture("textures/humans/poacher.png");
         }
         this.shootRange = 300;

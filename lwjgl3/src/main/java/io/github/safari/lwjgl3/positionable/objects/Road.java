@@ -26,13 +26,15 @@ public class Road extends Environment implements Positionable {
     public Road(Position position, int roadtype, Texture texture) {
         super(position);
         this.roadtype = roadtype;
-        this.texture = texture;
+        if(Gdx.app != null) {
+            this.texture = texture;
+        }
 
     }
 
     private Texture createGrayTexture(int roadtype) {
 
-        if(Gdx.app != null) {
+        if(Gdx.app != null && Gdx.gl != null) {
             Pixmap pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
             if (roadtype == 2) {
                 pixmap.setColor(Color.GREEN);

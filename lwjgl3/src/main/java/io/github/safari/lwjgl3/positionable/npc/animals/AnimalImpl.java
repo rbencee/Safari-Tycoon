@@ -28,7 +28,6 @@ public class AnimalImpl extends Actor implements Animal, Positionable {
         double thirst,
         Position position,
         AnimalSpecies animalSpecies) {
-
         this.speciesData = SpeciesFactory.getSpeciesData(animalSpecies);
         this.age = age;
         this.hunger = hunger;

@@ -161,6 +161,7 @@ public class GameModel implements EdibleCollection {
     public ArrayList<Road> getRoads(){ return roads;}
 
         public ArrayList<Tourist> getTourists() {return tourists;}
+    public int getDifficulty() {return this.difficulty;}
 
     public void InitializeGame() {
         generateMap();
@@ -234,7 +235,7 @@ public class GameModel implements EdibleCollection {
         boolean entranceb = false;
         boolean exitb = false;
 
-        while (!entranceb && !exitb) {
+        while (!entranceb || !exitb) {
 
             float gridSize = 64f;
 
@@ -359,7 +360,7 @@ public class GameModel implements EdibleCollection {
     }
 
     //HELPER OF CHECKWINCON
-    private int getRequiredMonths() {
+    int getRequiredMonths() {
         return switch (difficulty) {
             case 2 -> 6;
             case 3 -> 12;
@@ -423,7 +424,7 @@ public class GameModel implements EdibleCollection {
 
     }
 
-    private void SummonTourist() {
+    void SummonTourist() {
         if (entrancepos == null) return;
 
         Random random = new Random();
@@ -464,7 +465,7 @@ public class GameModel implements EdibleCollection {
         return sum;
     }
 
-    private int sumUniqueAnimals() {
+    int sumUniqueAnimals() {
         Set<AnimalSpecies> uniqueAnimals = new HashSet<>();
         for (Herd herd : herds) {
             uniqueAnimals.add(herd.getAnimalSpecies());

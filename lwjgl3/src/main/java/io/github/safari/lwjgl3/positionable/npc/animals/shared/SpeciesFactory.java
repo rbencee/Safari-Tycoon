@@ -34,7 +34,7 @@ public class SpeciesFactory {
             AnimalType animalType = AnimalType.valueOf(String.valueOf(config.animalType));
             TextureRegion region = null;
 
-            if(Gdx.app != null) {
+            if(Gdx.app != null && Gdx.gl != null) {
                 Texture texture = new Texture("textures/animals/" + config.texture);
                 region = new TextureRegion(texture);
             }

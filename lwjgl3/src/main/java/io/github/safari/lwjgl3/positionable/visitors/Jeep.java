@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.positionable.visitors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import io.github.safari.lwjgl3.positionable.Moveable;
 import io.github.safari.lwjgl3.positionable.Position;
@@ -16,7 +17,9 @@ public class Jeep implements Positionable, Moveable {
     public Jeep(Position position)
     {
         this.position = position;
-        this.texture = new Texture("textures/others/jeep.png");
+        if(Gdx.app != null && Gdx.gl != null) {
+            this.texture = new Texture("textures/others/jeep.png");
+        }
         this.tostart = true;
         this.tourists = new ArrayList<>();
     }
