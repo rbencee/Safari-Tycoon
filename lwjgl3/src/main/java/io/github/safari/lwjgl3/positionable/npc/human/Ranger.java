@@ -38,7 +38,9 @@ public class Ranger extends Actor implements Human, Positionable {
 
     public Ranger(Position position) {
         this.position = position;
-        this.texture = new Texture("textures/humans/steve.png");
+        if (Gdx.gl != null) {
+            this.texture = new Texture("textures/humans/steve.png");
+        }
         setPosition(position.getX(), position.getY());
         this.moveTimer = 0;
 
@@ -52,6 +54,13 @@ public class Ranger extends Actor implements Human, Positionable {
     public void setSelected(boolean selected) {
         this.isSelected = selected;
     }
+
+    public ArrayList<Poacher> getPoachers() {return poachers;}
+
+    public void setPoachers(ArrayList<Poacher> poachers) {this.poachers = poachers;}
+
+    public Positionable getCurrentTarget() {return currentTarget;}
+
 
 
     @Override
@@ -175,7 +184,7 @@ public class Ranger extends Actor implements Human, Positionable {
         updatePathToTarget();
     }
 
-    private void killAnimal(Animal animal) {
+    public void killAnimal(Animal animal) {
         for (Herd h : GamemodelInstance.gameModel.getHerds()) {
             if (h.getAnimals().contains(animal)) {
                 h.getAnimals().remove(animal);
@@ -185,14 +194,16 @@ public class Ranger extends Actor implements Human, Positionable {
         }
     }
 
-    private void killPoacher(Poacher poacher) {
+    public void killPoacher(Poacher poacher) {
         ArrayList<Poacher> tempList = new ArrayList<>(poachers);
         boolean removed = tempList.remove(poacher);
         if (removed) {
 
             poachers.clear();
             poachers.addAll(tempList);
-            Gdx.app.log("Ranger", "Poacher eliminated");
+            if(Gdx.app != null) {
+                Gdx.app.log("Ranger", "Poacher eliminated");
+            }
             System.out.println("Ranger eliminated a poacher.");
         }
     }

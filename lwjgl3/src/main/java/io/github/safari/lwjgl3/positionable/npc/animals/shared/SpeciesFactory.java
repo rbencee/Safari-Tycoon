@@ -19,18 +19,25 @@ public class SpeciesFactory {
 
         try {
             Json json = new Json();
-            speciesList = json.fromJson(Array.class, SpeciesConfig.class, Gdx.files.internal("species.json"));
-            Gdx.app.log("SpeciesFactory", "Loaded " + speciesList.size + " species from JSON");
+            if(Gdx.app != null) {
+                speciesList = json.fromJson(Array.class, SpeciesConfig.class, Gdx.files.internal("species.json"));
+                Gdx.app.log("SpeciesFactory", "Loaded " + speciesList.size + " species from JSON");
+            }
         } catch (Exception e) {
-            Gdx.app.error("SpeciesFactory", "Failed to load species.json", e);
+            if(Gdx.app != null) {
+                Gdx.app.error("SpeciesFactory", "Failed to load species.json", e);
+            }
         }
 
         for (SpeciesConfig config : speciesList) {
             AnimalSpecies animalSpecies = AnimalSpecies.valueOf(String.valueOf(config.animalSpecies));
             AnimalType animalType = AnimalType.valueOf(String.valueOf(config.animalType));
+            TextureRegion region = null;
 
-            Texture texture = new Texture("textures/animals/" + config.texture);
-            TextureRegion region = new TextureRegion(texture);
+            if(Gdx.app != null) {
+                Texture texture = new Texture("textures/animals/" + config.texture);
+                region = new TextureRegion(texture);
+            }
 
             SpeciesData data = new SpeciesData(animalType, animalSpecies, config.maxAge, config.speed, config.visionRange, config.reproductionTime, region);
 
