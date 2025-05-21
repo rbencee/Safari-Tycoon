@@ -1,5 +1,6 @@
 package io.github.safari.lwjgl3.util;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -10,12 +11,15 @@ import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 
 public class HerdFoodAndDrinkBar extends Actor {
     private Herd herd;
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private ShapeRenderer shapeRenderer ;
     private OrthographicCamera camera;
 
     public HerdFoodAndDrinkBar(Herd herd, OrthographicCamera camera) {
         this.herd = herd;
         this.camera = camera;
+        if (Gdx.gl != null) {
+            this.shapeRenderer = new ShapeRenderer();
+        }
     }
     //batch.draw(speciesData.textureRegion(), getX() * scale, getY() * scale, getPosition().getWidth() * scale, getPosition().getHeight() * scale); // simple draw
 
@@ -41,7 +45,9 @@ public class HerdFoodAndDrinkBar extends Actor {
     }
 
     public void dispose() {
-        shapeRenderer.dispose();
+        if(shapeRenderer != null) {
+            shapeRenderer.dispose();
+        }
     }
 
     private void drawBar(float amount, float barHeight, float barWidth, Color color, Vector3 screenPosition){

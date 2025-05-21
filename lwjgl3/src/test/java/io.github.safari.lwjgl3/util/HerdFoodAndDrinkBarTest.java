@@ -30,7 +30,7 @@ public class HerdFoodAndDrinkBarTest {
 
     @Test
     public void testRenderWithEmptyHerdDoesNothing() {
-        when(herd.getAnimals()).thenReturn(Collections.emptyList());
+        when(herd.getAnimals()).thenReturn(new ArrayList<AnimalImpl>());
 
         HerdFoodAndDrinkBar bar = new HerdFoodAndDrinkBar(herd, camera);
         assertDoesNotThrow(bar::render);
@@ -39,7 +39,7 @@ public class HerdFoodAndDrinkBarTest {
     @Test
     public void testRenderWithValidHerdDoesNotThrow() {
         Animal animal = mock(Animal.class);
-        when(herd.getAnimals()).thenReturn((ArrayList<AnimalImpl>) Collections.singletonList(animal));
+        when(herd.getAnimals()).thenReturn(new ArrayList<AnimalImpl>());
         when(herd.getMinHunger()).thenReturn(50.0);
         when(herd.getMinThirst()).thenReturn(75.0);
         when(herd.getPosition()).thenReturn(new Position(100, 100, 10, 10));
