@@ -1,11 +1,8 @@
-package io.github.safari.lwjgl3.util;
+package io.github.safari.lwjgl3.positionable.npc.animals;
 
 import io.github.safari.lwjgl3.maingame.GameModel;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalFactory;
-import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
-import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,5 @@
 package io.github.safari.lwjgl3.positionable.npc.human;
 
-import com.badlogic.gdx.math.Vector2;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.maingame.GameModel;
 import io.github.safari.lwjgl3.positionable.Position;
