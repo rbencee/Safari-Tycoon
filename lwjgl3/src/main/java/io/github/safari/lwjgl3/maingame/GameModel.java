@@ -60,7 +60,7 @@ public class GameModel implements EdibleCollection {
         return allDrinkable;
     }
 
-    private int objectNumber = 80;
+    private int objectNumber = 20;
     private float mapWidth = 3200;
     private float mapHeight = 3200;
     private Random random;
@@ -85,7 +85,7 @@ public class GameModel implements EdibleCollection {
         this.jeeps = new ArrayList<>();
         this.roads = new ArrayList<>();
         this.tourists = new ArrayList<>();
-        this.money = 500000;
+        this.money = 5000;
 
         InitializeGame();
         GamemodelInstance.gameModel = this;
@@ -141,7 +141,9 @@ public class GameModel implements EdibleCollection {
 
     public int getTouristcount() {return touristcount;}
 
-    public void setTouristcount(int touristcount) {this.touristcount = touristcount;}
+    public void setTouristcount(int touristcount) {this.touristcount = touristcount;
+
+    }
     public float getMapWidth(){
         return mapWidth;
     }
@@ -249,12 +251,14 @@ public class GameModel implements EdibleCollection {
                 this.entrancepos = entrapos;
 
                 roads.add(entrance);
+                System.out.println("Entrance placed");
                 //System.out.println("entrance:" + entrance.getRoadtype() + "   " + entrance.getPosition().getX() + "   " + entrance.getPosition().getY());
                 entranceb = true;
             }
 
             if (positionFound(mapWidth - 64, exitY, 64, 64)) {
                 Road exit = new Road(new Position(mapWidth - 64, exitY, 64, 64), 3);
+                System.out.println("Exit placed");
                 roads.add(exit);
                 exitb = true;
             }
@@ -543,6 +547,7 @@ public class GameModel implements EdibleCollection {
 
     public Road getExitRoad() {
         for (Road road : roads) {
+            System.out.println(road.getRoadtype());
             if (road.getRoadtype() == 3) {
                 return road;
             }

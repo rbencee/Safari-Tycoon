@@ -29,12 +29,11 @@ class GameModelTest extends LibGDXHeadlessTest{
 
     @BeforeEach
     void setUp() {
-        gameModel = new GameModel(TEST_DIFFICULTY);
-    }
+        gameModel = new GameModel(TEST_DIFFICULTY);}
 
     @Test
     void testInitialization() {
-        assertEquals(500000, gameModel.getMoney());
+        assertEquals(5000, gameModel.getMoney());
         assertEquals(0, gameModel.getDayspassed());
         assertEquals(1, gameModel.getSpeed());
         assertEquals(TEST_DIFFICULTY, gameModel.getDifficulty());
@@ -60,14 +59,16 @@ class GameModelTest extends LibGDXHeadlessTest{
     @Test
     void testMoneyManagement() {
         gameModel.increasemoney(1000);
-        assertEquals(501000, gameModel.getMoney());
+        assertEquals(6000, gameModel.getMoney());
 
         gameModel.Decrease_My_Money(2000);
-        assertEquals(499000, gameModel.getMoney());
+        assertEquals(4000, gameModel.getMoney());
     }
 
     @Test
     void testPositionFound() {
+        gameModel = new GameModel(1);
+        gameModel.getEnvironments().clear();
         assertTrue(gameModel.positionFound(100, 100, 32, 32));
         assertFalse(gameModel.positionFound(-50, 100, 32, 32));
         assertFalse(gameModel.positionFound(100, -50, 32, 32));
@@ -126,9 +127,10 @@ class GameModelTest extends LibGDXHeadlessTest{
         assertTrue(gameModel.Is_There_Road(100, 100));
         assertFalse(gameModel.Is_There_Road(200, 200));
 
-        gameModel.InitializeGame();
-        assertNotNull(gameModel.getEntranceRoad());
+        assertNotNull(gameModel.getRoads());
+        assertEquals(3, gameModel.getRoads().size());
         assertNotNull(gameModel.getExitRoad());
+        assertNotNull(gameModel.getEntranceRoad());
     }
 
     @Test
@@ -183,6 +185,8 @@ class GameModelTest extends LibGDXHeadlessTest{
     void testWinCondition() {
         gameModel.setTouristcount(100);
 
+        assertTrue(gameModel.getTouristcount() == 100);
+
         Herd herbherd = new Herd(AnimalSpecies.CAPYBARA, Behaviour.createHerbivoreBehaviours());;
         Herd predherd = new Herd(AnimalSpecies.LION, Behaviour.createPredatorBehaviours());
 
@@ -202,19 +206,26 @@ class GameModelTest extends LibGDXHeadlessTest{
             gameModel.checkwincon();
         }
 
+        assertNotNull(gameModel.getHerds());
+        assertNotNull(gameModel.getRangers());
 
+
+        assertEquals(105000, gameModel.getMoney());
         assertTrue(gameModel.checkwincon());
 
         for(int i = 0; i < 100; i++) {
-            gameModel.Simulation(1);
+            gameModel.Simulation(100);
         }
+
+        assertEquals(100, gameModel.getDayspassed());
+
         assertTrue(gameModel.isGameWon());
     }
 
     @Test
     void testCanBuy() {
         ShopItem expensiveItem = new ShopItem("Test", 600000);
-        ShopItem affordableItem = new ShopItem("Test", 100000);
+        ShopItem affordableItem = new ShopItem("Test", 2000);
 
         assertFalse(gameModel.CanBuy(expensiveItem));
         assertTrue(gameModel.CanBuy(affordableItem));

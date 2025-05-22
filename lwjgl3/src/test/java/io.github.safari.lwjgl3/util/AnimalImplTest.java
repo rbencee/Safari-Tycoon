@@ -1,14 +1,16 @@
-package io.github.safari.lwjgl3.positionable.npc.animals;
+package io.github.safari.lwjgl3.util;
 
-import io.github.safari.lwjgl3.maingame.*;
+import io.github.safari.lwjgl3.maingame.GameModel;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.positionable.npc.animals.AnimalImpl;
 import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
 import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnimalImplTest {
 
