@@ -8,7 +8,7 @@ import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 
 public class KillAction extends Action implements CloneableAction {
 
-    private final Herd herdToHunt;
+    final Herd herdToHunt;
 
     public KillAction(Herd herd) {
         this.herdToHunt = herd;

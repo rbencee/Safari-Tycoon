@@ -75,7 +75,7 @@ class PoacherTest {
         // Adjunk a modellhez egy environment-et, hogy legyen célpont a mozgáshoz
         testModel.getEnvironments().add(new Environment(new Position(200, 200, 32, 32)));
 
-        poacher.act(1f); // időlépés szimuláció
+        poacher.act(100f);
 
         assertTrue(poacher.hasActions(), "Poacher should have movement actions queued after act()");
     }

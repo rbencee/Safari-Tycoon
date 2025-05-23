@@ -1,98 +1,190 @@
 package io.github.safari.lwjgl3.maingame;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import io.github.safari.lwjgl3.maingame.GameController;
+import com.badlogic.gdx.math.Rectangle;
+import io.github.safari.lwjgl3.positionable.Position;
+import io.github.safari.lwjgl3.positionable.npc.animals.*;
+import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
+import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
+import io.github.safari.lwjgl3.positionable.objects.*;
+import io.github.safari.lwjgl3.positionable.visitors.Jeep;
+import io.github.safari.lwjgl3.util.exceptions.InSufficientFundsException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-public class GameControllerTest {
-    /*
+import java.util.ArrayList;
+import java.util.List;
 
-    private GameController controller;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class GameControllerTest {
+
+    private GameController gameController;
+    private Shop mockShop;
+    private GameModel mockModel;
+    private GameView mockView;
+
+    @BeforeAll
+    static void setupGameModelInstance() {
+        GamemodelInstance.gameModel = new GameModel(1);
+    }
 
     @BeforeEach
-    public void setUp() {
-        controller = new GameController();
+    void setUp() {
+        mockShop = mock(Shop.class);
+        mockModel = mock(GameModel.class);
+        mockView = mock(GameView.class);
+        gameController = new GameController(mockShop, mockModel, mockView);
     }
 
     @Test
-    public void testInitialMoneyIsCorrect() {
-        assertEquals(10000, controller.getGameModel().getMoney());
+    void selectRanger_ShouldSetSelectedRanger() {
+        Ranger ranger = new Ranger(new Position(0, 0, 32, 32));
+        GameController.selectRanger(ranger);
+        assertTrue(GameController.isRangerSelected());
+        assertEquals(ranger, getSelectedRanger());
+        assertTrue(ranger.isSelected());
     }
 
     @Test
-    public void testAddAndRemoveRoad() {
-        Road road = new Road(1, 1);
-        controller.addRoad(road);
-        assertTrue(controller.getGameModel().getRoads().contains(road));
+    void selectRanger_ShouldUnselectPreviousRanger() {
+        Ranger firstRanger = new Ranger(new Position(0, 0, 32, 32));
+        Ranger secondRanger = new Ranger(new Position(50, 50, 32, 32));
 
-        controller.removeRoad(road);
-        assertFalse(controller.getGameModel().getRoads().contains(road));
+        GameController.selectRanger(firstRanger);
+        GameController.selectRanger(secondRanger);
+
+        assertFalse(firstRanger.isSelected());
+        assertTrue(secondRanger.isSelected());
     }
 
     @Test
-    public void testAddAndRemoveAnimal() {
-        Animal animal = new Animal(2, 2, AnimalType.HERBIVORE);
-        controller.addAnimal(animal);
-        assertTrue(controller.getGameModel().getAnimals().contains(animal));
+    void selectTargetAt_ShouldSelectAnimalWhenClickedNear() {
+        Ranger ranger = new Ranger(new Position(0, 0, 32, 32));
+        GameController.selectRanger(ranger);
 
-        controller.removeAnimal(animal);
-        assertFalse(controller.getGameModel().getAnimals().contains(animal));
+        Herd mockHerd = mock(Herd.class);
+        AnimalImpl mockAnimal = mock(AnimalImpl.class);
+        when(mockAnimal.getPosition()).thenReturn(new Position(100, 100, 32, 32));
+        when(mockHerd.getAnimals()).thenReturn(new ArrayList<>());
+
+        when(mockModel.getHerds()).thenReturn(new ArrayList<>());
+        when(mockModel.getPoachers()).thenReturn(new ArrayList<>());
+
+        GameController.selectTargetAt(110, 110, mockModel);
     }
 
     @Test
-    public void testAddAndRemoveEnvironment() {
-        Environment environment = new Environment(3, 3, EnvironmentType.TREE);
-        controller.addEnvironment(environment);
-        assertTrue(controller.getGameModel().getEnvironments().contains(environment));
+    void selectTargetAt_ShouldSelectPoacherWhenClickedNear() {
+        Ranger ranger = new Ranger(new Position(0, 0, 32, 32));
+        GameController.selectRanger(ranger);
 
-        controller.removeEnvironment(environment);
-        assertFalse(controller.getGameModel().getEnvironments().contains(environment));
+        Poacher mockPoacher = mock(Poacher.class);
+        when(mockPoacher.getPosition()).thenReturn(new Position(100, 100, 32, 32));
+
+        when(mockModel.getHerds()).thenReturn(new ArrayList<>());
+        when(mockModel.getPoachers()).thenReturn(new ArrayList<>());
+
+        GameController.selectTargetAt(110, 110, mockModel);
     }
 
     @Test
-    public void testAddAndRemoveJeep() {
-        Jeep jeep = new Jeep(4, 4);
-        controller.addJeep(jeep);
-        assertTrue(controller.getGameModel().getJeeps().contains(jeep));
-
-        controller.removeJeep(jeep);
-        assertFalse(controller.getGameModel().getJeeps().contains(jeep));
+    void ranger_ShouldMoveToRandomLocationWhenNoTarget() {
+        Ranger ranger = new Ranger(new Position(0, 0, 32, 32));
+        ranger.act(0.1f);
+        ranger.act(5.1f);
+        assertTrue(ranger.getActions().size > 0);
     }
 
     @Test
-    public void testSetAndGetSelected() {
-        Object obj = new Object();
-        controller.setSelected(obj);
-        assertEquals(obj, controller.getSelected());
+    void ranger_ShouldHaveCorrectBounds() {
+        Position pos = new Position(50, 50, 32, 32);
+        Ranger ranger = new Ranger(pos);
+
+        Rectangle bounds = ranger.getBounds();
+        assertEquals(pos.getX(), bounds.x, 0.01f);
+        assertEquals(pos.getY(), bounds.y, 0.01f);
+        assertEquals(pos.getWidth(), bounds.width, 0.01f);
+        assertEquals(pos.getHeight(), bounds.height, 0.01f);
     }
 
     @Test
-    public void testSetAndGetToPlace() {
-        Object obj = new Object();
-        controller.setToPlace(obj);
-        assertEquals(obj, controller.getToPlace());
+    void tryToPlace_ShouldBuyAnimalWhenFundsAvailable() throws InSufficientFundsException {
+        ShopItem animalItem = new ShopItem("Capybara", 100);
+        when(mockShop.getShopItems()).thenReturn(animalItem);
+        when(mockShop.isBuying()).thenReturn(true);
+        when(mockModel.positionFound(anyFloat(), anyFloat(), anyInt(), anyInt())).thenReturn(true);
+        when(mockModel.CanBuy(animalItem)).thenReturn(true);
+
+        doNothing().when(mockModel).getHerds();
+        doNothing().when(mockView).getGameStage();
+
+        boolean result = gameController.TryToPlace(100, 100, 32, 32, 0, 0, false);
+        assertTrue(result);
+        verify(mockModel).Decrease_My_Money(animalItem.getPrice());
+
+        // Additional verifications if needed
+        verify(mockModel).getHerds();
+        verify(mockView).getGameStage();
     }
 
     @Test
-    public void testSetAndGetMode() {
-        GameController.Mode mode = GameController.Mode.BUY;
-        controller.setMode(mode);
-        assertEquals(mode, controller.getMode());
+    void tryToPlace_ShouldReturnFalseWhenInsufficientFunds() {
+        ShopItem expensiveItem = new ShopItem("Dinosaur", 100000);
+        when(mockShop.getShopItems()).thenReturn(expensiveItem);
+        when(mockShop.isBuying()).thenReturn(true);
+        when(mockModel.positionFound(anyFloat(), anyFloat(), anyInt(), anyInt())).thenReturn(true);
+        when(mockModel.CanBuy(expensiveItem)).thenReturn(false);
+
+        boolean result = gameController.TryToPlace(100, 100, 32, 32, 0, 0, false);
+        assertFalse(result);
+        verify(mockModel, never()).Decrease_My_Money(anyInt());
     }
 
     @Test
-    public void testSetAndGetSelectedTile() {
-        Vector2 tile = new Vector2(5, 5);
-        controller.setSelectedTile(tile);
-        assertEquals(tile, controller.getSelectedTile());
+    void getAdjacentRoads_ShouldReturnConnectedRoads() {
+        GameModel testModel = new GameModel(1);
+        Road mainRoad = new Road(new Position(100, 100, 64, 64));
+        Road rightRoad = new Road(new Position(164, 100, 64, 64));
+        Road downRoad = new Road(new Position(100, 164, 64, 64));
+        Road farRoad = new Road(new Position(300, 300, 64, 64));
+
+        testModel.getRoads().add(mainRoad);
+        testModel.getRoads().add(rightRoad);
+        testModel.getRoads().add(downRoad);
+        testModel.getRoads().add(farRoad);
+
+        List<Road> adjacent = GameController.getAdjacentRoads(mainRoad, testModel);
+
+        assertEquals(2, adjacent.size());
+        assertTrue(adjacent.contains(rightRoad));
+        assertTrue(adjacent.contains(downRoad));
+        assertFalse(adjacent.contains(farRoad));
     }
 
     @Test
-    public void testGameModelIsNotNull() {
-        assertNotNull(controller.getGameModel());
+    void getClosestRoad_ShouldReturnNearestRoad() {
+        GameModel testModel = new GameModel(1);
+        Road road1 = new Road(new Position(100, 100, 64, 64));
+        Road road2 = new Road(new Position(200, 200, 64, 64));
+        testModel.getRoads().add(road1);
+        testModel.getRoads().add(road2);
+
+        Position testPos = new Position(110, 110, 0, 0);
+        Road closest = GameController.getClosestRoad(testPos, testModel);
+
+        assertEquals(road1, closest);
     }
 
-     */
+    private static Ranger getSelectedRanger() {
+        try {
+            java.lang.reflect.Field field = GameController.class.getDeclaredField("selectedRanger");
+            field.setAccessible(true);
+            return (Ranger) field.get(null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

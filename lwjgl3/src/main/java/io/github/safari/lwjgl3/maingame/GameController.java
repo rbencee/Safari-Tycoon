@@ -42,6 +42,12 @@ public class GameController {
         return waitingForTarget;
     }
 
+    public static Ranger getSelectedRanger() {
+        return selectedRanger;
+    }
+
+
+
     public static void selectRanger(Ranger ranger) {
         if (selectedRanger != null) {
             selectedRanger.setSelected(false);
@@ -103,6 +109,7 @@ public class GameController {
         }
 
     }
+
 
 
     public boolean TryToPlace(float x, float y, int width, int height, int pointer, int button, boolean isjeep) {
@@ -464,7 +471,7 @@ public class GameController {
         return null; // Nincs út
     }
 
-    private static Road getClosestRoad(Position pos, GameModel gameModel) {
+    public static Road getClosestRoad(Position pos, GameModel gameModel) {
         Road closest = null;
         float minDist = Float.MAX_VALUE;
 
