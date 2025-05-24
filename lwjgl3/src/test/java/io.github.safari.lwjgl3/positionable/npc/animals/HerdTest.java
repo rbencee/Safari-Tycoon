@@ -36,7 +36,7 @@ public class HerdTest {
         );
         herd.addToHerd(animal);
 
-        herd.act(0.1f);
+        herd.act(20f);
 
     }
 }
