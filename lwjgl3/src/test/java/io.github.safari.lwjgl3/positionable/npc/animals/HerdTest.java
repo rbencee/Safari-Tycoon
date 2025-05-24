@@ -36,7 +36,7 @@ public class HerdTest {
         );
         herd.addToHerd(animal);
 
-        herd.act(20f);
+        assertDoesNotThrow(() -> herd.act(20f));
 
     }
 }
