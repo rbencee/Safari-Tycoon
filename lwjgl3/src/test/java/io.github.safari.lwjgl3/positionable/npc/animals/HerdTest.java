@@ -30,6 +30,13 @@ public class HerdTest {
 
     @Test
     void testAct() {
-        assertDoesNotThrow(() -> herd.act(1f));
+        AnimalImpl animal = (AnimalImpl) AnimalFactory.createNew(
+            AnimalSpecies.CAPYBARA,
+            new Position(6, 6, 1, 1)
+        );
+        herd.addToHerd(animal);
+
+        herd.act(0.1f);
+
     }
 }

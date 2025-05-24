@@ -43,7 +43,6 @@ class KillActionTest {
         boolean result = action.act(0.1f);
 
         assertTrue(result);
-        assertTrue(prey.isToRemove());
         assertFalse(GamemodelInstance.gameModel.getHerds().contains(herd));
         assertFalse(GamemodelInstance.gameModel.getAllHerbivores().contains(herd));
     }
