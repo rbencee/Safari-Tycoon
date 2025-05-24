@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public record PathGraph(Array<Node> nodes) implements IndexedGraph<Node> {
     public static Array<Node> STATIC_NODES = new Array<>();
-    private static int index = 0;
+    public static int index = 0;
 
     public PathGraph(Array<Node> nodes) {
         this.nodes = nodes;
