@@ -4,18 +4,16 @@ import io.github.safari.lwjgl3.maingame.GameModel;
 import io.github.safari.lwjgl3.maingame.GamemodelInstance;
 import io.github.safari.lwjgl3.positionable.Position;
 import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
-import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AnimalImplTest {
 
     @BeforeEach
     void setup() {
-        GameModel mockGameModel = new GameModel(1){
+        GameModel mockGameModel = new GameModel(1) {
             @Override
             public int getTimeMultiplicator() {
                 return 7;
@@ -46,7 +44,7 @@ class AnimalImplTest {
     @Test
     void testAnimalDiesFromOldAge() {
         AnimalImpl animal = new AnimalImpl(
-            animalMaxAge(AnimalSpecies.LION) + 1,
+            20000,
             100,
             100,
             new Position(0, 0, 1, 1),
@@ -54,7 +52,6 @@ class AnimalImplTest {
         );
 
         animal.act(1.0f);
-
         assertTrue(animal.isToRemove());
     }
 
@@ -86,7 +83,34 @@ class AnimalImplTest {
         assertTrue(animal.isToRemove());
     }
 
-    private double animalMaxAge(AnimalSpecies species) {
-        return SpeciesFactory.getSpeciesData(species).maxAge();
+    @Test
+    void testAnimalDoesNotDieWhenResourcesAvailable() {
+        AnimalImpl animal = new AnimalImpl(
+            1,
+            100.0,
+            100.0,
+            new Position(0, 0, 1, 1),
+            AnimalSpecies.LION
+        );
+
+        animal.act(1.0f);
+        assertFalse(animal.isToRemove());
+    }
+
+    @Test
+    void testAnimalProperties() {
+        AnimalImpl animal = new AnimalImpl(
+            5.0,
+            75.0,
+            80.0,
+            new Position(10, 20, 2, 2),
+            AnimalSpecies.LION
+        );
+
+        assertEquals(5.0, animal.getAge(), 0.001);
+        assertEquals(75.0, animal.getHunger(), 0.001);
+        assertEquals(80.0, animal.getThirst(), 0.001);
+        assertEquals(AnimalSpecies.LION, animal.getAnimalSpecies());
+        assertEquals(new Position(10, 20, 2, 2), animal.getPosition());
     }
 }

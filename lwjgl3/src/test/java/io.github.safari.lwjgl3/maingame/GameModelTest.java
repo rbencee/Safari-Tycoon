@@ -8,11 +8,14 @@ import io.github.safari.lwjgl3.positionable.npc.animals.Herd;
 import io.github.safari.lwjgl3.positionable.npc.animals.behaviours.Behaviour;
 import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalSpecies;
 import io.github.safari.lwjgl3.positionable.npc.animals.shared.AnimalType;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesData;
+import io.github.safari.lwjgl3.positionable.npc.animals.shared.SpeciesFactory;
 import io.github.safari.lwjgl3.positionable.npc.human.Poacher;
 import io.github.safari.lwjgl3.positionable.npc.human.Ranger;
 import io.github.safari.lwjgl3.positionable.objects.*;
 import io.github.safari.lwjgl3.positionable.visitors.Jeep;
 import io.github.safari.lwjgl3.positionable.visitors.Tourist;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +32,26 @@ class GameModelTest extends LibGDXHeadlessTest{
 
     @BeforeEach
     void setUp() {
-        gameModel = new GameModel(TEST_DIFFICULTY);}
+        SpeciesFactory.speciesCache.clear();
+
+        SpeciesFactory.speciesCache.put(AnimalSpecies.CAPYBARA,
+            new SpeciesData(AnimalType.HERBIVORE, AnimalSpecies.CAPYBARA, 100, 1f, 200f, 10, null));
+
+        SpeciesFactory.speciesCache.put(AnimalSpecies.LION,
+            new SpeciesData(AnimalType.PREDATOR, AnimalSpecies.LION, 100, 1.2f, 250f, 12, null));
+
+        SpeciesFactory.loaded = true;
+
+        gameModel = new GameModel(TEST_DIFFICULTY);
+    }
+
+    @AfterEach
+    void tearDown() {
+        SpeciesFactory.speciesCache.clear();
+        SpeciesFactory.loaded = false;
+    }
+
+
 
     @Test
     void testInitialization() {

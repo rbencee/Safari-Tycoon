@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SpeciesFactory {
-    private static final Map<AnimalSpecies, SpeciesData> speciesCache = new HashMap<>();
-    private static boolean loaded = false;
+    public static final Map<AnimalSpecies, SpeciesData> speciesCache = new HashMap<>();
+    public static boolean loaded = false;
 
     public static void loadData() {
         if (loaded) return;
