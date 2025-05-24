@@ -32,7 +32,7 @@ public class HerdTest {
     void testAct() {
         AnimalImpl animal = (AnimalImpl) AnimalFactory.createNew(
             AnimalSpecies.CAPYBARA,
-            new Position(6, 6, 1, 1)
+            new Position(200, 200, 32, 32)
         );
         herd.addToHerd(animal);
 
